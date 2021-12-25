@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/fragmainitemdetailed_parent_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ImageView
+        android:id="@+id/fragmainitemdetailed_titleimage"
+        android:layout_width="7mm"
+        android:layout_height="7mm"
+        android:layout_marginStart="1mm"
+        android:layout_marginTop="1mm"
+        android:layout_marginEnd="1mm"
+        android:layout_marginBottom="1mm"
+        android:background="@drawable/ic_journal" />
+
+    <TextView
+        android:id="@+id/fragmainitemdetailed_itemtype"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/fragmainitemdetailed_titleimage"
+        android:layout_alignLeft="@id/fragmainitemdetailed_titleimage"
+        android:layout_alignRight="@id/fragmainitemdetailed_titleimage"
+        android:gravity="center"
+        android:text="Journal Paper"
+        android:textSize="5pt" />
+
+    <TextView
+        android:id="@+id/fragmainitemdetailed_itemtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/fragmainitemdetailed_titleimage"
+        android:layout_alignBottom="@id/fragmainitemdetailed_itemtype"
+        android:layout_marginLeft="1mm"
+        android:layout_marginRight="1mm"
+        android:layout_toRightOf="@id/fragmainitemdetailed_titleimage"
+        android:gravity="center_vertical|left|start"
+        android:text="TITLE OF THE PAPER\nTITLE"
+        android:textSize="5mm"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/fragmainitemdetailed_itemtitle"
+        android:layout_marginTop="1mm"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.2"
+            >
+            <TextView
+                android:id="@+id/fragmainitemdetailed_itemabstract"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="3mm"
+                android:layout_marginRight="1mm"
+                android:text="TITLE OF THE PAPER\nTITLE"
+                android:textSize="3.5mm"
+                />
+        </ScrollView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/fragmainitemdetailed_listelements"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.7"
+            android:layout_marginBottom="1mm"
+            android:layout_marginLeft="2mm"
+            android:layout_marginRight="2mm"
+            />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/fragmainitemdetailed_listattachements"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.1"
+            android:layout_marginLeft="2mm"
+            android:layout_marginRight="2mm"
+            />
+
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>
