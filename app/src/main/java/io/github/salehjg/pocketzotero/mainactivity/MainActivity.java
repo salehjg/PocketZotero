@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
+
 import com.google.android.material.navigation.NavigationView;
 import io.github.salehjg.pocketzotero.R;
 import io.github.salehjg.pocketzotero.fragments.main.MainFragment;
@@ -24,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     Toolbar mToolbar;
     NavigationView mNavigationView;
     DrawerLayout mDrawerLayout;
+
+    ImageButton btnSettings, btnAbout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

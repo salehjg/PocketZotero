@@ -5,7 +5,8 @@
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.38125" />
         <entry key="app/src/main/res/drawable/ic_arrow_drop_down.xml" value="0.36875" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.35260416666666666" />
+        <entry key="app/src/main/res/layout-land/activity_main.xml" value="0.16534391534391535" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1953125" />
         <entry key="app/src/main/res/layout/drawer_header.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/fragment_about.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/fragment_main.xml" value="0.1953125" />

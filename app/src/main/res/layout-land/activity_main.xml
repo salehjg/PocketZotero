@@ -7,12 +7,67 @@
     android:orientation="horizontal">
 
     <com.google.android.material.navigation.NavigationView
-        android:layout_width="30mm"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:id="@+id/nav_view"
-        android:fitsSystemWindows="true"
-        app:menu="@menu/drawer"
-        />
+        android:id="@+id/activitymain_navview"
+        android:fitsSystemWindows="true">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="20mm"
+                android:layout_alignParentTop="true"
+                android:id="@+id/activitymain_drawer_header"
+                >
+                <TextView
+                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:text="Pocket Zotero"
+                    android:textSize="7mm"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:background="@color/dark_grey"
+                    />
+            </RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/activitymain_drawer_header"
+                android:layout_above="@+id/activitymain_drawer_toolbar"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/mainpanel_collections_linearlayout"
+                android:orientation="vertical"
+                android:background="@color/gray"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:id="@+id/activitymain_drawer_toolbar"
+                android:gravity="end"
+                android:layout_margin="10dp"
+                >
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/ic_settings"
+                    android:id="@+id/activitymain_btn_settings"
+                    android:layout_marginEnd="10dp"
+                    />
+                <ImageButton
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/ic_about"
+                    android:id="@+id/activitymain_btn_about"
+                    />
+            </LinearLayout>
+        </RelativeLayout>
+    </com.google.android.material.navigation.NavigationView>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -21,7 +76,7 @@
         <include layout="@layout/toolbar" />
 
         <FrameLayout
-            android:id="@+id/main_content_area"
+            android:id="@+id/activitymain_contentarea"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/toolbar" />
