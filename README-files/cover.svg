@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="88.586243mm"
+   height="37.663265mm"
+   viewBox="0 0 334.81416 142.34934"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20, custom)"
+   sodipodi:docname="pocketZotero.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="2.1060116"
+     inkscape:cx="145.77317"
+     inkscape:cy="122.98128"
+     inkscape:window-width="1920"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="32"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2">
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect50530"
+       is_visible="true"
+       lpeversion="1"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false" />
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect50315"
+       is_visible="true"
+       lpeversion="1"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false" />
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect50082"
+       is_visible="true"
+       lpeversion="1"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false" />
+    <inkscape:path-effect
+       effect="bspline"
+       id="path-effect49965"
+       is_visible="true"
+       lpeversion="1"
+       weight="33.333333"
+       steps="2"
+       helper_size="0"
+       apply_no_weight="true"
+       apply_with_weight="true"
+       only_selected="false" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-74.249791,-38.607418)">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:87.2611px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.18495;stroke-miterlimit:4;stroke-dasharray:none"
+       x="78.120377"
+       y="117.63026"
+       id="text2498"
+       transform="scale(1.0710058,0.93370175)"><tspan
+         sodipodi:role="line"
+         id="tspan2496"
+         x="78.120377"
+         y="117.63026"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:87.2611px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:2.18495">Pocket</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:40px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none"
+       x="223.07854"
+       y="215.01263"
+       id="text14664"><tspan
+         id="tspan14662"
+         sodipodi:role="line"
+         x="223.07854"
+         y="215.01263"></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:58.7695px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.46924"
+       x="90.875221"
+       y="157.24123"
+       id="text38672"
+       transform="scale(0.97028125,1.030629)"><tspan
+         sodipodi:role="line"
+         id="tspan38670"
+         x="90.875221"
+         y="157.24123"
+         style="font-style:italic;font-weight:bold;fill:#ff0000;stroke-width:1.46924">Zotero</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 91.290521,39.107418 c 95.668859,0 191.337729,0 243.607269,2.21675 52.26955,2.216749 62.43524,7.297744 67.17775,15.169996 4.74251,7.872252 7.1457,21.089552 6.33032,33.071021 -0.81537,11.981465 -4.74621,22.944665 -10.7892,30.352265 -6.04298,7.4076 -14.65582,11.94594 -52.97551,23.32999 -38.3197,11.38404 -106.33706,29.60894 -153.50847,35.19445 -47.1714,5.58551 -73.49685,-1.46838 -99.822302,-8.52226"
+       id="path49963"
+       inkscape:path-effect="#path-effect49965"
+       inkscape:original-d="m 91.290521,39.107418 c 95.668859,9.15e-4 191.337729,8.69e-4 287.006589,0 9.11941,3.934953 22.88568,1.812164 26.32023,13.155325 9.87873,10.707643 6.40814,24.992923 6.94615,38.203122 1.43222,13.018825 0.45095,25.039585 -11.63789,32.458325 -5.94003,8.97813 -15.69369,11.35143 -25.58679,13.48239 -68.01761,18.22396 -136.03425,36.45157 -204.05208,54.6747 -26.32563,-7.0532 -52.65108,-14.10709 -78.976352,-21.16165" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 91.290521,39.107418 c -0.697009,0 -1.395019,0 -2.083858,0.09092 -0.688839,0.09093 -1.368164,0.27295 -2.068571,0.460623 -0.700407,0.187674 -1.421855,0.380985 -2.50142,0.892556 -1.079566,0.511571 -2.516811,1.341365 -3.513573,2.237814 -0.996762,0.896449 -1.552489,1.858997 -2.07561,3.255753 -0.52312,1.396755 -1.013602,3.227258 -1.258757,5.140162 -0.245154,1.912903 -0.245154,3.907774 -0.245154,19.143295 0,15.235522 0,43.710515 0,59.923695 0,16.21317 0,20.1638 1.180706,24.1837 1.180706,4.01989 3.541341,8.10863 5.836089,10.70066 2.294749,2.59203 4.522958,3.68782 6.750005,4.78303"
+       id="path50528"
+       inkscape:path-effect="#path-effect50530"
+       inkscape:original-d="m 91.290521,39.107418 c -0.697009,10e-4 -1.395019,10e-4 -2.094028,0 -0.678352,0.183032 -1.357677,0.365056 -2.038015,0.546085 -0.720476,0.194319 -1.441924,0.38763 -2.164386,0.579945 -1.436303,0.830827 -2.873548,1.660621 -4.311822,2.489432 -0.55475,0.963587 -1.110478,1.926135 -1.667216,2.887703 -0.489502,1.831577 -0.979984,3.66208 -1.471476,5.49162 0.001,1.99595 0.001,3.990821 0,5.984731 0.001,28.477133 0.001,56.952126 0,85.426696 0.001,3.95178 0.001,7.90241 0,11.85212 2.36173,4.0899 4.722364,8.17864 7.082046,12.26646 2.229296,1.09683 4.457503,2.19262 6.684754,3.28742" />
+  </g>
+</svg>
