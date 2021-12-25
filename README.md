@@ -1,14 +1,15 @@
-# ZoteroReader
+# PocketZotero
 ![image info](./README-files/cover.svg)
+
 The project aims for providing a simple Android application to read the offline local Zotero databases. The idea is to ignore Zotero Cloud completely and only use the offline copy of the database which could be obtained from the desktop version of Zotero.
 
 ## APK
-I usually release unsigned working APKs of the applications. You can find them at [Releases](https://github.com/salehjg/ZoteroReader/releases).
+I usually release unsigned working APKs of the applications. You can find them at [Releases](https://github.com/salehjg/PocketZotero/releases).
 
 ## Features
 - [x] Single Library
 - [x] Read-only Mode
-- [x] Accessing the default DB located at `/storage/emulated/0/ZotReader/zotero.sqlite`  
+- [x] Accessing the default DB located at `/storage/emulated/0/PocketZotero/zotero.sqlite`  
 - [x] Offline and local Zotero DB access 
 - [x] Decoding the nested collection structure
 - [x] Decoding the fields and their values
