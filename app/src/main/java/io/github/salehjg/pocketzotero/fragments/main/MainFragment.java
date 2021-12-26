@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 
 import com.google.android.material.tabs.TabLayout;
 
+import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.R;
 
 public class MainFragment extends Fragment {
@@ -83,6 +84,13 @@ public class MainFragment extends Fragment {
                 tabLayout.selectTab(tabLayout.getTabAt(position));
             }
         });
+
+        ((AppMem) getActivity().getApplication()).setViewPager(viewPager);
     }
 
+    @Override
+    public void onDestroy() {
+        ((AppMem) getActivity().getApplication()).setViewPager(null);
+        super.onDestroy();
+    }
 }

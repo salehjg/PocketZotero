@@ -27,7 +27,7 @@ public class RecyclerAdapterAttachments extends RecyclerView.Adapter<RecyclerAda
     }
 
     // data is passed into the constructor
-    RecyclerAdapterAttachments(Context context, Vector<ItemAttachment> attachments) {
+    public RecyclerAdapterAttachments(Context context, Vector<ItemAttachment> attachments) {
         this.mInflater = LayoutInflater.from(context);
         this.mAttachments = attachments;
     }
@@ -98,7 +98,7 @@ public class RecyclerAdapterAttachments extends RecyclerView.Adapter<RecyclerAda
     }
 
     // a method for getting data at click position
-    ItemAttachment getDataAttachment(int id) {
+    public ItemAttachment getDataAttachment(int id) {
         return mAttachments.get(id);
     }
 

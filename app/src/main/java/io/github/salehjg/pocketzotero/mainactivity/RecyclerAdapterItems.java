@@ -141,7 +141,7 @@ public class RecyclerAdapterItems extends RecyclerView.Adapter<RecyclerAdapterIt
     }
 
     // a method for getting data at click position
-    CollectionItem getDataCollectionItem(int id) {
+    public CollectionItem getDataCollectionItem(int id) {
         return mItems.get(id);
     }
 

@@ -21,7 +21,7 @@ public class RecyclerAdapterElements extends RecyclerView.Adapter<RecyclerAdapte
     private ItemClickListener mClickListener;
     private boolean mMasterEditEnabled;
 
-    RecyclerAdapterElements(
+    public RecyclerAdapterElements(
             Context context,
             Vector<UnifiedElement> elements,
             boolean masterEditEnabled) {
@@ -131,7 +131,7 @@ public class RecyclerAdapterElements extends RecyclerView.Adapter<RecyclerAdapte
     }
 
     // allows clicks events to be caught
-    void setClickListener(ItemClickListener itemClickListener) {
+    public void setClickListener(ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
     }
 
