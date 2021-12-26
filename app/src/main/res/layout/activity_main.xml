@@ -51,16 +51,16 @@
                     android:background="@color/dark_grey"
                     />
             </RelativeLayout>
+
             <LinearLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/activitymain_collections_linearlayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/activitymain_drawer_header"
                 android:layout_above="@+id/activitymain_drawer_toolbar"
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/mainpanel_collections_linearlayout"
-                android:orientation="vertical"
+                android:layout_below="@id/activitymain_drawer_header"
                 android:background="@color/gray"
-                />
+                android:orientation="vertical" />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

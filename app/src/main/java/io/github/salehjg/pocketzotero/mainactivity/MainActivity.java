@@ -13,12 +13,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import com.google.android.material.navigation.NavigationView;
+
+import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.R;
 import io.github.salehjg.pocketzotero.fragments.about.AboutFragment;
 import io.github.salehjg.pocketzotero.fragments.main.MainFragment;
 import io.github.salehjg.pocketzotero.fragments.settings.SettingsFragment;
+import io.github.salehjg.pocketzotero.zoteroengine.ZoteroEngine;
 
 public class MainActivity extends AppCompatActivity {
     static Boolean mTwoPane;
@@ -29,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout mDrawerLayout;
 
     ImageButton btnMain, btnSettings, btnAbout;
+    LinearLayout linearLayoutCollections;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +72,28 @@ public class MainActivity extends AppCompatActivity {
                 ShowFragment(new AboutFragment());
             }
         });
+
+        linearLayoutCollections = findViewById(R.id.activitymain_collections_linearlayout);
+
+        ((AppMem) this.getApplication()).setRecyclerAdapterItems(
+                new RecyclerAdapterItems(
+                        this,
+                        null,
+                        null,
+                        null,
+                        null)
+        );
+
+        ((AppMem) this.getApplication()).setZoteroEngine(
+                new ZoteroEngine(
+                        this,
+                        getApplicationContext(),
+                        linearLayoutCollections,
+                        ((AppMem) this.getApplication()).getRecyclerAdapterItems(),
+                        "")
+        );
+
+        ((AppMem) this.getApplication()).getZoteroEngine().GuiCollections();
     }
 
     private void ShowFragment(Fragment fragment){
