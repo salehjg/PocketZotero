@@ -1,7 +1,9 @@
 package io.github.salehjg.pocketzotero.fragments.main;
 
 import static com.simplemobiletools.commons.extensions.ActivityKt.openPathIntent;
+import static com.simplemobiletools.commons.extensions.ContextKt.getMediaContentUri;
 
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,7 +11,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +19,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Objects;
-
 import io.github.salehjg.pocketzotero.AppMem;
-import io.github.salehjg.pocketzotero.BuildConfig;
 import io.github.salehjg.pocketzotero.R;
 import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterAttachments;
 import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterElements;
@@ -161,14 +163,29 @@ public class MainItemDetailedFragment extends Fragment {
     }
 
     public void OpenAttachmentFile(String key) {
-        File path = new File("/storage/emulated/0/ZotReader/storage");
+        File path = new File( getResources().getString(R.string.default_path_dir) + "storage");
         File file = new File(path, key);
+
+        {
+            Uri myUri = getMediaContentUri(requireContext(), file.getPath());
+            String myUriStr = myUri.getPath();
+            if (!myUriStr.contains("/external/file/")) {
+                Toast.makeText(
+                        requireContext(),
+                        "Failed to get a valid URI for android 10+. " +
+                                "Restart the device and try again. " +
+                                "Be aware that continuing in this state will result in invalid " +
+                                "write-access to the file and " +
+                                "all of the file modifications by the third-party app will be discarded.",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
 
         openPathIntent(
                 requireActivity(),
                 file.getPath(),
                 false,
-                BuildConfig.APPLICATION_ID,
+                requireContext().getPackageName(),
                 "",
                 new HashMap<>(0)
         );

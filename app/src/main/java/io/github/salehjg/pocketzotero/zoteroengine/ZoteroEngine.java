@@ -91,7 +91,7 @@ public class ZoteroEngine {
     }
 
     public boolean CreateStorageFolderIfNeeded(){
-        File f = new File(Environment.getExternalStorageDirectory(), "ZotReader/");
+        File f = new File(Environment.getExternalStorageDirectory(), context.getResources().getString(R.string.default_name_dir));
         if (!f.exists()) {
             return f.mkdirs();
         }else{
