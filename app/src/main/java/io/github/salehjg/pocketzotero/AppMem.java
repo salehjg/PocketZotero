@@ -131,4 +131,32 @@ public class AppMem extends Application {
         return reader.getString(getString(R.string.prefKey_storageSmbServerSharedPath_string), "");
     }
 
+    public void setStorageSmbServerUsername(String username){
+        // SMB Server Username
+        SharedPreferences.Editor writer = getPreferenceEditor();
+        writer.putString(getString(R.string.prefKey_storageSmbServerUsername_string), username);
+        writer.apply();
+    }
+
+    public String getStorageSmbServerUsername(){
+        // SMB Server Username
+        SharedPreferences reader = getPreference();
+        return reader.getString(getString(R.string.prefKey_storageSmbServerUsername_string), "");
+    }
+
+    public void setStorageSmbServerPassword(String password){
+        // SMB Server Password
+        /// TODO: STORE THE PASSWORD SAFELY WITH ITS PROPER PROCEDURE!
+        SharedPreferences.Editor writer = getPreferenceEditor();
+        writer.putString(getString(R.string.prefKey_storageSmbServerPassword_string), password);
+        writer.apply();
+    }
+
+    public String getStorageSmbServerPassword(){
+        // SMB Server Password
+        /// TODO: STORE THE PASSWORD SAFELY WITH ITS PROPER PROCEDURE!
+        SharedPreferences reader = getPreference();
+        return reader.getString(getString(R.string.prefKey_storageSmbServerPassword_string), "");
+    }
+
 }

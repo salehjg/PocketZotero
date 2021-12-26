@@ -18,7 +18,8 @@ import java.util.concurrent.Executors;
 
 public class SmbScanner {
     public interface Listener {
-        void onFinished(Vector<String> myResults);
+        void onFinished(Vector<String> serversFound);
+        void onServerFound(String theNewServer, Vector<String> serversFound);
         void onProgressTick(int percent);
         void onError(Exception e);
     }
@@ -51,10 +52,12 @@ public class SmbScanner {
                     }
                     String subIp = localIp.substring(0,localIp.lastIndexOf(".")+1);
                     for(int i=0; i<256; i++){
+                        if(Thread.currentThread().isInterrupted()) break;
                         _onProgressTick((i*100)/256);
                         String currentLocalIpToTry = subIp + i;
-                        if(isThisServer(currentLocalIpToTry )){
+                        if(isThisServer(currentLocalIpToTry)){
                             mServersFound.add(currentLocalIpToTry);
+                            _onServerFound(currentLocalIpToTry, mServersFound);
                             if(mEarlyTermination) break;
                         }
                     }
@@ -67,7 +70,18 @@ public class SmbScanner {
                 mExecutor.shutdown();
             }
         };
+    }
+
+    public void RunInBackground(){
         mExecutor.execute(mRunnable);
+    }
+
+    public void TerminateWithForce(){
+        mExecutor.shutdownNow();
+    }
+
+    public boolean isTerminated(){
+        return mExecutor.isTerminated();
     }
 
     private void _onFinished(Vector<String> serversFound){
@@ -75,6 +89,15 @@ public class SmbScanner {
             @Override
             public void run() {
                 mListener.onFinished(serversFound);
+            }
+        });
+    }
+
+    private void _onServerFound(String theNewServer, Vector<String> serversFound){
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                mListener.onServerFound(theNewServer, serversFound);
             }
         });
     }

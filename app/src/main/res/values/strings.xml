@@ -11,4 +11,6 @@
     <string name="prefKey_storageModeIsLocal_bool">storageModeIsLocal</string>
     <string name="prefKey_storageSmbServerIp_string">storageSmbServerIp</string>
     <string name="prefKey_storageSmbServerSharedPath_string">storageSmbServerSharedPath</string>
+    <string name="prefKey_storageSmbServerUsername_string">storageSmbServerUsername</string>
+    <string name="prefKey_storageSmbServerPassword_string">storageSmbServerPassword</string>
 </resources>

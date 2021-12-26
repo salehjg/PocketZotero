@@ -32,8 +32,9 @@ public class MyRunnable{
 
                     ///TODO Background Processing Here
                     for(int i =0; i<100; i++){
-                        if(i%10==0)
-                            _onProgressTick(i);
+                        if(Thread.currentThread().isInterrupted()) break;
+                        if(i%10==0) _onProgressTick(i);
+
                         Thread.sleep(100);
                     }
                 }
@@ -45,7 +46,19 @@ public class MyRunnable{
                 mExecutor.shutdown();
             }
         };
+        ;
+    }
+
+    public void RunInBackground(){
         mExecutor.execute(mRunnable);
+    }
+
+    public void TerminateWithForce(){
+        mExecutor.shutdownNow();
+    }
+
+    public boolean isTerminated(){
+        return mExecutor.isTerminated();
     }
 
     private void _onFinished(String myResults){

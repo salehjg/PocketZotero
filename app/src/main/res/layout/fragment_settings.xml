@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    android:layout_width="match_parent"
+<LinearLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:scrollbars="vertical"
     android:id="@+id/fragsettings_parent_layout"
-    android:layout_margin="5dp"
-    >
+    android:layout_margin="5dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,7 +22,7 @@
             android:text="DB Location: "
             android:id="@+id/fragsettings_lbl_mode"
             android:layout_centerVertical="true"
-            android:gravity="right"
+            android:gravity="end"
             />
 
         <LinearLayout
@@ -54,24 +53,120 @@
         <TextView
             android:layout_width="0mm"
             android:layout_weight="0.2"
-            android:layout_height="wrap_content"
-            android:text="SMB Server: "
+            android:layout_height="match_parent"
+            android:text="SMB Server:"
             android:id="@+id/fragsettings_lbl_smbserver"
             android:layout_centerVertical="true"
-            android:gravity="right"
+            android:gravity="center_vertical|end"
             />
-        <Spinner
-            android:id="@+id/fragsettings_spinner_smbserver"
+        <LinearLayout
+            android:layout_width="0mm"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:orientation="vertical">
+            <Spinner
+                android:id="@+id/fragsettings_spinner_smbserver"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dialog"
+                android:gravity="center"
+                />
+            <EditText
+                android:id="@+id/fragsettings_edittext_smbserver"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="SMB Server IP"
+                android:gravity="center"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0mm"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0mm"
+                android:layout_weight="0.5"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp">
+                <ImageButton
+                    android:background="@drawable/ic_server_search"
+                    android:id="@+id/fragsettings_searchserver_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="1:1"
+                    />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0mm"
+                android:layout_weight="0.5"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp">
+                <ImageButton
+                    android:background="@drawable/ic_stop"
+                    android:id="@+id/fragsettings_stopsearching_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="1:1"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        >
+        <TextView
+            android:layout_width="0mm"
+            android:layout_weight="0.2"
+            android:layout_height="wrap_content"
+            android:text="SMB Username:"
+            android:id="@+id/fragsettings_lbl_user"
+            android:gravity="end"
+            />
+
+        <EditText
+            android:id="@+id/fragsettings_text_user"
             android:layout_width="0mm"
             android:layout_weight="0.8"
             android:layout_height="wrap_content"
-            android:spinnerMode="dialog"/>
-        <ImageButton
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:background="@drawable/ic_server_search"
-            android:id="@+id/fragsettings_searchserver_btn"
+            android:text=""
+            android:hint="USERNAME"
+            android:gravity="center"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        >
+        <TextView
+            android:layout_width="0mm"
+            android:layout_weight="0.2"
+            android:layout_height="wrap_content"
+            android:text="SMB Password:"
+            android:id="@+id/fragsettings_lbl_pass"
+            android:gravity="end"
             />
+
+        <EditText
+            android:id="@+id/fragsettings_text_pass"
+            android:layout_width="0mm"
+            android:layout_weight="0.8"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:inputType="textPassword"
+            android:gravity="center"
+            android:ellipsize="start"
+            android:hint="PASSWORD"/>
     </LinearLayout>
 
     <LinearLayout
@@ -86,8 +181,7 @@
             android:layout_height="wrap_content"
             android:text="Shared Folder Path: "
             android:id="@+id/fragsettings_lbl_dbpath"
-            android:layout_centerVertical="true"
-            android:gravity="right"
+            android:gravity="end"
             />
 
         <EditText
@@ -95,6 +189,7 @@
             android:layout_width="0mm"
             android:layout_weight="0.8"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:text="@string/default_path_db" />
     </LinearLayout>
     <RelativeLayout

@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -28,13 +29,15 @@ import io.github.salehjg.pocketzotero.smbutils.SmbScanner;
 public class SettingsFragment extends Fragment {
     RadioButton radioButtonLocal, radioButtonSmb;
     Spinner spinnerSmbServerIp;
-    ImageButton imageButtonSearchServer;
+    EditText editTextSmbServerIp, editTextSmbServerUser, editTextSmbServerPass;
+    ImageButton imageButtonSearchServer, imageButtonStopSearching;
     Button buttonSave;
     EditText editTextSharedPath;
 
     boolean isLocal;
     List<String> spinnerSmbServerIpItems;
     ArrayAdapter<String> spinnerSmbServerIpAdapter;
+    SmbScanner smbScanner;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -66,9 +69,13 @@ public class SettingsFragment extends Fragment {
         radioButtonLocal = view.findViewById(R.id.fragsettings_radio_local);
         radioButtonSmb = view.findViewById(R.id.fragsettings_radio_smb);
         spinnerSmbServerIp = view.findViewById(R.id.fragsettings_spinner_smbserver);
+        editTextSmbServerIp = view.findViewById(R.id.fragsettings_edittext_smbserver);
         imageButtonSearchServer = view.findViewById(R.id.fragsettings_searchserver_btn);
+        imageButtonStopSearching = view.findViewById(R.id.fragsettings_stopsearching_btn);
         buttonSave = view.findViewById(R.id.fragsettings_save_btn);
         editTextSharedPath = view.findViewById(R.id.fragsettings_text_sharedpath);
+        editTextSmbServerUser = view.findViewById(R.id.fragsettings_text_user);
+        editTextSmbServerPass = view.findViewById(R.id.fragsettings_text_pass);
 
         radioButtonLocal.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -86,13 +93,36 @@ public class SettingsFragment extends Fragment {
         });
         spinnerSmbServerIpAdapter = new ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, spinnerSmbServerIpItems);
         spinnerSmbServerIp.setAdapter(spinnerSmbServerIpAdapter);
+        spinnerSmbServerIp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                editTextSmbServerIp.setText(spinnerSmbServerIpAdapter.getItem(i));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
         imageButtonSearchServer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SmbScanner smbScanner = new SmbScanner(true, new SmbScanner.Listener() {
+                if(smbScanner!=null){
+                    // skip if there is a scan already running in background!
+                    if(!smbScanner.isTerminated()) return;
+                }
+                smbScanner = new SmbScanner(false, new SmbScanner.Listener() {
                     @Override
-                    public void onFinished(Vector<String> myResults) {
-                        spinnerSmbServerIpItems.addAll(myResults);
+                    public void onFinished(Vector<String> serversFound) {
+                        spinnerSmbServerIpItems.clear();
+                        spinnerSmbServerIpItems.addAll(serversFound);
+                        spinnerSmbServerIpAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onServerFound(String theNewServer, Vector<String> serversFound) {
+                        spinnerSmbServerIpItems.clear();
+                        spinnerSmbServerIpItems.addAll(serversFound);
                         spinnerSmbServerIpAdapter.notifyDataSetChanged();
                     }
 
@@ -114,6 +144,16 @@ public class SettingsFragment extends Fragment {
                                 Toast.LENGTH_LONG).show();
                     }
                 });
+
+                smbScanner.RunInBackground();
+            }
+        });
+        imageButtonStopSearching.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(smbScanner!=null){
+                    smbScanner.TerminateWithForce();
+                }
             }
         });
 
@@ -123,8 +163,10 @@ public class SettingsFragment extends Fragment {
                 try {
                     AppMem appMem = ((AppMem)getActivity().getApplication());
                     appMem.setStorageModeIsLocal(isLocal);
-                    appMem.setStorageSmbServerIp(spinnerSmbServerIp.getSelectedItem().toString());
+                    appMem.setStorageSmbServerIp(editTextSmbServerIp.getText().toString());
                     appMem.setStorageSmbServerSharedPath(editTextSharedPath.getText().toString());
+                    appMem.setStorageSmbServerUsername(editTextSmbServerUser.getText().toString());
+                    appMem.setStorageSmbServerPassword(editTextSmbServerPass.getText().toString());
                     Toast.makeText(
                             requireContext(),
                             "The settings are saved.",
@@ -153,12 +195,17 @@ public class SettingsFragment extends Fragment {
 
             String ip = appMem.getStorageSmbServerIp();
             if(!ip.isEmpty()) {
-                spinnerSmbServerIpAdapter.add(ip);
-                spinnerSmbServerIpAdapter.notifyDataSetChanged();
+                editTextSmbServerIp.setText(ip);
             }
 
             String sharedPath = appMem.getStorageSmbServerSharedPath();
             editTextSharedPath.setText(sharedPath);
+
+            String smbUser = appMem.getStorageSmbServerUsername();
+            editTextSmbServerUser.setText(smbUser);
+
+            String smbPass = appMem.getStorageSmbServerPassword();
+            editTextSmbServerPass.setText(smbPass);
         }
         catch (Exception e){
             Toast.makeText(
