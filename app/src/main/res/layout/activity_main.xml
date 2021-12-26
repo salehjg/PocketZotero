@@ -70,15 +70,22 @@
                 android:layout_margin="10dp"
                 >
                 <ImageButton
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/ic_settings"
-                    android:id="@+id/activitymain_btn_settings"
-                    android:layout_marginEnd="10dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/ic_library"
+                    android:id="@+id/activitymain_btn_main"
+                    android:layout_marginEnd="20dp"
                     />
                 <ImageButton
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/ic_settings"
+                    android:id="@+id/activitymain_btn_settings"
+                    android:layout_marginEnd="20dp"
+                    />
+                <ImageButton
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
                     android:background="@drawable/ic_about"
                     android:id="@+id/activitymain_btn_about"
                     />

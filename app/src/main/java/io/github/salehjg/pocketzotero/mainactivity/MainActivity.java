@@ -16,6 +16,7 @@ import android.widget.ImageButton;
 
 import com.google.android.material.navigation.NavigationView;
 import io.github.salehjg.pocketzotero.R;
+import io.github.salehjg.pocketzotero.fragments.about.AboutFragment;
 import io.github.salehjg.pocketzotero.fragments.main.MainFragment;
 import io.github.salehjg.pocketzotero.fragments.settings.SettingsFragment;
 
@@ -27,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     NavigationView mNavigationView;
     DrawerLayout mDrawerLayout;
 
-    ImageButton btnSettings, btnAbout;
+    ImageButton btnMain, btnSettings, btnAbout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,45 +45,36 @@ public class MainActivity extends AppCompatActivity {
         }
 
         mNavigationView = findViewById(R.id.activitymain_navview);
-        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+
+        btnMain = findViewById(R.id.activitymain_btn_main);
+        btnSettings = findViewById(R.id.activitymain_btn_settings);
+        btnAbout = findViewById(R.id.activitymain_btn_about);
+        btnMain.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                item.setChecked(true);
-
-                Fragment fragment = null;
-                switch (item.getItemId()){
-                    case R.id.navigation_item_home:{
-                        mCurrentSelectedPosition = 0;
-                        fragment = new MainFragment();
-                        break;
-                    }
-                    case R.id.navigation_item_explore:{
-                        mCurrentSelectedPosition = 1;
-                        fragment = new MainFragment();
-                        break;
-                    }
-                    case R.id.navigation_item_settings:{
-                        mCurrentSelectedPosition = 2;
-                        fragment = new SettingsFragment();
-                        break;
-                    }
-                    case R.id.navigation_item_help:{
-                        mCurrentSelectedPosition = 3;
-                        fragment = new SettingsFragment();
-                        break;
-                    }
-                }
-
-                FragmentManager fm = getSupportFragmentManager();
-                FragmentTransaction ft = fm.beginTransaction();
-                assert fragment != null;
-                ft.replace(R.id.activitymain_contentarea, fragment);
-                ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                ft.commit();
-
-                return true;
+            public void onClick(View view) {
+                ShowFragment(new MainFragment());
             }
         });
+        btnSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ShowFragment(new SettingsFragment());
+            }
+        });
+        btnAbout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ShowFragment(new AboutFragment());
+            }
+        });
+    }
+
+    private void ShowFragment(Fragment fragment){
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.replace(R.id.activitymain_contentarea, fragment);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.commit();
     }
 
     private void setUpNavDrawer(){
