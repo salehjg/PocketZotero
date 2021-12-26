@@ -2,59 +2,52 @@ package io.github.salehjg.pocketzotero.fragments.settings;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.Spinner;
+import android.widget.Toast;
 
+import java.util.List;
+import java.util.Vector;
+
+import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.R;
+import io.github.salehjg.pocketzotero.smbutils.SmbScanner;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SettingsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SettingsFragment extends Fragment {
+    RadioButton radioButtonLocal, radioButtonSmb;
+    Spinner spinnerSmbServerIp;
+    ImageButton imageButtonSearchServer;
+    Button buttonSave;
+    EditText editTextSharedPath;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    boolean isLocal;
+    List<String> spinnerSmbServerIpItems;
+    ArrayAdapter<String> spinnerSmbServerIpAdapter;
 
     public SettingsFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SettingsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SettingsFragment newInstance(String param1, String param2) {
+    public static SettingsFragment newInstance() {
         SettingsFragment fragment = new SettingsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -62,5 +55,118 @@ public class SettingsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_settings, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        spinnerSmbServerIpItems = new Vector<>();
+        
+        radioButtonLocal = view.findViewById(R.id.fragsettings_radio_local);
+        radioButtonSmb = view.findViewById(R.id.fragsettings_radio_smb);
+        spinnerSmbServerIp = view.findViewById(R.id.fragsettings_spinner_smbserver);
+        imageButtonSearchServer = view.findViewById(R.id.fragsettings_searchserver_btn);
+        buttonSave = view.findViewById(R.id.fragsettings_save_btn);
+        editTextSharedPath = view.findViewById(R.id.fragsettings_text_sharedpath);
+
+        radioButtonLocal.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                isLocal = b;
+                radioButtonSmb.setChecked(!b);
+            }
+        });
+        radioButtonSmb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                isLocal = !b;
+                radioButtonLocal.setChecked(!b);
+            }
+        });
+        spinnerSmbServerIpAdapter = new ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, spinnerSmbServerIpItems);
+        spinnerSmbServerIp.setAdapter(spinnerSmbServerIpAdapter);
+        imageButtonSearchServer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SmbScanner smbScanner = new SmbScanner(true, new SmbScanner.Listener() {
+                    @Override
+                    public void onFinished(Vector<String> myResults) {
+                        spinnerSmbServerIpItems.addAll(myResults);
+                        spinnerSmbServerIpAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onProgressTick(int percent) {
+                        if(percent % 5==0){
+                            Toast.makeText(
+                                    requireContext(),
+                                    "SMB Server Search Progress: " + percent + "%",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Toast.makeText(
+                                requireContext(),
+                                "SMB Server Search Error: " + e.toString(),
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        });
+
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    AppMem appMem = ((AppMem)getActivity().getApplication());
+                    appMem.setStorageModeIsLocal(isLocal);
+                    appMem.setStorageSmbServerIp(spinnerSmbServerIp.getSelectedItem().toString());
+                    appMem.setStorageSmbServerSharedPath(editTextSharedPath.getText().toString());
+                    Toast.makeText(
+                            requireContext(),
+                            "The settings are saved.",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                }catch (Exception e){
+                    Toast.makeText(
+                            requireContext(),
+                            "Failed to save the settings.",
+                            Toast.LENGTH_LONG
+                    ).show();
+                }
+            }
+        });
+
+        LoadSettings();
+    }
+
+    private void LoadSettings(){
+        try {
+            AppMem appMem = ((AppMem)getActivity().getApplication());
+
+            isLocal = appMem.getStorageModeIsLocal();
+            radioButtonLocal.setChecked(isLocal);
+            radioButtonSmb.setChecked(!isLocal);
+
+            String ip = appMem.getStorageSmbServerIp();
+            if(!ip.isEmpty()) {
+                spinnerSmbServerIpAdapter.add(ip);
+                spinnerSmbServerIpAdapter.notifyDataSetChanged();
+            }
+
+            String sharedPath = appMem.getStorageSmbServerSharedPath();
+            editTextSharedPath.setText(sharedPath);
+        }
+        catch (Exception e){
+            Toast.makeText(
+                    requireContext(),
+                    "Failed to retrieve the settings.",
+                    Toast.LENGTH_LONG
+            ).show();
+        }
+
     }
 }

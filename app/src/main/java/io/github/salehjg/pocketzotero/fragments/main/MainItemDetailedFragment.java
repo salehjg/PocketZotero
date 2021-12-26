@@ -123,6 +123,7 @@ public class MainItemDetailedFragment extends Fragment {
     }
 
     private void updateGuiItemDetailed(ItemDetailed itemDetailed){
+        if(itemDetailed==null) return;
         int imgResId = -1;
         switch (itemDetailed.getItemTypeId() ){
             case 33:{//conference

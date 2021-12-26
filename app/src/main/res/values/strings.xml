@@ -5,4 +5,10 @@
     <string name="default_path_db">/storage/emulated/0/PocketZotero/zotero.sqlite</string>
     <string name="default_path_dir">/storage/emulated/0/PocketZotero/</string>
     <string name="default_name_dir">PocketZotero</string>
+    <string name="default_preference_file">pzDefPref</string>
+
+    <string name="prefKey_isThisTheFirstLaunch_bool">isThisTheFirstLaunch</string>
+    <string name="prefKey_storageModeIsLocal_bool">storageModeIsLocal</string>
+    <string name="prefKey_storageSmbServerIp_string">storageSmbServerIp</string>
+    <string name="prefKey_storageSmbServerSharedPath_string">storageSmbServerSharedPath</string>
 </resources>

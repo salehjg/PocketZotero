@@ -2,6 +2,7 @@ package io.github.salehjg.pocketzotero;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -62,4 +63,72 @@ public class AppMem extends Application {
     public void setOnSelectedItemDetailedChangedListener(ItemDetailedChangedListener selectedItemDetailedChangedListener) {
         this.selectedItemDetailedChangedListener = selectedItemDetailedChangedListener;
     }
+
+    private SharedPreferences.Editor getPreferenceEditor(){
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
+                getString(R.string.default_preference_file),
+                Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        return editor;
+    }
+
+    private SharedPreferences getPreference(){
+        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
+                getString(R.string.default_preference_file),
+                Context.MODE_PRIVATE);
+        return sharedPref;
+    }
+
+    public void setTheFirstLaunch(boolean val){
+        // is this the first launch?
+        SharedPreferences.Editor writer = getPreferenceEditor();
+        writer.putBoolean(getString(R.string.prefKey_isThisTheFirstLaunch_bool), val);
+        writer.apply();
+    }
+
+    public boolean getTheFirstLaunch(){
+        // is this the first launch?
+        SharedPreferences reader = getPreference();
+        return reader.getBoolean(getString(R.string.prefKey_isThisTheFirstLaunch_bool), true);
+    }
+
+    public void setStorageModeIsLocal(boolean isLocal){
+        // local vs SMB shared
+        SharedPreferences.Editor writer = getPreferenceEditor();
+        writer.putBoolean(getString(R.string.prefKey_storageModeIsLocal_bool), isLocal);
+        writer.apply();
+    }
+
+    public boolean getStorageModeIsLocal(){
+        // local vs SMB shared
+        SharedPreferences reader = getPreference();
+        return reader.getBoolean(getString(R.string.prefKey_storageModeIsLocal_bool), true);
+    }
+
+    public void setStorageSmbServerIp(String ip){
+        // SMB Server IP String
+        SharedPreferences.Editor writer = getPreferenceEditor();
+        writer.putString(getString(R.string.prefKey_storageSmbServerIp_string), ip);
+        writer.apply();
+    }
+
+    public String getStorageSmbServerIp(){
+        // SMB Server IP String
+        SharedPreferences reader = getPreference();
+        return reader.getString(getString(R.string.prefKey_storageSmbServerIp_string), "");
+    }
+
+    public void setStorageSmbServerSharedPath(String path){
+        // SMB Server Shared Path
+        SharedPreferences.Editor writer = getPreferenceEditor();
+        writer.putString(getString(R.string.prefKey_storageSmbServerSharedPath_string), path);
+        writer.apply();
+    }
+
+    public String getStorageSmbServerSharedPath(){
+        // SMB Server Shared Path
+        SharedPreferences reader = getPreference();
+        return reader.getString(getString(R.string.prefKey_storageSmbServerSharedPath_string), "");
+    }
+
 }

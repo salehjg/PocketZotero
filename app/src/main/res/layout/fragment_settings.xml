@@ -6,15 +6,14 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:scrollbars="vertical"
-    android:id="@+id/settingspanel_parent_layout"
+    android:id="@+id/fragsettings_parent_layout"
+    android:layout_margin="5dp"
     >
-
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:gravity="center"
         >
         <TextView
@@ -22,7 +21,7 @@
             android:layout_weight="0.2"
             android:layout_height="wrap_content"
             android:text="DB Location: "
-            android:id="@+id/settingspanel_lbl_mode"
+            android:id="@+id/fragsettings_lbl_mode"
             android:layout_centerVertical="true"
             android:gravity="right"
             />
@@ -36,59 +35,63 @@
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/settingspanel_radio_local"
+                android:id="@+id/fragsettings_radio_local"
                 android:text="Local"
                 android:checked="true"/>
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/settingspanel_radio_smb"
+                android:id="@+id/fragsettings_radio_smb"
                 android:text="Shared over MS-SMB"/>
         </LinearLayout>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:gravity="center"
         >
         <TextView
             android:layout_width="0mm"
             android:layout_weight="0.2"
             android:layout_height="wrap_content"
             android:text="SMB Server: "
-            android:id="@+id/settingspanel_lbl_smbserver"
+            android:id="@+id/fragsettings_lbl_smbserver"
             android:layout_centerVertical="true"
             android:gravity="right"
             />
-
         <Spinner
-            android:id="@+id/settingspanel_spinner_smbserver"
+            android:id="@+id/fragsettings_spinner_smbserver"
             android:layout_width="0mm"
             android:layout_weight="0.8"
             android:layout_height="wrap_content"
             android:spinnerMode="dialog"/>
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/ic_server_search"
+            android:id="@+id/fragsettings_searchserver_btn"
+            />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:gravity="center"
         >
         <TextView
             android:layout_width="0mm"
             android:layout_weight="0.2"
             android:layout_height="wrap_content"
-            android:text="Shared Address: "
-            android:id="@+id/settingspanel_lbl_dbpath"
+            android:text="Shared Folder Path: "
+            android:id="@+id/fragsettings_lbl_dbpath"
             android:layout_centerVertical="true"
             android:gravity="right"
             />
 
         <EditText
-            android:id="@+id/settingspanel_text_dbpath"
+            android:id="@+id/fragsettings_text_sharedpath"
             android:layout_width="0mm"
             android:layout_weight="0.8"
             android:layout_height="wrap_content"
@@ -100,7 +103,7 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/settingspanel_save_btn"
+            android:id="@+id/fragsettings_save_btn"
             android:layout_width="30mm"
             android:layout_height="wrap_content"
             android:text="Save" />
