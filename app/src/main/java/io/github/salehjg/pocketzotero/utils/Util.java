@@ -12,6 +12,8 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import io.github.salehjg.pocketzotero.R;
+
 /**
  * Created by oni on 14/07/2017.
  */
@@ -97,7 +99,7 @@ public class Util {
         String download_path = settings.getString("settings_download_location", "");
 
         if (!path_exists(download_path)) {
-            download_path = Environment.getExternalStorageDirectory().toString() + "/ZotDroid/";
+            download_path = Environment.getExternalStorageDirectory().toString() + "/" + activity.getResources().getString(R.string.default_name_dir) +"/";
             File root_dir = new File(download_path);
             if (!root_dir.exists()) {
                 root_dir.mkdirs();

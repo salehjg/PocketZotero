@@ -2,4 +2,7 @@
     <string name="app_name">PocketZotero</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="default_path_db">/storage/emulated/0/PocketZotero/zotero.sqlite</string>
+    <string name="default_path_dir">/storage/emulated/0/PocketZotero/</string>
+    <string name="default_name_dir">PocketZotero</string>
 </resources>

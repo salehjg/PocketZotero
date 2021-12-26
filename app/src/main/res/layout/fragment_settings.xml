@@ -92,7 +92,7 @@
             android:layout_width="0mm"
             android:layout_weight="0.8"
             android:layout_height="wrap_content"
-            android:text="/storage/emulated/0/ZotReader/zotero.sqlite" />
+            android:text="@string/default_path_db" />
     </LinearLayout>
     <RelativeLayout
         android:gravity="center"

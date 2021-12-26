@@ -58,8 +58,7 @@ public class ZoteroEngine {
 
                 String fname;
                 if(sqliteDbPath.equals("")){
-                    File f = new File(Environment.getExternalStorageDirectory(), "ZotReader/zotero.sqlite");
-                    fname = f.getAbsolutePath();
+                    fname = context.getResources().getString(R.string.default_path_db);
                 }else{
                     fname = sqliteDbPath;
                 }
