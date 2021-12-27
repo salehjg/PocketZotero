@@ -24,6 +24,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.nio.channels.WritableByteChannel;
 import java.util.EnumSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -85,19 +89,38 @@ public class SmbSendFileToHost {
                             long localFileSize = localFile.length();
                             InputStream localStream = new FileInputStream(localFile);
 
+                            final ReadableByteChannel inputChannel = Channels.newChannel(localStream);
+                            final WritableByteChannel outputChannel = Channels.newChannel(smbStream);
+
                             long bytesProcessed = 0;
                             try{
                                 if (smbStream != null && localFile.exists()) {
-                                    byte[] buffer = new byte[10 * 1024 * 1024];
-                                    int length;
-                                    while ((length = localStream.read(buffer)) > 0) {
-                                        smbStream.write(buffer, 0, length);
-                                        bytesProcessed += length;
+                                    // https://stackoverflow.com/a/13748290/8296604
+                                    final ByteBuffer buffer = ByteBuffer.allocateDirect(16 * 1024 * 1024);
+                                    while (inputChannel.read(buffer) != -1) {
+                                        bytesProcessed += buffer.position();
+
+                                        // prepare the buffer to be drained
+                                        buffer.flip();
+                                        // write to the channel, may block
+                                        outputChannel.write(buffer);
+                                        // If partial transfer, shift remainder down
+                                        // If buffer is empty, same as doing clear()
+                                        buffer.compact();
+
                                         _onProgressTick((int) ((bytesProcessed*100)/localFileSize));
-                                        if(Thread.currentThread().isInterrupted()) break;
+                                    }
+                                    // EOF will leave buffer in fill state
+                                    buffer.flip();
+                                    // make sure the buffer is fully drained.
+                                    while (buffer.hasRemaining()) {
+                                        outputChannel.write(buffer);
                                     }
                                 }
                             } finally {
+                                inputChannel.close();
+                                outputChannel.close();
+
                                 localStream.close();
                                 if(smbStream!=null) smbStream.close();
                             }
@@ -107,7 +130,6 @@ public class SmbSendFileToHost {
                 catch (Exception e) {
                     _onError(e);
                 }
-                _onProgressTick(100);
                 _onFinished();
                 mExecutor.shutdown();
             }
