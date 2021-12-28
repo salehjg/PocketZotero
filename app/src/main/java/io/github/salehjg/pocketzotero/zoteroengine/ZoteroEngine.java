@@ -6,12 +6,8 @@ import android.content.Context;
 import android.os.Environment;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import com.master.permissionhelper.PermissionHelper;
-
 import java.io.File;
 import java.util.Vector;
-
 import io.github.salehjg.pocketzotero.R;
 import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterItems;
 import io.github.salehjg.pocketzotero.mainactivity.TreeItemHolder;
@@ -23,7 +19,6 @@ import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
 
 public class ZoteroEngine {
     private ZotDroidDB zotDroidDB;
-    private PermissionHelper permissionHelper;
 
     private Context context;
     private LinearLayout collectionsTreeView;
@@ -33,70 +28,25 @@ public class ZoteroEngine {
     private Vector<Collection> collectionTree;
     private Collection __selectedCollection = null;
 
-    public ZoteroEngine(Activity activity, Context context, LinearLayout collectionsTreeView, RecyclerAdapterItems recyclerAdapterItems, String sqliteDbPath){
+    public ZoteroEngine(Activity activity, Context context, LinearLayout collectionsTreeView, String sqliteDbPath){
         this.activity = activity;
         this.context = context;
         this.collectionsTreeView = collectionsTreeView;
-        this.recyclerAdapterItems = recyclerAdapterItems;
+        this.recyclerAdapterItems = new RecyclerAdapterItems(
+                context,
+                null,
+                null,
+                null,
+                null);;
+        zotDroidDB = new ZotDroidDB(context, sqliteDbPath);
+    }
 
-        permissionHelper = new PermissionHelper(
-                activity,
-                new String[]{
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                },
-                100);
-        permissionHelper.request(new PermissionHelper.PermissionCallback() {
-            @Override
-            public void onPermissionGranted() {
-                // The rest of the constructor for TopClass is here.
-
-                if(!RunAllChecks()){
-                    Toast.makeText(context, "Check the permissions.", Toast.LENGTH_LONG).show();
-                    System.exit(1);
-                }
-
-                String fname;
-                if(sqliteDbPath.equals("")){
-                    fname = context.getResources().getString(R.string.default_path_db);
-                }else{
-                    fname = sqliteDbPath;
-                }
-
-                zotDroidDB = new ZotDroidDB(context, fname);
-            }
-
-            @Override public void onIndividualPermissionGranted(String[] grantedPermission) {}
-
-            @Override
-            public void onPermissionDenied() {
-                Toast.makeText(context, "Check the permissions.", Toast.LENGTH_LONG).show();
-                System.exit(1);
-            }
-
-            @Override
-            public void onPermissionDeniedBySystem() {
-                Toast.makeText(context, "Check the permissions.", Toast.LENGTH_LONG).show();
-                System.exit(1);
-            }
-        });
+    public RecyclerAdapterItems getRecyclerAdapterItems() {
+        return recyclerAdapterItems;
     }
 
     public Collection getSelectedCollection() {
         return __selectedCollection;
-    }
-
-    public boolean RunAllChecks(){
-        return CreateStorageFolderIfNeeded();
-    }
-
-    public boolean CreateStorageFolderIfNeeded(){
-        File f = new File(Environment.getExternalStorageDirectory(), context.getResources().getString(R.string.default_name_dir));
-        if (!f.exists()) {
-            return f.mkdirs();
-        }else{
-            return true;
-        }
     }
 
     public void GuiCollections(){

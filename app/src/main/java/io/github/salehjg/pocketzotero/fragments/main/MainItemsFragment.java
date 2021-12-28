@@ -48,7 +48,7 @@ public class MainItemsFragment extends Fragment {
         recyclerViewItems = view.findViewById(R.id.fragmainitems_recycler);
         recyclerViewItems.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
-        recyclerAdapterItems = ((AppMem) getActivity().getApplication()).getRecyclerAdapterItems();
+        recyclerAdapterItems = ((AppMem) getActivity().getApplication()).getZoteroEngine().getRecyclerAdapterItems();
         recyclerAdapterItems.setClickListener(new RecyclerAdapterItems.ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {

@@ -1,13 +1,7 @@
 <resources>
     <string name="app_name">PocketZotero</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="default_path_db">/storage/emulated/0/PocketZotero/zotero.sqlite</string>
-    <string name="default_path_dir">/storage/emulated/0/PocketZotero/</string>
-    <string name="default_name_dir">PocketZotero</string>
-    <string name="default_preference_file">pzDefPref</string>
 
-
+    <string name="DefaultPreferenceFile">pzDefPref</string>
 
     <string name="DirNameApp">PocketZotero</string>
     <string name="DirNameLocal">LocalDatabaseCopy</string>
@@ -17,12 +11,6 @@
     <string name="DbFileNameLocal">zotero.sqlite</string>
     <string name="DbFileNameSmb">zotero.smb.sqlite</string>
     <string name="DbFileNameSmbTemp">zotero.tmp.sqlite</string>
-
-
-
-
-
-
 
     <string name="prefKey_isThisTheFirstLaunch_bool">isThisTheFirstLaunch</string>
     <string name="prefKey_storageModeIsLocal_bool">storageModeIsLocal</string>

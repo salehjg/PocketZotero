@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -164,7 +166,13 @@ public class MainItemDetailedFragment extends Fragment {
     }
 
     public void OpenAttachmentFile(String key) {
-        File path = new File( getResources().getString(R.string.default_path_dir) + "storage");
+        String fileAbsPath =
+                Environment.getExternalStorageDirectory().getPath() + File.separator +
+                getResources().getString(R.string.DirNameApp) + File.separator +
+                getResources().getString(R.string.DirNameLocal) + File.separator +
+                "storage" + File.separator;
+
+        File path = new File( fileAbsPath);
         File file = new File(path, key);
 
         {

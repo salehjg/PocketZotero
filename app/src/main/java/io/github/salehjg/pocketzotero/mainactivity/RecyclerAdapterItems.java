@@ -41,7 +41,7 @@ public class RecyclerAdapterItems extends RecyclerView.Adapter<RecyclerAdapterIt
     private ItemClickListener mClickListener;
 
     // data is passed into the constructor
-    RecyclerAdapterItems(Context context, Vector<CollectionItem> items, Vector<String> itemsTitles, Vector<Integer> itemsTypes, Vector<Integer> itemsIds) {
+    public RecyclerAdapterItems(Context context, Vector<CollectionItem> items, Vector<String> itemsTitles, Vector<Integer> itemsTypes, Vector<Integer> itemsIds) {
         this.mInflater = LayoutInflater.from(context);
         this.mItems = items;
         this.mItemsTitles = itemsTitles;

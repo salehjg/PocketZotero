@@ -31,21 +31,23 @@ public class SmbScanner {
 
     private Vector<String> mServersFound;
     private final boolean mEarlyTermination;
+    private int mLastProgressReport;
 
     public SmbScanner(boolean terminateOnFirstServerFound, Listener mListener){
         this.mEarlyTermination = terminateOnFirstServerFound;
         this.mListener = mListener;
         this.mServersFound = new Vector<>();
+        this.mLastProgressReport = 0;
 
         mRunnable = new Runnable() {
             @Override
             public void run() {
                 try {
-                    _onProgressTick(0);
+                    _onProgressTick(0, true);
                     mServersFound.clear();
                     String localIp = getLocalIpAddress();
                     if(localIp==null) {
-                        _onProgressTick(100);
+                        _onProgressTick(100, true);
                         _onFinished(mServersFound);
                         mExecutor.shutdown();
                         return;
@@ -53,7 +55,7 @@ public class SmbScanner {
                     String subIp = localIp.substring(0,localIp.lastIndexOf(".")+1);
                     for(int i=0; i<256; i++){
                         if(Thread.currentThread().isInterrupted()) break;
-                        _onProgressTick((i*100)/256);
+                        _onProgressTick((i*100)/256, false);
                         String currentLocalIpToTry = subIp + i;
                         if(isThisServer(currentLocalIpToTry)){
                             mServersFound.add(currentLocalIpToTry);
@@ -61,12 +63,11 @@ public class SmbScanner {
                             if(mEarlyTermination) break;
                         }
                     }
+                    _onFinished(mServersFound);
                 }
                 catch (Exception e) {
                     _onError(e);
                 }
-                _onProgressTick(100);
-                _onFinished(mServersFound);
                 mExecutor.shutdown();
             }
         };
@@ -85,6 +86,7 @@ public class SmbScanner {
     }
 
     private void _onFinished(Vector<String> serversFound){
+        _onProgressTick(100, true);
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -102,15 +104,19 @@ public class SmbScanner {
         });
     }
 
-    private void _onProgressTick(int percent){
-        mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                mListener.onProgressTick(percent);
-            }
-        });
+    private void _onProgressTick(int percent, boolean forcedTick){
+        if(percent - mLastProgressReport > 5 || forcedTick) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    mListener.onProgressTick(percent);
+                }
+            });
+            mLastProgressReport = percent;
+        }
     }
     private void _onError(Exception e){
+        _onProgressTick(100, true);
         mHandler.post(new Runnable() {
             @Override
             public void run() {

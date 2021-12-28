@@ -15,9 +15,12 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.github.nikartm.button.FitButton;
 
 import java.util.List;
 import java.util.Vector;
@@ -30,14 +33,16 @@ public class SettingsFragment extends Fragment {
     RadioButton radioButtonLocal, radioButtonSmb;
     Spinner spinnerSmbServerIp;
     EditText editTextSmbServerIp, editTextSmbServerUser, editTextSmbServerPass;
-    ImageButton imageButtonSearchServer, imageButtonStopSearching;
-    Button buttonSave;
+    FitButton imageButtonSearchServer, imageButtonStopSearching;
+    FitButton buttonSave;
     EditText editTextSharedPath;
 
     boolean isLocal;
     List<String> spinnerSmbServerIpItems;
     ArrayAdapter<String> spinnerSmbServerIpAdapter;
     SmbScanner smbScanner;
+
+    ProgressBar progressBar;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -76,6 +81,7 @@ public class SettingsFragment extends Fragment {
         editTextSharedPath = view.findViewById(R.id.fragsettings_text_sharedpath);
         editTextSmbServerUser = view.findViewById(R.id.fragsettings_text_user);
         editTextSmbServerPass = view.findViewById(R.id.fragsettings_text_pass);
+        progressBar = ((AppMem)requireActivity().getApplication()).getProgressBar();
 
         radioButtonLocal.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -128,12 +134,7 @@ public class SettingsFragment extends Fragment {
 
                     @Override
                     public void onProgressTick(int percent) {
-                        if(percent % 5==0){
-                            Toast.makeText(
-                                    requireContext(),
-                                    "SMB Server Search Progress: " + percent + "%",
-                                    Toast.LENGTH_SHORT).show();
-                        }
+                        progressBar.setProgress(percent);
                     }
 
                     @Override
@@ -161,7 +162,7 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 try {
-                    AppMem appMem = ((AppMem)getActivity().getApplication());
+                    AppMem appMem = ((AppMem)requireActivity().getApplication());
                     appMem.setStorageModeIsLocal(isLocal);
                     appMem.setStorageSmbServerIp(editTextSmbServerIp.getText().toString());
                     appMem.setStorageSmbServerSharedPath(editTextSharedPath.getText().toString());
@@ -187,7 +188,7 @@ public class SettingsFragment extends Fragment {
 
     private void LoadSettings(){
         try {
-            AppMem appMem = ((AppMem)getActivity().getApplication());
+            AppMem appMem = ((AppMem)requireActivity().getApplication());
 
             isLocal = appMem.getStorageModeIsLocal();
             radioButtonLocal.setChecked(isLocal);

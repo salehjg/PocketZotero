@@ -59,63 +59,62 @@
             android:layout_centerVertical="true"
             android:gravity="center_vertical|end"
             />
-        <LinearLayout
-            android:layout_width="0mm"
+
+        <RelativeLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.7"
-            android:orientation="vertical"
-            android:gravity="center_horizontal">
-            <Spinner
-                android:id="@+id/fragsettings_spinner_smbserver"
+            android:layout_weight="0.8">
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:spinnerMode="dialog"
-                android:gravity="center"
-                />
-            <EditText
-                android:id="@+id/fragsettings_edittext_smbserver"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="SMB Server IP"
-                android:gravity="center"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="0mm"
-            android:layout_height="match_parent"
-            android:layout_weight="0.1"
-            android:orientation="horizontal"
-            android:gravity="center">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="0mm"
-                android:layout_weight="0.5"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp">
-                <ImageButton
-                    android:background="@drawable/ic_server_search"
-                    android:id="@+id/fragsettings_searchserver_btn"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_toStartOf="@id/fragsettings_searchserver_btn"
+                android:layout_alignParentLeft="true">
+                <Spinner
+                    android:id="@+id/fragsettings_spinner_smbserver"
                     android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    app:layout_constraintDimensionRatio="1:1"
+                    android:layout_height="wrap_content"
+                    android:spinnerMode="dialog"
+                    android:gravity="center"
                     />
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                <EditText
+                    android:id="@+id/fragsettings_edittext_smbserver"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="SMB Server IP"
+                    android:gravity="center"/>
+            </LinearLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="0mm"
-                android:layout_weight="0.5"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp">
-                <ImageButton
-                    android:background="@drawable/ic_stop"
-                    android:id="@+id/fragsettings_stopsearching_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    app:layout_constraintDimensionRatio="1:1"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.github.nikartm.button.FitButton
+                android:id="@+id/fragsettings_searchserver_btn"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/fragsettings_stopsearching_btn"
+                app:fb_icon="@drawable/ic_server_search"
+                app:fb_iconHeight="33dp"
 
-        </LinearLayout>
+                app:fb_iconPosition="center"
+                app:fb_iconWidth="33dp"
+                app:fb_rippleColor="@color/theme_dark_red_primary_color" />
+
+            <com.github.nikartm.button.FitButton
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                app:fb_icon="@drawable/ic_stop"
+                app:fb_iconWidth="33dp"
+                app:fb_iconHeight="33dp"
+                app:fb_iconPosition="center"
+                app:fb_rippleColor="@color/md_lime"
+
+                android:id="@+id/fragsettings_stopsearching_btn"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                />
+        </RelativeLayout>
+
     </LinearLayout>
 
     <LinearLayout
@@ -191,17 +190,27 @@
             android:layout_weight="0.8"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@string/default_path_db" />
+            android:hint="/SharedDrive/Folder/zotero.sqlite" />
     </LinearLayout>
+
     <RelativeLayout
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <Button
+        <com.github.nikartm.button.FitButton
             android:id="@+id/fragsettings_save_btn"
-            android:layout_width="30mm"
-            android:layout_height="wrap_content"
-            android:text="Save" />
+            android:layout_width="150dp"
+            android:layout_height="35dp"
+            android:layout_margin="16dp"
+            android:gravity="center"
+            app:fb_backgroundColor="@color/theme_dark_red_primary_color"
+            app:fb_cornerRadius="12dp"
+            app:fb_iconColor="#FFF"
+            app:fb_iconPosition="left"
+            app:fb_shape="rectangle"
+            app:fb_text="Save"
+            app:fb_textColor="#FFF"
+            app:fb_textPaddingStart="8dp" />
     </RelativeLayout>
 </LinearLayout>

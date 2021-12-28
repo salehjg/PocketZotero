@@ -62,7 +62,7 @@ public class SmbReceiveFileFromHost {
             @Override
             public void run() {
                 try {
-                    _onProgressTick(0);
+                    _onProgressTick(0, false);
                     SMBClient client = new SMBClient();
                     try (Connection connection = client.connect(mServerInfo.getIp())) {
                         AuthenticationContext ac = new AuthenticationContext(mServerInfo.getUsername(), mServerInfo.getPassword().toCharArray(), serverInfo.getIp());
@@ -70,6 +70,7 @@ public class SmbReceiveFileFromHost {
 
                         // Connect to Share
                         try (DiskShare share = (DiskShare) session.connectShare(getSmbDiskName())) {
+                            //int maxReadSize = share.getTreeConnect().getSession().getConnection().getNegotiatedProtocol().getMaxReadSize();
 
                             File smbFile = share.openFile(getSmbPathWithoutDiskName(),
                                     EnumSet.of(AccessMask.FILE_READ_DATA),
@@ -77,7 +78,6 @@ public class SmbReceiveFileFromHost {
                                     SMB2ShareAccess.ALL,
                                     FILE_OPEN,
                                     null);
-
                             InputStream smbStream = smbFile.getInputStream();
                             long localFileSize = share.getFileInformation(getSmbPathWithoutDiskName()).getStandardInformation().getEndOfFile();
 
@@ -103,7 +103,7 @@ public class SmbReceiveFileFromHost {
                                         // If buffer is empty, same as doing clear()
                                         buffer.compact();
 
-                                        _onProgressTick((int) ((bytesProcessed*100)/localFileSize));
+                                        _onProgressTick((int) ((bytesProcessed*100)/localFileSize), false);
                                     }
                                     // EOF will leave buffer in fill state
                                     buffer.flip();
@@ -121,11 +121,12 @@ public class SmbReceiveFileFromHost {
                             }
                         }
                     }
+                    _onFinished();
                 }
                 catch (Exception e) {
                     _onError(e);
                 }
-                _onFinished();
+
                 mExecutor.shutdown();
             }
         };
@@ -144,6 +145,7 @@ public class SmbReceiveFileFromHost {
     }
 
     private void _onFinished(){
+        _onProgressTick(100, true);
         mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -152,9 +154,9 @@ public class SmbReceiveFileFromHost {
         });
     }
 
-    private void _onProgressTick(int percent){
+    private void _onProgressTick(int percent, boolean forcedTick){
         // To avoid possible burst of progress ticks with tiny deltas.
-        if(percent - mLastProgressReport > 5) {
+        if(percent - mLastProgressReport > 5 || forcedTick) {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -166,6 +168,7 @@ public class SmbReceiveFileFromHost {
     }
 
     private void _onError(Exception e){
+        _onProgressTick(100, true);
         mHandler.post(new Runnable() {
             @Override
             public void run() {

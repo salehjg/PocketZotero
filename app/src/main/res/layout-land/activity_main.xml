@@ -51,26 +51,35 @@
                 android:gravity="end"
                 android:layout_margin="10dp"
                 >
-                <ImageButton
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:background="@drawable/ic_library"
+                <com.github.nikartm.button.FitButton
                     android:id="@+id/activitymain_btn_main"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:fb_icon="@drawable/ic_library"
+                    app:fb_iconHeight="33dp"
                     android:layout_marginEnd="20dp"
-                    />
-                <ImageButton
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:background="@drawable/ic_settings"
+                    app:fb_iconPosition="center"
+                    app:fb_iconWidth="33dp"
+                    app:fb_rippleColor="@color/theme_dark_red_primary_color" />
+                <com.github.nikartm.button.FitButton
                     android:id="@+id/activitymain_btn_settings"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:fb_icon="@drawable/ic_settings"
+                    app:fb_iconHeight="33dp"
                     android:layout_marginEnd="20dp"
-                    />
-                <ImageButton
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:background="@drawable/ic_about"
+                    app:fb_iconPosition="center"
+                    app:fb_iconWidth="33dp"
+                    app:fb_rippleColor="@color/theme_dark_red_primary_color" />
+                <com.github.nikartm.button.FitButton
                     android:id="@+id/activitymain_btn_about"
-                    />
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:fb_icon="@drawable/ic_about"
+                    app:fb_iconHeight="33dp"
+                    app:fb_iconPosition="center"
+                    app:fb_iconWidth="33dp"
+                    app:fb_rippleColor="@color/theme_dark_red_primary_color" />
             </LinearLayout>
         </RelativeLayout>
     </com.google.android.material.navigation.NavigationView>
@@ -85,7 +94,20 @@
             android:id="@+id/activitymain_contentarea"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/toolbar" />
+            android:layout_below="@id/toolbar"
+            android:layout_above="@id/activitymain_progressbar"/>
+
+        <ProgressBar
+            android:id="@+id/activitymain_progressbar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="false"
+            android:max="100"
+            android:minHeight="10dp"
+            android:progress="55"
+            android:progressBackgroundTint="@color/colorPrimaryDark" />
     </RelativeLayout>
 
 </LinearLayout>

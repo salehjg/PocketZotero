@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -16,10 +17,19 @@ import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
 // This class is used to hold global stuff in memory.
 public class AppMem extends Application {
     private ZoteroEngine zoteroEngine;
-    private RecyclerAdapterItems recyclerAdapterItems;
+
     private ViewPager2 viewPager;
     private ItemDetailed selectedItemDetailed;
     private ItemDetailedChangedListener selectedItemDetailedChangedListener = null;
+    private ProgressBar progressBar;
+
+    public ProgressBar getProgressBar() {
+        return progressBar;
+    }
+
+    public void setProgressBar(ProgressBar progressBar) {
+        this.progressBar = progressBar;
+    }
 
     public ZoteroEngine getZoteroEngine() {
         return zoteroEngine;
@@ -27,14 +37,6 @@ public class AppMem extends Application {
 
     public void setZoteroEngine(ZoteroEngine zoteroEngine) {
         this.zoteroEngine = zoteroEngine;
-    }
-
-    public RecyclerAdapterItems getRecyclerAdapterItems() {
-        return recyclerAdapterItems;
-    }
-
-    public void setRecyclerAdapterItems(RecyclerAdapterItems recyclerAdapterItems) {
-        this.recyclerAdapterItems = recyclerAdapterItems;
     }
 
     public ViewPager2 getViewPager() {
@@ -66,7 +68,7 @@ public class AppMem extends Application {
 
     private SharedPreferences.Editor getPreferenceEditor(){
         SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
-                getString(R.string.default_preference_file),
+                getString(R.string.DefaultPreferenceFile),
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPref.edit();
         return editor;
@@ -74,7 +76,7 @@ public class AppMem extends Application {
 
     private SharedPreferences getPreference(){
         SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(
-                getString(R.string.default_preference_file),
+                getString(R.string.DefaultPreferenceFile),
                 Context.MODE_PRIVATE);
         return sharedPref;
     }
