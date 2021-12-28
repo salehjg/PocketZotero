@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import com.hierynomus.msdtyp.AccessMask;
+import com.hierynomus.msfscc.fileinformation.FileStandardInformation;
 import com.hierynomus.mssmb2.SMB2ShareAccess;
 import com.hierynomus.smbj.SMBClient;
 import com.hierynomus.smbj.auth.AuthenticationContext;
@@ -16,14 +17,10 @@ import com.hierynomus.smbj.session.Session;
 import com.hierynomus.smbj.share.DiskShare;
 import com.hierynomus.smbj.share.File;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileInputStream;
-import java.io.FileReader;
+import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -32,7 +29,7 @@ import java.util.EnumSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class SmbSendFileToHost {
+public class SmbReceiveFileFromHost {
 
     public interface Listener {
         void onFinished();
@@ -40,9 +37,8 @@ public class SmbSendFileToHost {
         void onError(Exception e);
     }
 
-    private final boolean mOverWrite;
-    private String mFilePathToSend;
-    private String mFilePathOnHost;
+    private String mFilePathOnHostToReceive;
+    private String mFilePathToSave;
     private SmbServerInfo mServerInfo;
     private int mLastProgressReport;
 
@@ -51,16 +47,14 @@ public class SmbSendFileToHost {
     private Handler mHandler = new Handler(Looper.getMainLooper());
     private Runnable mRunnable;
 
-    public SmbSendFileToHost(
+    public SmbReceiveFileFromHost(
             SmbServerInfo serverInfo,
-            String filePathToSend,
-            String filePathOnHost,
-            boolean overWrite,
+            String filePathOnHostToReceive,
+            String filePathToSave,
             Listener mListener){
         this.mServerInfo = serverInfo;
-        this.mFilePathToSend = filePathToSend;
-        this.mFilePathOnHost = filePathOnHost;
-        this.mOverWrite = overWrite;
+        this.mFilePathOnHostToReceive = filePathOnHostToReceive;
+        this.mFilePathToSave = filePathToSave;
         this.mListener = mListener;
         this.mLastProgressReport = 0;
 
@@ -78,20 +72,20 @@ public class SmbSendFileToHost {
                         try (DiskShare share = (DiskShare) session.connectShare(getSmbDiskName())) {
 
                             File smbFile = share.openFile(getSmbPathWithoutDiskName(),
-                                    EnumSet.of(AccessMask.FILE_APPEND_DATA),
+                                    EnumSet.of(AccessMask.FILE_READ_DATA),
                                     null,
                                     SMB2ShareAccess.ALL,
-                                    mOverWrite? FILE_OVERWRITE_IF: FILE_CREATE,
+                                    FILE_OPEN,
                                     null);
 
-                            OutputStream smbStream = smbFile.getOutputStream();
+                            InputStream smbStream = smbFile.getInputStream();
+                            long localFileSize = share.getFileInformation(getSmbPathWithoutDiskName()).getStandardInformation().getEndOfFile();
 
-                            java.io.File localFile = new java.io.File(mFilePathToSend);
-                            long localFileSize = localFile.length();
-                            InputStream localStream = new FileInputStream(localFile);
+                            java.io.File localFile = new java.io.File(mFilePathToSave);
+                            OutputStream localStream = new FileOutputStream(localFile);
 
-                            final ReadableByteChannel inputChannel = Channels.newChannel(localStream);
-                            final WritableByteChannel outputChannel = Channels.newChannel(smbStream);
+                            final WritableByteChannel outputChannel = Channels.newChannel(localStream);
+                            final ReadableByteChannel inputChannel = Channels.newChannel(smbStream);
 
                             long bytesProcessed = 0;
                             try{
@@ -181,24 +175,24 @@ public class SmbSendFileToHost {
     }
 
     private String getSmbDiskName(){
-        int windowsStyle = mFilePathOnHost.indexOf(":\\");
-        int unixStyle = mFilePathOnHost.indexOf("/");
+        int windowsStyle = mFilePathOnHostToReceive.indexOf(":\\");
+        int unixStyle = mFilePathOnHostToReceive.indexOf("/");
         if(windowsStyle!=-1){
-            return mFilePathOnHost.substring(0, windowsStyle);
+            return mFilePathOnHostToReceive.substring(0, windowsStyle);
         } else if ( unixStyle!=-1){
-            return mFilePathOnHost.substring(0, unixStyle);
+            return mFilePathOnHostToReceive.substring(0, unixStyle);
         }else{
             return "";
         }
     }
 
     private String getSmbPathWithoutDiskName(){
-        int windowsStyle = mFilePathOnHost.indexOf(":\\");
-        int unixStyle = mFilePathOnHost.indexOf("/");
+        int windowsStyle = mFilePathOnHostToReceive.indexOf(":\\");
+        int unixStyle = mFilePathOnHostToReceive.indexOf("/");
         if(windowsStyle!=-1){
             return "ERROR";
         } else if ( unixStyle!=-1){
-            return mFilePathOnHost.substring(unixStyle+1);
+            return mFilePathOnHostToReceive.substring(unixStyle+1);
         }else{
             return "ERROR";
         }
