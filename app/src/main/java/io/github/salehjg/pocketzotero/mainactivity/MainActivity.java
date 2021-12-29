@@ -48,6 +48,8 @@ import io.github.salehjg.pocketzotero.R;
 import io.github.salehjg.pocketzotero.fragments.about.AboutFragment;
 import io.github.salehjg.pocketzotero.fragments.main.MainFragment;
 import io.github.salehjg.pocketzotero.fragments.settings.SettingsFragment;
+import io.github.salehjg.pocketzotero.fragments.status.StatusFragment;
+import io.github.salehjg.pocketzotero.fragments.welcome.WelcomeFragment;
 import io.github.salehjg.pocketzotero.smbutils.SmbReceiveFileFromHost;
 import io.github.salehjg.pocketzotero.smbutils.SmbSendFileToHost;
 import io.github.salehjg.pocketzotero.smbutils.SmbServerInfo;
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     Toolbar mToolbar;
     NavigationView mNavigationView;
     DrawerLayout mDrawerLayout;
-    FitButton btnMain, btnSettings, btnAbout;
+    FitButton btnMain, btnSettings, btnAbout, btnStatus;
     LinearLayout linearLayoutCollections;
     ProgressBar mProgressBar;
     boolean doubleBackToExitPressedOnce = false;
@@ -86,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setUpToolbar();
+        //setUpToolbar();
 
         if(findViewById(R.id.activitymain_drawer) != null){
             mTwoPane = false;
@@ -106,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
         btnMain = findViewById(R.id.activitymain_btn_main);
         btnSettings = findViewById(R.id.activitymain_btn_settings);
         btnAbout = findViewById(R.id.activitymain_btn_about);
+        btnStatus = findViewById(R.id.activitymain_btn_status);
         btnMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -122,6 +125,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ShowFragment(new AboutFragment());
+            }
+        });
+        btnStatus.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ShowFragment(new StatusFragment());
             }
         });
 
@@ -157,6 +166,10 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
+
+        if(!((AppMem)getApplication()).getPreparation().isInitialized()){
+            ShowFragment(new WelcomeFragment());
+        }
 
         /*
         ((AppMem) this.getApplication()).setZoteroEngine(
@@ -227,6 +240,7 @@ public class MainActivity extends AppCompatActivity {
         // Forced = true : force to re-run the sequence even if it has been run before. (inc. downloading db, decoding collections, ...)
         // Forced = false: in case the sequence has been run before, re-use the data. This is useful for situations like display rotation, dynamic ui, ...
         ((AppMem)getApplication()).getPreparation().StartupSequence(getApplication(), this, linearLayoutCollections, false);
+
     }
 
     private void ShowFragment(Fragment fragment){

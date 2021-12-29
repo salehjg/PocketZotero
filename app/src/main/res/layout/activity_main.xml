@@ -64,8 +64,7 @@
                     />
             </RelativeLayout>
 
-            <LinearLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/activitymain_collections_linearlayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -106,6 +105,17 @@
                     android:layout_width="35dp"
                     android:layout_height="35dp"
                     app:fb_icon="@drawable/ic_about"
+                    app:fb_iconHeight="33dp"
+                    android:layout_marginEnd="20dp"
+                    app:fb_iconPosition="center"
+                    app:fb_iconWidth="33dp"
+                    app:fb_rippleColor="@color/theme_dark_red_primary_color" />
+                <com.github.nikartm.button.FitButton
+                    android:id="@+id/activitymain_btn_status"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    app:fb_icon="@drawable/ic_status"
+                    app:fb_iconColor="@color/black"
                     app:fb_iconHeight="33dp"
                     app:fb_iconPosition="center"
                     app:fb_iconWidth="33dp"

@@ -2,6 +2,10 @@ package io.github.salehjg.pocketzotero;
 
 import static android.os.Build.VERSION.SDK_INT;
 
+import static io.github.salehjg.pocketzotero.RecordedStatus.ERR_BASE_PERMISSIONS;
+import static io.github.salehjg.pocketzotero.RecordedStatus.ERR_BASE_PREFERENCES;
+import static io.github.salehjg.pocketzotero.RecordedStatus.ERR_BASE_STORAGE;
+
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
@@ -24,26 +28,18 @@ import io.github.salehjg.pocketzotero.zoteroengine.types.Collection;
 import io.github.salehjg.pocketzotero.zoteroengine.types.CollectionItem;
 
 public class Preparation {
-    static final int ERR_BASE_STORAGE = 100;
-    static final int ERR_BASE_PREFERENCES = 200;
-    static final int ERR_BASE_PERMISSIONS = 300;
-
     private AppMem mAppMem;
     private Context mContext;
-    private Vector<Integer> mRecordedStates;
     private boolean mIsInitialized;
 
     private Activity mActivity;
     private ProgressBar mProgressBar;
 
     public Preparation(){
-        mRecordedStates = new Vector<>();
         mIsInitialized = false;
     }
 
-    private void RecordState(int retVal){
-        mRecordedStates.add(retVal);
-    }
+    public boolean isInitialized(){return mIsInitialized;}
 
     public void StartupSequence(
             Application application,
@@ -60,7 +56,7 @@ public class Preparation {
                 if (Environment.isExternalStorageManager()) {
                     StartupSequencePermissionGranted(linearLayoutCollections);
                 } else {
-                    RecordState(ERR_BASE_PERMISSIONS);
+                    mAppMem.RecordStatusSingle(ERR_BASE_PERMISSIONS);
                 }
             }
         }else{
@@ -72,15 +68,15 @@ public class Preparation {
         int state;
 
         // -----------------------------------------------------------------------------------------
-        RecordState(state = CheckTheAppDirectories());
+        mAppMem.RecordStatusSingle(state = CheckTheAppDirectories());
         if(state!=0) return;
 
         // -----------------------------------------------------------------------------------------
-        RecordState(state = CheckTheDatabases());
+        mAppMem.RecordStatusSingle(state = CheckTheDatabases());
         if(state!=0) return;
 
         // -----------------------------------------------------------------------------------------
-        RecordState(state = CheckPreferencesSmb());
+        mAppMem.RecordStatusSingle(state = CheckPreferencesSmb());
         if(state!=0) return;
 
         // -----------------------------------------------------------------------------------------
@@ -114,7 +110,7 @@ public class Preparation {
                                 if(dbOldSmbFile.exists()){
                                     if(!dbOldSmbFile.delete()){
                                         // ERROR FAILED TO DELETE THE OLD `DbFileNameSmb`
-                                        RecordState(ERR_BASE_STORAGE + 7);
+                                        mAppMem.RecordStatusSingle(ERR_BASE_STORAGE + 7);
                                         return;
                                     }
                                 }
@@ -130,12 +126,12 @@ public class Preparation {
 
                                 }else{
                                     // ERROR FAILED TO RENAME `DbFileNameSmbTemp` TO `DbFileNameSmb`
-                                    RecordState(ERR_BASE_STORAGE + 6);
+                                    mAppMem.RecordStatusSingle(ERR_BASE_STORAGE + 6);
                                     return;
                                 }
                             }else{
                                 //ERROR CANNOT FIND THE NEWLY DOWNLOADED `DbFileNameSmbTemp`
-                                RecordState(ERR_BASE_STORAGE + 8);
+                                mAppMem.RecordStatusSingle(ERR_BASE_STORAGE + 8);
                                 return;
                             }
                         }
@@ -154,7 +150,7 @@ public class Preparation {
                                     getResourceString(R.string.DbFileNameSmb));
                             if(oldSmbDbFile.exists()){
                                 Toast.makeText(mContext, "Loading the OLD CACHED SMB database ..." + e.toString(), Toast.LENGTH_LONG).show();
-                                StartZoteroEngine(dbPathSmb + File.separator + getResourceString(R.string.DbFileNameSmbTemp), linearLayoutCollections);
+                                StartZoteroEngine(dbPathSmb + File.separator + getResourceString(R.string.DbFileNameSmb), linearLayoutCollections);
                             }
                         }
                     }
@@ -277,113 +273,5 @@ public class Preparation {
             retVal = dir.mkdirs();
         }
         return retVal;
-    }
-
-    public static Vector<String> TranslateReturnCode(int retVal){
-        String msgBase, msgDetailed = "";
-        int baseError = retVal / 100;
-        switch (baseError){
-            case 0: {
-                msgBase = "Others";
-                break;
-            }
-            case ERR_BASE_STORAGE/100: {
-                msgBase = "External Storage";
-                break;
-            }
-            case ERR_BASE_PREFERENCES/100: {
-                msgBase = "Preferences";
-                break;
-            }
-            default:{
-                msgBase = "Unknown Base.";
-                break;
-            }
-        }
-
-        if(baseError == ERR_BASE_STORAGE/100)
-            switch (retVal%ERR_BASE_STORAGE){
-                case 0: {
-                    msgDetailed = "The external storage has invalid state (not mounted).";
-                    break;
-                }
-                case 1: {
-                    msgDetailed = "Failed to create the app directory.";
-                    break;
-                }
-                case 2: {
-                    msgDetailed = "Failed to create the app/local directory.";
-                    break;
-                }
-                case 3: {
-                    msgDetailed = "Failed to create the app/pending directory.";
-                    break;
-                }
-                case 4: {
-                    msgDetailed = "Failed to create the app/smb directory.";
-                    break;
-                }
-                case 5: {
-                    msgDetailed = "The operation mode is set to Local but the database does not exist at app/local.";
-                    break;
-                }
-                case 6: {
-                    msgDetailed = "Failed to rename `DbFileNameSmbTemp` to `DbFileNameSmb`.";
-                    break;
-                }
-                case 7: {
-                    msgDetailed = "Failed to delete the old `DbFileNameSmb`.";
-                    break;
-                }
-                case 8: {
-                    msgDetailed = "Failed to find the newly downloaded `DbFileNameSmbTemp`.";
-                    break;
-                }
-                default:{
-                    msgDetailed = "Unknown Details.";
-                    break;
-                }
-            }
-
-        if(baseError == ERR_BASE_PREFERENCES/100)
-            switch (retVal%ERR_BASE_PREFERENCES){
-                case 0: {
-                    msgDetailed = "Empty username for the SMB server.";
-                    break;
-                }
-                case 1: {
-                    msgDetailed = "Empty password for the SMB server.";
-                    break;
-                }
-                case 2: {
-                    msgDetailed = "Empty IP address for the SMB server.";
-                    break;
-                }
-                case 3: {
-                    msgDetailed = "Malformed IP address for the SMB server.";
-                    break;
-                }
-                default:{
-                    msgDetailed = "Unknown Details.";
-                    break;
-                }
-            }
-        if(baseError == ERR_BASE_PERMISSIONS/100)
-            switch (retVal%ERR_BASE_PREFERENCES){
-                case 0: {
-                    msgDetailed = "Need ALL FILES permission (ANDROID 11).";
-                    break;
-                }
-                default:{
-                    msgDetailed = "Unknown Details.";
-                    break;
-                }
-            }
-
-
-        Vector<String> vec = new Vector<String>();
-        vec.add(msgBase);
-        vec.add(msgDetailed);
-        return vec;
     }
 }

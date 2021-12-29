@@ -22,6 +22,7 @@ import com.permissionx.guolindev.request.ExplainScope;
 
 import java.util.List;
 import java.util.Vector;
+import java.util.logging.ErrorManager;
 
 import io.github.salehjg.pocketzotero.mainactivity.MainActivity;
 import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterItems;
@@ -31,6 +32,8 @@ import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
 
 // This class is used to hold global stuff in memory.
 public class AppMem extends Application {
+
+    private Vector<RecordedStatus> recordedStatuses;
     private ZoteroEngine zoteroEngine;
 
     private ViewPager2 viewPager;
@@ -51,7 +54,28 @@ public class AppMem extends Application {
                 null);
 
         preparation = new Preparation();
+        recordedStatuses = new Vector<>();
         super.onCreate();
+    }
+
+    public void RecordStatusSingle(int statusCode){
+        recordedStatuses.add(new RecordedStatus(statusCode));
+    }
+
+    public void RecordStatusSingle(RecordedStatus status){
+        recordedStatuses.add(status);
+    }
+
+    public Vector<RecordedStatus> getAllRecordedStatuses(){
+        return recordedStatuses;
+    }
+
+    public Vector<String> getAllRecordedStatusesStrings(){
+        Vector<String> s = new Vector<>();
+        for(RecordedStatus r:recordedStatuses){
+            s.add(r.toString());
+        }
+        return s;
     }
 
     public Preparation getPreparation() {
