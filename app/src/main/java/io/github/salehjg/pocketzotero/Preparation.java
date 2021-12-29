@@ -2,17 +2,14 @@ package io.github.salehjg.pocketzotero;
 
 import static android.os.Build.VERSION.SDK_INT;
 
-import static io.github.salehjg.pocketzotero.RecordedStatus.ERR_BASE_PERMISSIONS;
-import static io.github.salehjg.pocketzotero.RecordedStatus.ERR_BASE_PREFERENCES;
-import static io.github.salehjg.pocketzotero.RecordedStatus.ERR_BASE_STORAGE;
+import static io.github.salehjg.pocketzotero.RecordedStatus.STATUS_BASE_PERMISSIONS;
+import static io.github.salehjg.pocketzotero.RecordedStatus.STATUS_BASE_PREFERENCES;
+import static io.github.salehjg.pocketzotero.RecordedStatus.STATUS_BASE_STORAGE;
 
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Environment;
-import android.provider.Settings;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -56,7 +53,7 @@ public class Preparation {
                 if (Environment.isExternalStorageManager()) {
                     StartupSequencePermissionGranted(linearLayoutCollections);
                 } else {
-                    mAppMem.RecordStatusSingle(ERR_BASE_PERMISSIONS);
+                    mAppMem.RecordStatusSingle(STATUS_BASE_PERMISSIONS);
                 }
             }
         }else{
@@ -87,6 +84,7 @@ public class Preparation {
                     getResourceString(R.string.DirNameApp)+ File.separator +
                     getResourceString(R.string.DirNameLocal);
             StartZoteroEngine(dbPathLocal + File.separator + getResourceString(R.string.DbFileNameLocal), linearLayoutCollections);
+            mAppMem.RecordStatusSingle(STATUS_BASE_STORAGE+11);
         }else{
             String serverIp = mAppMem.getStorageSmbServerIp();
             String serverUser = mAppMem.getStorageSmbServerUsername();
@@ -110,7 +108,7 @@ public class Preparation {
                                 if(dbOldSmbFile.exists()){
                                     if(!dbOldSmbFile.delete()){
                                         // ERROR FAILED TO DELETE THE OLD `DbFileNameSmb`
-                                        mAppMem.RecordStatusSingle(ERR_BASE_STORAGE + 7);
+                                        mAppMem.RecordStatusSingle(STATUS_BASE_STORAGE + 7);
                                         return;
                                     }
                                 }
@@ -123,15 +121,15 @@ public class Preparation {
                                 if(retVal){
                                     // LOAD THE DATABASE AT `DbFileNameSmb`
                                     StartZoteroEngine(dbPathSmb + File.separator + getResourceString(R.string.DbFileNameSmb), linearLayoutCollections);
-
+                                    mAppMem.RecordStatusSingle(STATUS_BASE_STORAGE+10);
                                 }else{
                                     // ERROR FAILED TO RENAME `DbFileNameSmbTemp` TO `DbFileNameSmb`
-                                    mAppMem.RecordStatusSingle(ERR_BASE_STORAGE + 6);
+                                    mAppMem.RecordStatusSingle(STATUS_BASE_STORAGE + 6);
                                     return;
                                 }
                             }else{
                                 //ERROR CANNOT FIND THE NEWLY DOWNLOADED `DbFileNameSmbTemp`
-                                mAppMem.RecordStatusSingle(ERR_BASE_STORAGE + 8);
+                                mAppMem.RecordStatusSingle(STATUS_BASE_STORAGE + 8);
                                 return;
                             }
                         }
@@ -143,14 +141,16 @@ public class Preparation {
 
                         @Override
                         public void onError(Exception e) {
-                            Toast.makeText(mContext, "Loading the database from SMB failed with: " + e.toString(), Toast.LENGTH_LONG).show();
+                            String msg = "Failed to download the database over SMB network with error: " + e.toString();
+                            Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
+                            mAppMem.RecordStatusSingle(msg);
                             File oldSmbDbFile = new File(getExternalStorage()+ File.separator +
                                     getResourceString(R.string.DirNameApp)+ File.separator +
                                     getResourceString(R.string.DirNameSmb)+ File.separator +
                                     getResourceString(R.string.DbFileNameSmb));
                             if(oldSmbDbFile.exists()){
-                                Toast.makeText(mContext, "Loading the OLD CACHED SMB database ..." + e.toString(), Toast.LENGTH_LONG).show();
                                 StartZoteroEngine(dbPathSmb + File.separator + getResourceString(R.string.DbFileNameSmb), linearLayoutCollections);
+                                mAppMem.RecordStatusSingle(STATUS_BASE_STORAGE+9);
                             }
                         }
                     }
@@ -187,14 +187,17 @@ public class Preparation {
     }
 
     private int CheckPreferencesSmb(){
-        String serverIp = mAppMem.getStorageSmbServerIp();
-        String serverUser = mAppMem.getStorageSmbServerUsername();
-        String serverPass = mAppMem.getStorageSmbServerPassword();
+        boolean isLocal = mAppMem.getStorageModeIsLocal();
+        if(!isLocal) {
+            String serverIp = mAppMem.getStorageSmbServerIp();
+            String serverUser = mAppMem.getStorageSmbServerUsername();
+            String serverPass = mAppMem.getStorageSmbServerPassword();
 
-        if(serverUser.isEmpty()) return ERR_BASE_PREFERENCES;
-        if(serverPass.isEmpty()) return ERR_BASE_PREFERENCES+1;
-        if(serverIp.isEmpty()) return ERR_BASE_PREFERENCES+2;
-
+            if (serverUser.isEmpty()) return STATUS_BASE_PREFERENCES;
+            if (serverPass.isEmpty()) return STATUS_BASE_PREFERENCES + 1;
+            if (serverIp.isEmpty()) return STATUS_BASE_PREFERENCES + 2;
+            return 0;
+        }
         return 0;
     }
 
@@ -207,7 +210,7 @@ public class Preparation {
                             getResourceString(R.string.DirNameLocal) + File.separator +
                             getResourceString(R.string.DbFileNameLocal)
             );
-            if(!localDb.exists()) return ERR_BASE_STORAGE + 5;
+            if(!localDb.exists()) return STATUS_BASE_STORAGE + 5;
         } else {
 
         }
@@ -215,20 +218,20 @@ public class Preparation {
     }
 
     private int CheckTheAppDirectories(){
-        if(!isStorageReadyLocal()) return ERR_BASE_STORAGE;
+        if(!isStorageReadyLocal()) return STATUS_BASE_STORAGE;
         File baseStorage = getExternalStorage();
 
         File appDir = new File(baseStorage, getResourceString(R.string.DirNameApp));
-        if(!CreateDirectory(appDir)) return ERR_BASE_STORAGE+1;
+        if(!CreateDirectory(appDir)) return STATUS_BASE_STORAGE +1;
 
         File localDbDir = new File(appDir, getResourceString(R.string.DirNameLocal));
-        if(!CreateDirectory(localDbDir)) return ERR_BASE_STORAGE+2;
+        if(!CreateDirectory(localDbDir)) return STATUS_BASE_STORAGE +2;
 
         File pendingDir = new File(appDir, getResourceString(R.string.DirNamePending));
-        if(!CreateDirectory(pendingDir)) return ERR_BASE_STORAGE+3;
+        if(!CreateDirectory(pendingDir)) return STATUS_BASE_STORAGE +3;
 
         File SmbDbDir = new File(appDir, getResourceString(R.string.DirNameSmb));
-        if(!CreateDirectory(SmbDbDir)) return ERR_BASE_STORAGE+4;
+        if(!CreateDirectory(SmbDbDir)) return STATUS_BASE_STORAGE +4;
 
         return 0;
     }

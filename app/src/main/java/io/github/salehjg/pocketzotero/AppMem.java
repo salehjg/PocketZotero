@@ -62,6 +62,10 @@ public class AppMem extends Application {
         recordedStatuses.add(new RecordedStatus(statusCode));
     }
 
+    public void RecordStatusSingle(String customStatusMessage){
+        recordedStatuses.add(new RecordedStatus(customStatusMessage));
+    }
+
     public void RecordStatusSingle(RecordedStatus status){
         recordedStatuses.add(status);
     }

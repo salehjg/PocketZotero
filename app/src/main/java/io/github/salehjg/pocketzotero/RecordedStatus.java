@@ -3,9 +3,9 @@ package io.github.salehjg.pocketzotero;
 import androidx.annotation.NonNull;
 
 public class RecordedStatus {
-    static final int ERR_BASE_STORAGE = 100;
-    static final int ERR_BASE_PREFERENCES = 200;
-    static final int ERR_BASE_PERMISSIONS = 300;
+    static final int STATUS_BASE_STORAGE = 100;
+    static final int STATUS_BASE_PREFERENCES = 200;
+    static final int STATUS_BASE_PERMISSIONS = 300;
 
     private String mBaseErrorMessage, mDetailedErrorMessage;
     private int mBaseErrorCode, mDetailedErrorCode, mErrorCode;
@@ -14,6 +14,12 @@ public class RecordedStatus {
         mBaseErrorMessage = mDetailedErrorMessage = "";
         mErrorCode = mBaseErrorCode = mDetailedErrorCode = -1;
         TranslateReturnCode(code);
+    }
+
+    public RecordedStatus(String customStatusMessage){
+        mBaseErrorMessage = "";
+        mDetailedErrorMessage = customStatusMessage;
+        mErrorCode = mBaseErrorCode = mDetailedErrorCode = -1;
     }
 
     public RecordedStatus(RecordedStatus recordedStatus){
@@ -72,11 +78,11 @@ public class RecordedStatus {
                 msgBase = "Others";
                 break;
             }
-            case ERR_BASE_STORAGE/100: {
+            case STATUS_BASE_STORAGE /100: {
                 msgBase = "External Storage";
                 break;
             }
-            case ERR_BASE_PREFERENCES/100: {
+            case STATUS_BASE_PREFERENCES /100: {
                 msgBase = "Preferences";
                 break;
             }
@@ -86,8 +92,8 @@ public class RecordedStatus {
             }
         }
 
-        if(baseError == ERR_BASE_STORAGE/100)
-            switch (retVal%ERR_BASE_STORAGE){
+        if(baseError == STATUS_BASE_STORAGE /100)
+            switch (retVal% STATUS_BASE_STORAGE){
                 case 0: {
                     msgDetailed = "The external storage has invalid state (not mounted).";
                     break;
@@ -124,14 +130,26 @@ public class RecordedStatus {
                     msgDetailed = "Failed to find the newly downloaded `DbFileNameSmbTemp`.";
                     break;
                 }
+                case 9: {
+                    msgDetailed = "Loaded the old cached database. The attachments will not be accessible.";
+                    break;
+                }
+                case 10: {
+                    msgDetailed = "Loaded the downloaded SMB database.";
+                    break;
+                }
+                case 11: {
+                    msgDetailed = "Loaded the local database.";
+                    break;
+                }
                 default:{
                     msgDetailed = "Unknown Details.";
                     break;
                 }
             }
 
-        if(baseError == ERR_BASE_PREFERENCES/100)
-            switch (retVal%ERR_BASE_PREFERENCES){
+        if(baseError == STATUS_BASE_PREFERENCES /100)
+            switch (retVal% STATUS_BASE_PREFERENCES){
                 case 0: {
                     msgDetailed = "Empty username for the SMB server.";
                     break;
@@ -153,8 +171,8 @@ public class RecordedStatus {
                     break;
                 }
             }
-        if(baseError == ERR_BASE_PERMISSIONS/100)
-            switch (retVal%ERR_BASE_PREFERENCES){
+        if(baseError == STATUS_BASE_PERMISSIONS /100)
+            switch (retVal% STATUS_BASE_PREFERENCES){
                 case 0: {
                     msgDetailed = "Need ALL FILES permission (ANDROID 11).";
                     break;

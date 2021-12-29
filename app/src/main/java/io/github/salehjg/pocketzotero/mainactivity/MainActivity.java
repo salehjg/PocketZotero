@@ -63,12 +63,13 @@ public class MainActivity extends AppCompatActivity {
     FitButton btnMain, btnSettings, btnAbout, btnStatus;
     LinearLayout linearLayoutCollections;
     ProgressBar mProgressBar;
+    AppMem mAppMem;
     boolean doubleBackToExitPressedOnce = false;
 
     @Override
     public void onBackPressed() {
         if (doubleBackToExitPressedOnce) {
-            super.onBackPressed();
+            this.finishAffinity();
             return;
         }
 
@@ -90,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //setUpToolbar();
 
+        mAppMem = (AppMem)getApplication();
+
         if(findViewById(R.id.activitymain_drawer) != null){
             mTwoPane = false;
             mDrawerLayout = findViewById(R.id.activitymain_drawer);
@@ -103,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         mProgressBar = findViewById(R.id.activitymain_progressbar);
         mProgressBar.setMax(100);
         mProgressBar.setProgress(0);
-        ((AppMem)getApplication()).setProgressBar(mProgressBar);
+        mAppMem.setProgressBar(mProgressBar);
 
         btnMain = findViewById(R.id.activitymain_btn_main);
         btnSettings = findViewById(R.id.activitymain_btn_settings);
@@ -162,12 +165,14 @@ public class MainActivity extends AppCompatActivity {
                         if (allGranted) {
                             StartStartupSequence();
                         } else {
-                            Toast.makeText(getApplicationContext(), "These permissions are denied: " + deniedList.toString(), Toast.LENGTH_LONG).show();
+                            String msg = "These permissions are denied: " + deniedList.toString();
+                            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                            mAppMem.RecordStatusSingle(msg);
                         }
                     }
                 });
 
-        if(!((AppMem)getApplication()).getPreparation().isInitialized()){
+        if(!mAppMem.getPreparation().isInitialized()){
             ShowFragment(new WelcomeFragment());
         }
 
@@ -239,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
     private void StartStartupSequence(){
         // Forced = true : force to re-run the sequence even if it has been run before. (inc. downloading db, decoding collections, ...)
         // Forced = false: in case the sequence has been run before, re-use the data. This is useful for situations like display rotation, dynamic ui, ...
-        ((AppMem)getApplication()).getPreparation().StartupSequence(getApplication(), this, linearLayoutCollections, false);
+        mAppMem.getPreparation().StartupSequence(getApplication(), this, linearLayoutCollections, false);
 
     }
 
