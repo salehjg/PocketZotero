@@ -1,12 +1,8 @@
 package io.github.salehjg.pocketzotero.zoteroengine;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.os.Environment;
 import android.widget.LinearLayout;
-import android.widget.Toast;
-import java.io.File;
 import java.util.Vector;
 import io.github.salehjg.pocketzotero.R;
 import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterItems;
@@ -21,67 +17,80 @@ public class ZoteroEngine {
     private ZotDroidDB zotDroidDB;
 
     private Context context;
-    private LinearLayout collectionsTreeView;
-    private RecyclerAdapterItems recyclerAdapterItems;
     private Activity activity;
-
     private Vector<Collection> collectionTree;
-    private Collection __selectedCollection = null;
+    private Listeners listeners;
+    private TreeNode treeRoot;
 
-    public ZoteroEngine(Activity activity, Context context, LinearLayout collectionsTreeView, String sqliteDbPath){
+    public interface Listeners{
+        void onCollectionSelected(
+                Collection selectedCollectionObject,
+                Vector<CollectionItem> items,
+                Vector<String> titles,
+                Vector<Integer> ids,
+                Vector<Integer> types
+        );
+    }
+
+    public ZoteroEngine(
+            Activity activity,
+            Context context,
+            String sqliteDbPath,
+            Listeners listeners){
         this.activity = activity;
         this.context = context;
-        this.collectionsTreeView = collectionsTreeView;
-        this.recyclerAdapterItems = new RecyclerAdapterItems(
-                context,
-                null,
-                null,
-                null,
-                null);;
+        this.listeners = listeners;
         zotDroidDB = new ZotDroidDB(context, sqliteDbPath);
     }
 
-    public RecyclerAdapterItems getRecyclerAdapterItems() {
-        return recyclerAdapterItems;
-    }
-
-    public Collection getSelectedCollection() {
-        return __selectedCollection;
-    }
-
-    public void GuiCollections(){
+    public void GuiCollections(LinearLayout collectionsTreeView){
         collectionTree = this.zotDroidDB.getCollectionTree();
-        TreeNode root = TreeNode.root();
+        treeRoot = TreeNode.root();
 
         // go through all of the top parents
         for(Collection collection:collectionTree){
             TreeNode node = GuiCollectionRecursive(collection, 0);
-            root.addChild(node);
+            treeRoot.addChild(node);
         }
 
-        AndroidTreeView tView = new AndroidTreeView(context, root);
+        AndroidTreeView tView = new AndroidTreeView(context, treeRoot);
         tView.setDefaultNodeClickListener(new TreeNode.TreeNodeClickListener() {
             @Override
             public void onClick(TreeNode node, Object value) {
-                TreeItemHolder.IconTreeItem tmp = (TreeItemHolder.IconTreeItem) value;
-
-                __selectedCollection = tmp.collectionObject;
-                Vector<CollectionItem> items = GetItemsForRecyclerItems(tmp.collectionObject);
-                Vector<String> titles = GetTitlesForRecyclerItems(items);
-                Vector<Integer> ids = GetItemIdsForRecyclerItems(items);
-                Vector<Integer> types = GetTypesForRecyclerItems(items);
-
-                recyclerAdapterItems.setmItems(items);
-                recyclerAdapterItems.setmItemsTitles(titles);
-                recyclerAdapterItems.setmItemsIDs(ids);
-                recyclerAdapterItems.setmItemsTypes(types);
-
-                recyclerAdapterItems.notifyDataSetChanged();
-
-                //Toast.makeText(context, "Click on the node with collectionID " + tmp.collectionId + " and title of " + tmp.text, Toast.LENGTH_SHORT).show();
+                __TreeNodeClick(node, value);
             }
         });
-        this.collectionsTreeView.addView(tView.getView());
+        collectionsTreeView.addView(tView.getView());
+    }
+
+    public void GuiCollectionsLast(LinearLayout collectionsTreeView){
+        AndroidTreeView tView = new AndroidTreeView(context, treeRoot);
+        tView.setDefaultNodeClickListener(new TreeNode.TreeNodeClickListener() {
+            @Override
+            public void onClick(TreeNode node, Object value) {
+                __TreeNodeClick(node, value);
+            }
+        });
+        collectionsTreeView.addView(tView.getView());
+    }
+
+    private void __TreeNodeClick(TreeNode node, Object value){
+        TreeItemHolder.IconTreeItem tmp = (TreeItemHolder.IconTreeItem) value;
+
+        Vector<CollectionItem> items = GetItemsForRecyclerItems(tmp.collectionObject);
+        Vector<String> titles = GetTitlesForRecyclerItems(items);
+        Vector<Integer> ids = GetItemIdsForRecyclerItems(items);
+        Vector<Integer> types = GetTypesForRecyclerItems(items);
+
+        if(listeners!=null) {
+            listeners.onCollectionSelected(
+                    tmp.collectionObject,
+                    items,
+                    titles,
+                    ids,
+                    types
+            );
+        }
     }
 
     private TreeNode GuiCollectionRecursive(Collection crntCollection, int level){

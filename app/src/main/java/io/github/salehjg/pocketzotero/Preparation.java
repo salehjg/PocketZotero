@@ -16,9 +16,12 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.Vector;
 
+import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterItems;
 import io.github.salehjg.pocketzotero.smbutils.SmbReceiveFileFromHost;
 import io.github.salehjg.pocketzotero.smbutils.SmbServerInfo;
 import io.github.salehjg.pocketzotero.zoteroengine.ZoteroEngine;
+import io.github.salehjg.pocketzotero.zoteroengine.types.Collection;
+import io.github.salehjg.pocketzotero.zoteroengine.types.CollectionItem;
 
 public class Preparation {
     static final int ERR_BASE_STORAGE = 100;
@@ -28,39 +31,44 @@ public class Preparation {
     private AppMem mAppMem;
     private Context mContext;
     private Vector<Integer> mRecordedStates;
+    private boolean mIsInitialized;
 
     private Activity mActivity;
-    private LinearLayout mLinearLayoutCollections;
     private ProgressBar mProgressBar;
 
-    public Preparation(
-            Application application,
-            Activity mainActivity,
-            LinearLayout linearLayoutCollections
-    ){
-        mAppMem = (AppMem) application;
-        mContext = application.getApplicationContext();
+    public Preparation(){
         mRecordedStates = new Vector<>();
-        mActivity = mainActivity;
-        mLinearLayoutCollections = linearLayoutCollections;
-        mProgressBar = mAppMem.getProgressBar();
+        mIsInitialized = false;
     }
 
     private void RecordState(int retVal){
         mRecordedStates.add(retVal);
     }
 
-    public void StartupSequence(){
-        if(SDK_INT >= 30) {
-            if (Environment.isExternalStorageManager()) {
-                StartupSequencePermissionGranted();
-            } else {
-                RecordState(ERR_BASE_PERMISSIONS);
+    public void StartupSequence(
+            Application application,
+            Activity mainActivity,
+            LinearLayout linearLayoutCollections,
+            boolean forced){
+        mAppMem = (AppMem) application;
+        mProgressBar = mAppMem.getProgressBar();
+        mContext = application.getApplicationContext();
+        mActivity = mainActivity;
+
+        if(!mIsInitialized || forced) {
+            if (SDK_INT >= 30) {
+                if (Environment.isExternalStorageManager()) {
+                    StartupSequencePermissionGranted(linearLayoutCollections);
+                } else {
+                    RecordState(ERR_BASE_PERMISSIONS);
+                }
             }
+        }else{
+            mAppMem.getZoteroEngine().GuiCollectionsLast(linearLayoutCollections);
         }
     }
 
-    public void StartupSequencePermissionGranted(){
+    public void StartupSequencePermissionGranted(LinearLayout linearLayoutCollections){
         int state;
 
         // -----------------------------------------------------------------------------------------
@@ -76,12 +84,13 @@ public class Preparation {
         if(state!=0) return;
 
         // -----------------------------------------------------------------------------------------
+        mIsInitialized = true;
         if(mAppMem.getStorageModeIsLocal()){
             // LOAD THE DATABASE AT `DbFileNameLocal`
             String dbPathLocal = getExternalStorage()+ File.separator +
                     getResourceString(R.string.DirNameApp)+ File.separator +
                     getResourceString(R.string.DirNameLocal);
-            StartZoteroEngine(dbPathLocal + File.separator + getResourceString(R.string.DbFileNameLocal));
+            StartZoteroEngine(dbPathLocal + File.separator + getResourceString(R.string.DbFileNameLocal), linearLayoutCollections);
         }else{
             String serverIp = mAppMem.getStorageSmbServerIp();
             String serverUser = mAppMem.getStorageSmbServerUsername();
@@ -117,7 +126,7 @@ public class Preparation {
                                 );
                                 if(retVal){
                                     // LOAD THE DATABASE AT `DbFileNameSmb`
-                                    StartZoteroEngine(dbPathSmb + File.separator + getResourceString(R.string.DbFileNameSmb));
+                                    StartZoteroEngine(dbPathSmb + File.separator + getResourceString(R.string.DbFileNameSmb), linearLayoutCollections);
 
                                 }else{
                                     // ERROR FAILED TO RENAME `DbFileNameSmbTemp` TO `DbFileNameSmb`
@@ -145,7 +154,7 @@ public class Preparation {
                                     getResourceString(R.string.DbFileNameSmb));
                             if(oldSmbDbFile.exists()){
                                 Toast.makeText(mContext, "Loading the OLD CACHED SMB database ..." + e.toString(), Toast.LENGTH_LONG).show();
-                                StartZoteroEngine(dbPathSmb + File.separator + getResourceString(R.string.DbFileNameSmbTemp));
+                                StartZoteroEngine(dbPathSmb + File.separator + getResourceString(R.string.DbFileNameSmbTemp), linearLayoutCollections);
                             }
                         }
                     }
@@ -155,19 +164,30 @@ public class Preparation {
 
     }
 
-    private void StartZoteroEngine(String dbPath){
-        StartZoteroEngine(new File(dbPath));
+    private void StartZoteroEngine(String dbPath, LinearLayout linearLayoutCollections){
+        StartZoteroEngine(new File(dbPath), linearLayoutCollections);
     }
 
-    private void StartZoteroEngine(File dbFile){
+    private void StartZoteroEngine(File dbFile, LinearLayout linearLayoutCollections){
         mAppMem.setZoteroEngine(
                 new ZoteroEngine(
                         mActivity,
                         mContext,
-                        mLinearLayoutCollections,
-                        dbFile.getPath())
+                        dbFile.getPath(),
+                        new ZoteroEngine.Listeners() {
+                            @Override
+                            public void onCollectionSelected(Collection selectedCollectionObject, Vector<CollectionItem> items, Vector<String> titles, Vector<Integer> ids, Vector<Integer> types) {
+                                mAppMem.setSelectedCollection(selectedCollectionObject);
+                                RecyclerAdapterItems recyclerAdapterItems = mAppMem.getRecyclerAdapterItems();
+                                recyclerAdapterItems.setmItems(items);
+                                recyclerAdapterItems.setmItemsTitles(titles);
+                                recyclerAdapterItems.setmItemsIDs(ids);
+                                recyclerAdapterItems.setmItemsTypes(types);
+                                recyclerAdapterItems.notifyDataSetChanged();
+                            }
+                        })
         );
-        mAppMem.getZoteroEngine().GuiCollections();
+        mAppMem.getZoteroEngine().GuiCollections(linearLayoutCollections);
     }
 
     private int CheckPreferencesSmb(){

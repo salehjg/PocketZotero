@@ -129,6 +129,12 @@ public class AndroidTreeView {
         });
 
         expandNode(mRoot, false);
+
+        // https://stackoverflow.com/a/28071422/8296604
+        // Fix for: IllegalStateException: The specified child already has a parent. You must call removeView() on the child's parent first.
+        if(view.getParent() != null) {
+            ((ViewGroup)view.getParent()).removeView(view); // <- fix
+        }
         return view;
     }
 
@@ -243,12 +249,18 @@ public class AndroidTreeView {
         } else {
             parentViewHolder.getNodeItemsView().setVisibility(View.VISIBLE);
         }
-
     }
 
     private void addNode(ViewGroup container, final TreeNode n) {
         final TreeNode.BaseNodeViewHolder viewHolder = getViewHolderForNode(n);
         final View nodeView = viewHolder.getView();
+
+        // https://stackoverflow.com/a/28071422/8296604
+        // Fix for: IllegalStateException: The specified child already has a parent. You must call removeView() on the child's parent first.
+        if(nodeView.getParent() != null) {
+            ((ViewGroup)nodeView.getParent()).removeView(nodeView); // <- fix
+        }
+
         container.addView(nodeView);
         if (mSelectionModeEnabled) {
             viewHolder.toggleSelectionMode(mSelectionModeEnabled);

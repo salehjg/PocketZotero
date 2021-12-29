@@ -170,9 +170,10 @@ public class SettingsFragment extends Fragment {
                     appMem.setStorageSmbServerPassword(editTextSmbServerPass.getText().toString());
                     Toast.makeText(
                             requireContext(),
-                            "The settings are saved.",
+                            "The settings are saved. Please restart the application.",
                             Toast.LENGTH_SHORT
                     ).show();
+
                 }catch (Exception e){
                     Toast.makeText(
                             requireContext(),

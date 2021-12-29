@@ -1,17 +1,32 @@
 package io.github.salehjg.pocketzotero;
 
+import static android.os.Build.VERSION.SDK_INT;
+
+import android.Manifest;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.viewpager2.widget.ViewPager2;
+
+import com.permissionx.guolindev.PermissionX;
+import com.permissionx.guolindev.callback.ExplainReasonCallback;
+import com.permissionx.guolindev.callback.RequestCallback;
+import com.permissionx.guolindev.request.ExplainScope;
+
+import java.util.List;
+import java.util.Vector;
 
 import io.github.salehjg.pocketzotero.mainactivity.MainActivity;
 import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterItems;
 import io.github.salehjg.pocketzotero.zoteroengine.ZoteroEngine;
+import io.github.salehjg.pocketzotero.zoteroengine.types.Collection;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
 
 // This class is used to hold global stuff in memory.
@@ -22,6 +37,38 @@ public class AppMem extends Application {
     private ItemDetailed selectedItemDetailed;
     private ItemDetailedChangedListener selectedItemDetailedChangedListener = null;
     private ProgressBar progressBar;
+    private RecyclerAdapterItems recyclerAdapterItems;
+    private Collection selectedCollection;
+    private Preparation preparation;
+
+    @Override
+    public void onCreate() {
+        recyclerAdapterItems = new RecyclerAdapterItems(
+                getApplicationContext(),
+                null,
+                null,
+                null,
+                null);
+
+        preparation = new Preparation();
+        super.onCreate();
+    }
+
+    public Preparation getPreparation() {
+        return preparation;
+    }
+
+    public Collection getSelectedCollection() {
+        return selectedCollection;
+    }
+
+    public void setSelectedCollection(Collection selectedCollection) {
+        this.selectedCollection = selectedCollection;
+    }
+
+    public RecyclerAdapterItems getRecyclerAdapterItems() {
+        return recyclerAdapterItems;
+    }
 
     public ProgressBar getProgressBar() {
         return progressBar;

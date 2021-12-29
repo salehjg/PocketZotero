@@ -53,21 +53,13 @@ import io.github.salehjg.pocketzotero.zoteroengine.ZoteroEngine;
 
 public class MainActivity extends AppCompatActivity {
     static Boolean mTwoPane;
-    private int mCurrentSelectedPosition = 0;
-
     Toolbar mToolbar;
     NavigationView mNavigationView;
     DrawerLayout mDrawerLayout;
-
     FitButton btnMain, btnSettings, btnAbout;
     LinearLayout linearLayoutCollections;
-
     ProgressBar mProgressBar;
-
     Preparation mPreparation;
-
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,8 +203,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void StartStartupSequence(){
-        mPreparation = new Preparation(getApplication(), this, linearLayoutCollections);
-        mPreparation.StartupSequence();
+        // Forced = true : force to re-run the sequence even if it has been run before. (inc. downloading db, decoding collections, ...)
+        // Forced = false: in case the sequence has been run before, re-use the data. This is useful for situations like display rotation, dynamic ui, ...
+        ((AppMem)getApplication()).getPreparation().StartupSequence(getApplication(), this, linearLayoutCollections, false);
     }
 
     private void ShowFragment(Fragment fragment){
