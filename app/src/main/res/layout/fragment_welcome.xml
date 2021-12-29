@@ -47,7 +47,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="To use PocketZotero in this mode, all you have to do is to copy the content of your Zotero Data-folder into `LocalStorage/PocketZotero/LocalDatabaseCopy/. Also, make sure that the Local Mode is selected in PocketZotero's settings. To do so, go to settings, select the Local Mode, and press Save button. Then, close the application and re-open it. Your database should be automatically loaded."
+                android:text="To use PocketZotero in this mode, all you have to do is to copy the content of your Zotero Data-folder into `LocalStorage/PocketZotero/LocalDatabaseCopy/`. Also, make sure that the Local Mode is selected in PocketZotero's settings. To do so, go to settings, select the Local Mode, and press Save button. Then, close the application and re-open it. Your database should be automatically loaded."
                 />
         </LinearLayout>
 

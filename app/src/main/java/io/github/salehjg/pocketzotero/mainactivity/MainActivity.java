@@ -174,6 +174,8 @@ public class MainActivity extends AppCompatActivity {
 
         if(!mAppMem.getPreparation().isInitialized()){
             ShowFragment(new WelcomeFragment());
+        }else{
+            ShowFragment(new MainFragment());
         }
 
         /*
