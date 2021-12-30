@@ -236,7 +236,7 @@ public class Preparation {
         return 0;
     }
 
-    private String getResourceString(int id){
+    public String getResourceString(int id){
         return mContext.getResources().getString(id);
     }
 
@@ -246,7 +246,7 @@ public class Preparation {
 
     }
 
-    private File getExternalStorage(){
+    public File getExternalStorage(){
         return Environment.getExternalStorageDirectory();
     }
 
@@ -261,7 +261,7 @@ public class Preparation {
         return retVal;
     }
 
-    private boolean CreateDirectory(String baseDir, String dirName){
+    public boolean CreateDirectory(String baseDir, String dirName){
         File folder = new File(new File(baseDir) + File.separator + dirName);
         boolean retVal = true;
         if (!folder.exists()) {
@@ -270,11 +270,29 @@ public class Preparation {
         return retVal;
     }
 
-    private boolean CreateDirectory(File dir){
+    public boolean CreateDirectory(File dir){
         boolean retVal = true;
         if (!dir.exists()) {
             retVal = dir.mkdirs();
         }
         return retVal;
+    }
+
+    public String GetAppDirPath(){
+        File baseStorage = getExternalStorage();
+        File appDir = new File(baseStorage, getResourceString(R.string.DirNameApp));
+        return appDir.getPath();
+    }
+
+    public String GetPendingDirPath(){
+        File baseStorage = getExternalStorage();
+        File appDir = new File(baseStorage, getResourceString(R.string.DirNameApp));
+        File pendingDir = new File(appDir, getResourceString(R.string.DirNamePending));
+        return pendingDir.getPath();
+    }
+
+    public String GetSmbDataDir(){
+        String dbPath = mAppMem.getStorageSmbServerSharedPath();
+        return dbPath.substring(0,dbPath.lastIndexOf(File.separator));
     }
 }

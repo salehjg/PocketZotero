@@ -40,4 +40,5 @@ dependencies {
     implementation 'com.github.SimpleMobileTools:Simple-Commons:d39bf6263d' // for generating content uri's
     implementation 'io.github.nikartm:fit-button:2.0.0'
     implementation 'com.guolindev.permissionx:permissionx:1.6.1'
+    implementation 'com.google.code.gson:gson:2.8.9'
 }

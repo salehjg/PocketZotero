@@ -1,7 +1,9 @@
 package io.github.salehjg.pocketzotero.fragments.main;
 
+import static com.simplemobiletools.commons.extensions.ActivityKt.appLaunched;
 import static com.simplemobiletools.commons.extensions.ActivityKt.openPathIntent;
 import static com.simplemobiletools.commons.extensions.ContextKt.getMediaContentUri;
+import static com.simplemobiletools.commons.extensions.ContextKt.getMediaStoreLastModified;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,20 +19,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.hierynomus.smbj.server.ServerList;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.HashMap;
-import java.util.Objects;
+
 import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.R;
 import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterAttachments;
 import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterElements;
+import io.github.salehjg.pocketzotero.smbutils.SmbReceiveFileFromHost;
+import io.github.salehjg.pocketzotero.smbutils.SmbServerInfo;
+import io.github.salehjg.pocketzotero.zoteroengine.types.ItemAttachment;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
 
 public class MainItemDetailedFragment extends Fragment {
@@ -40,6 +45,7 @@ public class MainItemDetailedFragment extends Fragment {
     RecyclerAdapterElements recyclerAdapterElements;
     RecyclerView recyclerViewAttachments;
     RecyclerAdapterAttachments recyclerAdapterAttachments;
+    AppMem mAppMem;
     
     public MainItemDetailedFragment() {
         // Required empty public constructor
@@ -65,6 +71,8 @@ public class MainItemDetailedFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mAppMem = (AppMem)(requireActivity().getApplication());
 
         imageView = view.findViewById(R.id.fragmainitemdetailed_titleimage);
         textViewType = view.findViewById(R.id.fragmainitemdetailed_itemtype);
@@ -92,11 +100,8 @@ public class MainItemDetailedFragment extends Fragment {
         recyclerAdapterAttachments.setClickListener(new RecyclerAdapterAttachments.ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                String fileName = recyclerAdapterAttachments.getDataAttachment(position).getFilePath();
-                fileName = fileName.substring(fileName.indexOf("storage:")+8);
-                String key = recyclerAdapterAttachments.getDataAttachment(position).getFileKey();
-                OpenAttachmentFile(key+"/"+fileName);
-                //OpenAttachmentFile(key);
+                ItemAttachment attachment =  recyclerAdapterAttachments.getDataAttachment(position);
+                OpenAttachmentFile(attachment);
             }
         });
         recyclerAdapterAttachments.setLongClickListener(new RecyclerAdapterAttachments.ItemLongClickListener() {
@@ -111,7 +116,7 @@ public class MainItemDetailedFragment extends Fragment {
         });
         recyclerViewAttachments.setAdapter(recyclerAdapterAttachments);
 
-        ((AppMem) getActivity().getApplication()).setOnSelectedItemDetailedChangedListener(
+        ((AppMem) requireActivity().getApplication()).setOnSelectedItemDetailedChangedListener(
                 new AppMem.ItemDetailedChangedListener() {
                     @Override
                     public void onItemDetailedChanged(ItemDetailed itemDetailed) {
@@ -121,7 +126,7 @@ public class MainItemDetailedFragment extends Fragment {
         );
 
         // To update the GUI when the fragment is instantiated just now.
-        updateGuiItemDetailed(((AppMem) getActivity().getApplication()).getSelectedItemDetailed());
+        updateGuiItemDetailed(((AppMem) requireActivity().getApplication()).getSelectedItemDetailed());
     }
 
     private void updateGuiItemDetailed(ItemDetailed itemDetailed){
@@ -165,15 +170,88 @@ public class MainItemDetailedFragment extends Fragment {
         recyclerAdapterAttachments.notifyDataSetChanged();
     }
 
-    public void OpenAttachmentFile(String key) {
-        String fileAbsPath =
+    private void OpenAttachmentFile(ItemAttachment attachment){
+        boolean isLocal = mAppMem.getStorageModeIsLocal();
+        if(isLocal){
+            OpenLocalAttachmentFile(attachment);
+        }else{
+            OpenSmbAttachmentFile(attachment);
+        }
+    }
+
+    private void OpenSmbAttachmentFile(ItemAttachment attachment){
+        String dirPending = mAppMem.getPreparation().GetPendingDirPath();
+        String extractedFileName = attachment.ExtractFileName();
+
+        mAppMem.getPreparation().CreateDirectory(dirPending, attachment.getFileKey());
+
+        String dirDest = dirPending + File.separator + attachment.getFileKey();
+        String fileDestPath = dirDest + File.separator + extractedFileName;
+
+        String fileSrcSmb =
+                mAppMem.getPreparation().GetSmbDataDir()+File.separator+
+                        attachment.ExtractStorageDirName()+File.separator+
+                        attachment.getFileKey()+File.separator+
+                        extractedFileName;
+
+        SmbServerInfo serverInfo = new SmbServerInfo(
+                "foo",
+                mAppMem.getStorageSmbServerUsername(),
+                mAppMem.getStorageSmbServerPassword(),
+                mAppMem.getStorageSmbServerIp());
+
+        SmbReceiveFileFromHost receiveFileFromHost = new SmbReceiveFileFromHost(
+                serverInfo,
+                fileSrcSmb,
+                fileDestPath,
+                new SmbReceiveFileFromHost.Listener() {
+                    @Override
+                    public void onFinished() {
+                        try {
+                            Gson gson = new Gson();
+                            String strJsonAttachment = gson.toJson(attachment);
+                            File fileJson = new File(dirDest, "attachment.json");
+                            FileWriter writer = new FileWriter(fileJson);
+                            writer.append(strJsonAttachment);
+                            writer.flush();
+                            writer.close();
+                            OpenLocalAttachmentFile(fileDestPath);
+                        }catch (Exception e){
+                            String msg = "Failed to write attachment.json or open the downloaded SMB attachment with: " + e.toString();
+                            mAppMem.RecordStatusSingle(msg);
+                            Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onProgressTick(int percent) {
+                        mAppMem.getProgressBar().setProgress(percent);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        String msg = "Failed to download the SMB attachment with: " + e.toString();
+                        mAppMem.RecordStatusSingle(msg);
+                        Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show();
+                    }
+                }
+        );
+        receiveFileFromHost.RunInBackground();
+    }
+
+    private void OpenLocalAttachmentFile(ItemAttachment attachment) {
+        String storageFolderName = attachment.ExtractStorageDirName();
+        String fileName = attachment.ExtractFileName();
+        String key = attachment.getFileKey();
+
+        String fileLocalStorageDir =
                 Environment.getExternalStorageDirectory().getPath() + File.separator +
                 getResources().getString(R.string.DirNameApp) + File.separator +
                 getResources().getString(R.string.DirNameLocal) + File.separator +
-                "storage" + File.separator;
+                        storageFolderName + File.separator;
 
-        File path = new File( fileAbsPath);
-        File file = new File(path, key);
+        File path = new File( fileLocalStorageDir);
+        File file = new File(path, key + File.separator + fileName);
 
         {
             Uri myUri = getMediaContentUri(requireContext(), file.getPath());
@@ -200,9 +278,39 @@ public class MainItemDetailedFragment extends Fragment {
         );
     }
 
+    private void OpenLocalAttachmentFile(String customFilePath) {
+        File file = new File(customFilePath);
+
+        {
+            Uri myUri = getMediaContentUri(requireContext(), file.getPath());
+            if(myUri != null){
+                String myUriStr = myUri.getPath();
+                if (!myUriStr.contains("/external/file/")) {
+                    Toast.makeText(
+                            requireContext(),
+                            "Failed to get a valid URI for android 10+. " +
+                                    "Restart the device and try again. " +
+                                    "Be aware that continuing in this state will result in invalid " +
+                                    "write-access to the file and " +
+                                    "all of the file modifications by the third-party app will be discarded.",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+
+        openPathIntent(
+                requireActivity(),
+                file.getPath(),
+                false,
+                requireContext().getPackageName(),
+                "",
+                new HashMap<>(0)
+        );
+    }
+
     @Override
     public void onDestroy() {
-        ((AppMem) getActivity().getApplication()).setOnSelectedItemDetailedChangedListener(null);
+        ((AppMem) requireActivity().getApplication()).setOnSelectedItemDetailedChangedListener(null);
         super.onDestroy();
     }
 }

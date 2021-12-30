@@ -63,6 +63,26 @@ public class ItemAttachment {
         this.filePath = filePath;
     }
 
+    public String ExtractFileName(){
+        String storageFileNamePair = getFilePath();
+        if(!storageFileNamePair.isEmpty()) {
+            int i = storageFileNamePair.indexOf(":");
+            return storageFileNamePair.substring(i + 1);
+        }else{
+            return "";
+        }
+    }
+
+    public String ExtractStorageDirName(){
+        String storageFileNamePair = getFilePath();
+        if(!storageFileNamePair.isEmpty()) {
+            int i = storageFileNamePair.indexOf(":");
+            return storageFileNamePair.substring(0, i);
+        }else{
+            return "";
+        }
+    }
+
     public String getStorageModTime() {
         return storageModTime;
     }

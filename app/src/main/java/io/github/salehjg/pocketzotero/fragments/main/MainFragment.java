@@ -85,12 +85,12 @@ public class MainFragment extends Fragment {
             }
         });
 
-        ((AppMem) getActivity().getApplication()).setViewPager(viewPager);
+        ((AppMem) requireActivity().getApplication()).setViewPager(viewPager);
     }
 
     @Override
     public void onDestroy() {
-        ((AppMem) getActivity().getApplication()).setViewPager(null);
+        ((AppMem) requireActivity().getApplication()).setViewPager(null);
         super.onDestroy();
     }
 }
