@@ -3,9 +3,9 @@ package io.github.salehjg.pocketzotero;
 import androidx.annotation.NonNull;
 
 public class RecordedStatus {
-    static final int STATUS_BASE_STORAGE = 100;
-    static final int STATUS_BASE_PREFERENCES = 200;
-    static final int STATUS_BASE_PERMISSIONS = 300;
+    public static final int STATUS_BASE_STORAGE = 100;
+    public static final int STATUS_BASE_PREFERENCES = 200;
+    public static final int STATUS_BASE_PERMISSIONS = 300;
 
     private String mBaseErrorMessage, mDetailedErrorMessage;
     private int mBaseErrorCode, mDetailedErrorCode, mErrorCode;
@@ -94,14 +94,6 @@ public class RecordedStatus {
 
         if(baseError == STATUS_BASE_STORAGE /100)
             switch (retVal% STATUS_BASE_STORAGE){
-                case 0: {
-                    msgDetailed = "The external storage has invalid state (not mounted).";
-                    break;
-                }
-                case 1: {
-                    msgDetailed = "Failed to create the app directory.";
-                    break;
-                }
                 case 2: {
                     msgDetailed = "Failed to create the app/local directory.";
                     break;
@@ -142,6 +134,14 @@ public class RecordedStatus {
                     msgDetailed = "Loaded the local database.";
                     break;
                 }
+                case 12: {
+                    msgDetailed = "Failed to import Zotero database to the predefined private storage due to null Intent data.";
+                    break;
+                }
+                case 13: {
+                    msgDetailed = "Failed to create a new folder for a new pending attachment.";
+                    break;
+                }
                 default:{
                     msgDetailed = "Unknown Details.";
                     break;
@@ -173,10 +173,6 @@ public class RecordedStatus {
             }
         if(baseError == STATUS_BASE_PERMISSIONS /100)
             switch (retVal% STATUS_BASE_PREFERENCES){
-                case 0: {
-                    msgDetailed = "Need ALL FILES permission (ANDROID 11).";
-                    break;
-                }
                 default:{
                     msgDetailed = "Unknown Details.";
                     break;

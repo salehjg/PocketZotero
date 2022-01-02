@@ -169,17 +169,32 @@ public class AppMem extends Application {
         return reader.getBoolean(getString(R.string.prefKey_isThisTheFirstLaunch_bool), true);
     }
 
-    public void setStorageModeIsLocal(boolean isLocal){
-        // local vs SMB shared
+    public void setStorageMode(boolean isLocalScoped, boolean isSharedSmb){
+        // localExt vs localScoped vs SMB shared
+        int storageMode =
+                        isLocalScoped & !isSharedSmb ? 1:
+                        !isLocalScoped & isSharedSmb ? 2:
+                        0;
+
         SharedPreferences.Editor writer = getPreferenceEditor();
-        writer.putBoolean(getString(R.string.prefKey_storageModeIsLocal_bool), isLocal);
+        writer.putInt(getString(R.string.prefKey_storageMode_int), storageMode);
         writer.apply();
     }
 
-    public boolean getStorageModeIsLocal(){
+    public int getStorageMode(){
         // local vs SMB shared
         SharedPreferences reader = getPreference();
-        return reader.getBoolean(getString(R.string.prefKey_storageModeIsLocal_bool), true);
+        return reader.getInt(getString(R.string.prefKey_storageMode_int), 2);
+    }
+
+    public boolean getStorageModeIsLocalScoped(){
+        SharedPreferences reader = getPreference();
+        return reader.getInt(getString(R.string.prefKey_storageMode_int), 2) == 1;
+    }
+
+    public boolean getStorageModeIsSharedSmb(){
+        SharedPreferences reader = getPreference();
+        return reader.getInt(getString(R.string.prefKey_storageMode_int), 2) == 2;
     }
 
     public void setStorageSmbServerIp(String ip){

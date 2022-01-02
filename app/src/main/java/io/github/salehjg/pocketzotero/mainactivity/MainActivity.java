@@ -142,9 +142,10 @@ public class MainActivity extends AppCompatActivity {
 
         List<String> permissions = new Vector<>();
         if (SDK_INT >= Build.VERSION_CODES.R) {
-            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            if(SDK_INT<=Build.VERSION_CODES.P) {
+                permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
             permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-            permissions.add(Manifest.permission.MANAGE_EXTERNAL_STORAGE);
             permissions.add(Manifest.permission.INTERNET);
         }else{
             permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);

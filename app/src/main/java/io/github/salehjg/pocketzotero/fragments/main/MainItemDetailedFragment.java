@@ -1,20 +1,19 @@
 package io.github.salehjg.pocketzotero.fragments.main;
 
-import static com.simplemobiletools.commons.extensions.ActivityKt.appLaunched;
-import static com.simplemobiletools.commons.extensions.ActivityKt.openPathIntent;
-import static com.simplemobiletools.commons.extensions.ContextKt.getMediaContentUri;
-import static com.simplemobiletools.commons.extensions.ContextKt.getMediaStoreLastModified;
-
-import android.net.Uri;
+import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,14 +22,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.hierynomus.smbj.server.ServerList;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.HashMap;
 
 import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.R;
+import io.github.salehjg.pocketzotero.RecordedStatus;
 import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterAttachments;
 import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterElements;
 import io.github.salehjg.pocketzotero.smbutils.SmbReceiveFileFromHost;
@@ -170,8 +168,15 @@ public class MainItemDetailedFragment extends Fragment {
         recyclerAdapterAttachments.notifyDataSetChanged();
     }
 
+    ActivityResultLauncher<Intent> mIntentResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            //if(result.getResultCode() == Activity.RESULT_OK){}
+        }
+    });
+
     private void OpenAttachmentFile(ItemAttachment attachment){
-        boolean isLocal = mAppMem.getStorageModeIsLocal();
+        boolean isLocal = mAppMem.getStorageModeIsLocalScoped();
         if(isLocal){
             OpenLocalAttachmentFile(attachment);
         }else{
@@ -180,16 +185,25 @@ public class MainItemDetailedFragment extends Fragment {
     }
 
     private void OpenSmbAttachmentFile(ItemAttachment attachment){
-        String dirPending = mAppMem.getPreparation().GetPendingDirPath();
+        File dirPendingAbs = mAppMem.getPreparation().getPredefinedPrivateStoragePending();
+
         String extractedFileName = attachment.ExtractFileName();
 
-        mAppMem.getPreparation().CreateDirectory(dirPending, attachment.getFileKey());
+        if(!
+            mAppMem.getPreparation().MakeDirAtPrivateBase(
+                    mAppMem.getPreparation().getPredefinedPrivateStorageDirNamePending(),
+                    attachment.getFileKey()
+            )
+        ){
+            mAppMem.RecordStatusSingle(RecordedStatus.STATUS_BASE_STORAGE+13);
+            return;
+        }
 
-        String dirDest = dirPending + File.separator + attachment.getFileKey();
+        String dirDest = dirPendingAbs.getPath() + File.separator + attachment.getFileKey();
         String fileDestPath = dirDest + File.separator + extractedFileName;
 
         String fileSrcSmb =
-                mAppMem.getPreparation().GetSmbDataDir()+File.separator+
+                mAppMem.getPreparation().getSharedSmbBase()+File.separator+
                         attachment.ExtractStorageDirName()+File.separator+
                         attachment.getFileKey()+File.separator+
                         extractedFileName;
@@ -215,9 +229,13 @@ public class MainItemDetailedFragment extends Fragment {
                             writer.append(strJsonAttachment);
                             writer.flush();
                             writer.close();
-                            OpenLocalAttachmentFile(fileDestPath);
+
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(FileProvider.getUriForFile(requireContext(), requireContext().getPackageName()+".provider", new File(fileDestPath)));
+                            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                            mIntentResultLauncher.launch(intent);
                         }catch (Exception e){
-                            String msg = "Failed to write attachment.json or open the downloaded SMB attachment with: " + e.toString();
+                            String msg = "Failed to write attachment.json or to open the downloaded SMB attachment with: " + e.toString();
                             mAppMem.RecordStatusSingle(msg);
                             Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show();
                         }
@@ -244,30 +262,14 @@ public class MainItemDetailedFragment extends Fragment {
         String fileName = attachment.ExtractFileName();
         String key = attachment.getFileKey();
 
-        String fileLocalStorageDir =
-                Environment.getExternalStorageDirectory().getPath() + File.separator +
-                getResources().getString(R.string.DirNameApp) + File.separator +
-                getResources().getString(R.string.DirNameLocal) + File.separator +
-                        storageFolderName + File.separator;
+        File path = new File( mAppMem.getPreparation().getPredefinedPrivateStorageLocalScoped(), storageFolderName);
+        File targetFile = new File(path, key + File.separator + fileName);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(FileProvider.getUriForFile(requireActivity().getApplicationContext(), requireContext().getPackageName()+".provider", targetFile));
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        mIntentResultLauncher.launch(intent);
 
-        File path = new File( fileLocalStorageDir);
-        File file = new File(path, key + File.separator + fileName);
-
-        {
-            Uri myUri = getMediaContentUri(requireContext(), file.getPath());
-            String myUriStr = myUri.getPath();
-            if (!myUriStr.contains("/external/file/")) {
-                Toast.makeText(
-                        requireContext(),
-                        "Failed to get a valid URI for android 10+. " +
-                                "Restart the device and try again. " +
-                                "Be aware that continuing in this state will result in invalid " +
-                                "write-access to the file and " +
-                                "all of the file modifications by the third-party app will be discarded.",
-                        Toast.LENGTH_LONG).show();
-            }
-        }
-
+        /*
         openPathIntent(
                 requireActivity(),
                 file.getPath(),
@@ -276,36 +278,7 @@ public class MainItemDetailedFragment extends Fragment {
                 "",
                 new HashMap<>(0)
         );
-    }
-
-    private void OpenLocalAttachmentFile(String customFilePath) {
-        File file = new File(customFilePath);
-
-        {
-            Uri myUri = getMediaContentUri(requireContext(), file.getPath());
-            if(myUri != null){
-                String myUriStr = myUri.getPath();
-                if (!myUriStr.contains("/external/file/")) {
-                    Toast.makeText(
-                            requireContext(),
-                            "Failed to get a valid URI for android 10+. " +
-                                    "Restart the device and try again. " +
-                                    "Be aware that continuing in this state will result in invalid " +
-                                    "write-access to the file and " +
-                                    "all of the file modifications by the third-party app will be discarded.",
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-        }
-
-        openPathIntent(
-                requireActivity(),
-                file.getPath(),
-                false,
-                requireContext().getPackageName(),
-                "",
-                new HashMap<>(0)
-        );
+        */
     }
 
     @Override

@@ -28,7 +28,6 @@ public class Preparation {
     private AppMem mAppMem;
     private Context mContext;
     private boolean mIsInitialized;
-
     private Activity mActivity;
     private ProgressBar mProgressBar;
 
@@ -50,11 +49,7 @@ public class Preparation {
 
         if(!mIsInitialized || forced) {
             if (SDK_INT >= 30) {
-                if (Environment.isExternalStorageManager()) {
-                    StartupSequencePermissionGranted(linearLayoutCollections);
-                } else {
-                    mAppMem.RecordStatusSingle(STATUS_BASE_PERMISSIONS);
-                }
+                StartupSequencePermissionGranted(linearLayoutCollections);
             }
         }else{
             mAppMem.getZoteroEngine().GuiCollectionsLast(linearLayoutCollections);
@@ -78,11 +73,10 @@ public class Preparation {
 
         // -----------------------------------------------------------------------------------------
         mIsInitialized = true;
-        if(mAppMem.getStorageModeIsLocal()){
+        if(mAppMem.getStorageModeIsLocalScoped()){
             // LOAD THE DATABASE AT `DbFileNameLocal`
-            String dbPathLocal = getExternalStorage()+ File.separator +
-                    getResourceString(R.string.DirNameApp)+ File.separator +
-                    getResourceString(R.string.DirNameLocal);
+            String dbPathLocal = getPredefinedPrivateStorageBase()+ File.separator +
+                    getResourceString(R.string.PrivateDirNameLocal);
             StartZoteroEngine(dbPathLocal + File.separator + getResourceString(R.string.DbFileNameLocal), linearLayoutCollections);
             mAppMem.RecordStatusSingle(STATUS_BASE_STORAGE+11);
         }else{
@@ -90,9 +84,8 @@ public class Preparation {
             String serverUser = mAppMem.getStorageSmbServerUsername();
             String serverPass = mAppMem.getStorageSmbServerPassword();
 
-            String dbPathSmb = getExternalStorage()+ File.separator +
-                    getResourceString(R.string.DirNameApp)+ File.separator +
-                    getResourceString(R.string.DirNameSmb);
+            String dbPathSmb = getPredefinedPrivateStorageBase()+ File.separator +
+                    getResourceString(R.string.PrivateDirNameSmb);
 
             SmbReceiveFileFromHost smbReceiveFileFromHost = new SmbReceiveFileFromHost(
                     new SmbServerInfo("fooname", serverUser, serverPass, serverIp),
@@ -144,10 +137,11 @@ public class Preparation {
                             String msg = "Failed to download the database over SMB network with error: " + e.toString();
                             Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
                             mAppMem.RecordStatusSingle(msg);
-                            File oldSmbDbFile = new File(getExternalStorage()+ File.separator +
-                                    getResourceString(R.string.DirNameApp)+ File.separator +
-                                    getResourceString(R.string.DirNameSmb)+ File.separator +
-                                    getResourceString(R.string.DbFileNameSmb));
+                            File oldSmbDbFile = new File(
+                                    getPredefinedPrivateStorageBase(),
+                                    getResourceString(R.string.PrivateDirNameSmb)+ File.separator +
+                                    getResourceString(R.string.DbFileNameSmb)
+                            );
                             if(oldSmbDbFile.exists()){
                                 StartZoteroEngine(dbPathSmb + File.separator + getResourceString(R.string.DbFileNameSmb), linearLayoutCollections);
                                 mAppMem.RecordStatusSingle(STATUS_BASE_STORAGE+9);
@@ -187,7 +181,7 @@ public class Preparation {
     }
 
     private int CheckPreferencesSmb(){
-        boolean isLocal = mAppMem.getStorageModeIsLocal();
+        boolean isLocal = mAppMem.getStorageModeIsLocalScoped();
         if(!isLocal) {
             String serverIp = mAppMem.getStorageSmbServerIp();
             String serverUser = mAppMem.getStorageSmbServerUsername();
@@ -202,12 +196,11 @@ public class Preparation {
     }
 
     private int CheckTheDatabases(){
-        boolean isLocal = mAppMem.getStorageModeIsLocal();
+        boolean isLocal = mAppMem.getStorageModeIsLocalScoped();
         if(isLocal){
             File localDb = new File(
-                    getExternalStorage() + File.separator +
-                            getResourceString(R.string.DirNameApp) + File.separator +
-                            getResourceString(R.string.DirNameLocal) + File.separator +
+                    getPredefinedPrivateStorageBase() + File.separator +
+                            getResourceString(R.string.PrivateDirNameLocal) + File.separator +
                             getResourceString(R.string.DbFileNameLocal)
             );
             if(!localDb.exists()) return STATUS_BASE_STORAGE + 5;
@@ -218,21 +211,9 @@ public class Preparation {
     }
 
     private int CheckTheAppDirectories(){
-        if(!isStorageReadyLocal()) return STATUS_BASE_STORAGE;
-        File baseStorage = getExternalStorage();
-
-        File appDir = new File(baseStorage, getResourceString(R.string.DirNameApp));
-        if(!CreateDirectory(appDir)) return STATUS_BASE_STORAGE +1;
-
-        File localDbDir = new File(appDir, getResourceString(R.string.DirNameLocal));
-        if(!CreateDirectory(localDbDir)) return STATUS_BASE_STORAGE +2;
-
-        File pendingDir = new File(appDir, getResourceString(R.string.DirNamePending));
-        if(!CreateDirectory(pendingDir)) return STATUS_BASE_STORAGE +3;
-
-        File SmbDbDir = new File(appDir, getResourceString(R.string.DirNameSmb));
-        if(!CreateDirectory(SmbDbDir)) return STATUS_BASE_STORAGE +4;
-
+        if(!MakeDirAtPrivateBase(getPredefinedPrivateStorageDirNameLocalScoped())) return STATUS_BASE_STORAGE +2;
+        if(!MakeDirAtPrivateBase(getPredefinedPrivateStorageDirNamePending())) return STATUS_BASE_STORAGE +3;
+        if(!MakeDirAtPrivateBase(getPredefinedPrivateStorageDirNameSharedSmb())) return STATUS_BASE_STORAGE +4;
         return 0;
     }
 
@@ -240,59 +221,63 @@ public class Preparation {
         return mContext.getResources().getString(id);
     }
 
-    private boolean isStorageReadyLocal(){
-        String state = Environment.getExternalStorageState();
-        return Environment.MEDIA_MOUNTED.equals(state);
-
+    public File getPredefinedPrivateStorageBase(){
+        // getCacheDir : the data could be lost if the device is running low on storage.
+        // getFilesDir : the data will only be lost if the user uninstalls the application.
+        // getExternalFilesDir(null): the data will persist even after app's uninstallation.
+        return mContext.getFilesDir();
     }
 
-    public File getExternalStorage(){
-        return Environment.getExternalStorageDirectory();
+    public File getPredefinedPrivateStorageLocalScoped(){
+        return new File(getPredefinedPrivateStorageBase(), getResourceString(R.string.PrivateDirNameLocal));
     }
 
-    private boolean CreateDirectory(File baseDir, String dirName){
-        File folder = new File(
-                Environment.getExternalStorageDirectory() +
-                File.separator + dirName);
-        boolean retVal = true;
-        if (!folder.exists()) {
-            retVal = folder.mkdirs();
-        }
-        return retVal;
+    public File getPredefinedPrivateStorageSharedSmb(){
+        return new File(getPredefinedPrivateStorageBase(), getResourceString(R.string.PrivateDirNameSmb));
     }
 
-    public boolean CreateDirectory(String baseDir, String dirName){
-        File folder = new File(new File(baseDir) + File.separator + dirName);
-        boolean retVal = true;
-        if (!folder.exists()) {
-            retVal = folder.mkdirs();
-        }
-        return retVal;
+    public File getPredefinedPrivateStoragePending(){
+        return new File(getPredefinedPrivateStorageBase(), getResourceString(R.string.PrivateDirNamePending));
     }
 
-    public boolean CreateDirectory(File dir){
-        boolean retVal = true;
-        if (!dir.exists()) {
-            retVal = dir.mkdirs();
-        }
-        return retVal;
+    public String getPredefinedPrivateStorageDirNameLocalScoped(){
+        return getResourceString(R.string.PrivateDirNameLocal);
     }
 
-    public String GetAppDirPath(){
-        File baseStorage = getExternalStorage();
-        File appDir = new File(baseStorage, getResourceString(R.string.DirNameApp));
-        return appDir.getPath();
+    public String getPredefinedPrivateStorageDirNameSharedSmb(){
+        return getResourceString(R.string.PrivateDirNameSmb);
     }
 
-    public String GetPendingDirPath(){
-        File baseStorage = getExternalStorage();
-        File appDir = new File(baseStorage, getResourceString(R.string.DirNameApp));
-        File pendingDir = new File(appDir, getResourceString(R.string.DirNamePending));
-        return pendingDir.getPath();
+    public String getPredefinedPrivateStorageDirNamePending(){
+        return getResourceString(R.string.PrivateDirNamePending);
     }
 
-    public String GetSmbDataDir(){
+    public String getSharedSmbBase(){
         String dbPath = mAppMem.getStorageSmbServerSharedPath();
-        return dbPath.substring(0,dbPath.lastIndexOf(File.separator));
+        return dbPath.substring(0, dbPath.lastIndexOf(File.separator));
     }
+
+    private boolean MakeDirAtPrivateBase(String dirName){
+        File folder = new File(getPredefinedPrivateStorageBase(), dirName);
+        boolean retVal = true;
+        if (!folder.exists()) {
+            retVal = folder.mkdirs();
+        }
+        return retVal;
+    }
+
+    public boolean MakeDirAtPrivateBase(String parentDir, String dirName){
+        File folder = new File(getPredefinedPrivateStorageBase().getPath() + File.separator + parentDir + File.separator + dirName);
+        boolean retVal = true;
+        if (!folder.exists()) {
+            retVal = folder.mkdirs();
+        }
+        return retVal;
+    }
+
+    public boolean MakeDirAtPrivateBase(File dir){
+        return MakeDirAtPrivateBase(dir.getPath());
+    }
+
+
 }

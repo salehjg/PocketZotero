@@ -1,19 +1,16 @@
 <resources>
-    <string name="app_name">PocketZotero</string>
-
     <string name="DefaultPreferenceFile">pzDefPref</string>
 
-    <string name="DirNameApp">PocketZotero</string>
-    <string name="DirNameLocal">LocalDatabaseCopy</string>
-    <string name="DirNameSmb">SmbDatabase</string>
-    <string name="DirNamePending">Pending</string>
+    <string name="PrivateDirNameLocal">LocalDatabaseCopy</string>
+    <string name="PrivateDirNameSmb">SharedSmb</string>
+    <string name="PrivateDirNamePending">Pending</string>
 
     <string name="DbFileNameLocal">zotero.sqlite</string>
     <string name="DbFileNameSmb">zotero.smb.sqlite</string>
     <string name="DbFileNameSmbTemp">zotero.tmp.sqlite</string>
 
     <string name="prefKey_isThisTheFirstLaunch_bool">isThisTheFirstLaunch</string>
-    <string name="prefKey_storageModeIsLocal_bool">storageModeIsLocal</string>
+    <string name="prefKey_storageMode_int">storageMode</string>
     <string name="prefKey_storageSmbServerIp_string">storageSmbServerIp</string>
     <string name="prefKey_storageSmbServerSharedPath_string">storageSmbServerSharedPath</string>
     <string name="prefKey_storageSmbServerUsername_string">storageSmbServerUsername</string>

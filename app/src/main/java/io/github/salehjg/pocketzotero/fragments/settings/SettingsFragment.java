@@ -1,9 +1,18 @@
 package io.github.salehjg.pocketzotero.fragments.settings;
 
+import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -11,10 +20,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Spinner;
@@ -27,22 +34,27 @@ import java.util.Vector;
 
 import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.R;
+import io.github.salehjg.pocketzotero.RecordedStatus;
 import io.github.salehjg.pocketzotero.smbutils.SmbScanner;
 
 public class SettingsFragment extends Fragment {
-    RadioButton radioButtonLocal, radioButtonSmb;
+    RadioButton radioButtonLocalScoped, radioButtonSmb;
     Spinner spinnerSmbServerIp;
     EditText editTextSmbServerIp, editTextSmbServerUser, editTextSmbServerPass;
     FitButton imageButtonSearchServer, imageButtonStopSearching;
+    FitButton imageButtonImportLocalScoped;
     FitButton buttonSave;
     EditText editTextSharedPath;
 
-    boolean isLocal;
+    boolean isLocalScoped;
+    boolean isSharedSmb;
+
     List<String> spinnerSmbServerIpItems;
     ArrayAdapter<String> spinnerSmbServerIpAdapter;
     SmbScanner smbScanner;
-
     ProgressBar progressBar;
+
+    AppMem mAppMem;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -65,36 +77,43 @@ public class SettingsFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_settings, container, false);
     }
 
+    private void scanRadioButtons(){
+        isLocalScoped = radioButtonLocalScoped.isChecked();
+        isSharedSmb = radioButtonSmb.isChecked();
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mAppMem = ((AppMem)requireActivity().getApplication());
+
         spinnerSmbServerIpItems = new Vector<>();
-        
-        radioButtonLocal = view.findViewById(R.id.fragsettings_radio_local);
+        radioButtonLocalScoped = view.findViewById(R.id.fragsettings_radio_local_scoped);
         radioButtonSmb = view.findViewById(R.id.fragsettings_radio_smb);
         spinnerSmbServerIp = view.findViewById(R.id.fragsettings_spinner_smbserver);
         editTextSmbServerIp = view.findViewById(R.id.fragsettings_edittext_smbserver);
         imageButtonSearchServer = view.findViewById(R.id.fragsettings_searchserver_btn);
         imageButtonStopSearching = view.findViewById(R.id.fragsettings_stopsearching_btn);
+        imageButtonImportLocalScoped = view.findViewById(R.id.fragsettings_import_localscp_btn);
         buttonSave = view.findViewById(R.id.fragsettings_save_btn);
         editTextSharedPath = view.findViewById(R.id.fragsettings_text_sharedpath);
         editTextSmbServerUser = view.findViewById(R.id.fragsettings_text_user);
         editTextSmbServerPass = view.findViewById(R.id.fragsettings_text_pass);
-        progressBar = ((AppMem)requireActivity().getApplication()).getProgressBar();
+        progressBar = mAppMem.getProgressBar();
 
-        radioButtonLocal.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        radioButtonLocalScoped.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                isLocal = b;
+                scanRadioButtons();
                 radioButtonSmb.setChecked(!b);
             }
         });
         radioButtonSmb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                isLocal = !b;
-                radioButtonLocal.setChecked(!b);
+                scanRadioButtons();
+                radioButtonLocalScoped.setChecked(!b);
             }
         });
         spinnerSmbServerIpAdapter = new ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, spinnerSmbServerIpItems);
@@ -157,17 +176,44 @@ public class SettingsFragment extends Fragment {
                 }
             }
         });
+        imageButtonImportLocalScoped.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:{
+                                //Yes button clicked
+                                ImportZippedZoteroDbAndroid10Friendly();
+                                break;
+                            }
 
+                            case DialogInterface.BUTTON_NEGATIVE: {
+                                //No button clicked
+                                ///TODO : IMPLEMENT EXPORT DATABASE
+                                Toast.makeText(requireContext(), "In case you do not have a backup of the currently loaded database, please use the export database button to get a compressed zip file of it", Toast.LENGTH_LONG).show();
+                                break;
+                            }
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+                builder.setMessage("All the data belonging to any previously imported database will be lost. Do you still want to continue?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+
+            }
+        });
         buttonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
-                    AppMem appMem = ((AppMem)requireActivity().getApplication());
-                    appMem.setStorageModeIsLocal(isLocal);
-                    appMem.setStorageSmbServerIp(editTextSmbServerIp.getText().toString());
-                    appMem.setStorageSmbServerSharedPath(editTextSharedPath.getText().toString());
-                    appMem.setStorageSmbServerUsername(editTextSmbServerUser.getText().toString());
-                    appMem.setStorageSmbServerPassword(editTextSmbServerPass.getText().toString());
+                    mAppMem.setStorageMode(isLocalScoped, isSharedSmb);
+                    mAppMem.setStorageSmbServerIp(editTextSmbServerIp.getText().toString());
+                    mAppMem.setStorageSmbServerSharedPath(editTextSharedPath.getText().toString());
+                    mAppMem.setStorageSmbServerUsername(editTextSmbServerUser.getText().toString());
+                    mAppMem.setStorageSmbServerPassword(editTextSmbServerPass.getText().toString());
                     Toast.makeText(
                             requireContext(),
                             "The settings are saved. Please restart the application.",
@@ -189,24 +235,23 @@ public class SettingsFragment extends Fragment {
 
     private void LoadSettings(){
         try {
-            AppMem appMem = ((AppMem)requireActivity().getApplication());
+            isLocalScoped = mAppMem.getStorageModeIsLocalScoped();
+            isSharedSmb = mAppMem.getStorageModeIsSharedSmb();
+            radioButtonLocalScoped.setChecked(isLocalScoped);
+            radioButtonSmb.setChecked(isSharedSmb);
 
-            isLocal = appMem.getStorageModeIsLocal();
-            radioButtonLocal.setChecked(isLocal);
-            radioButtonSmb.setChecked(!isLocal);
-
-            String ip = appMem.getStorageSmbServerIp();
+            String ip = mAppMem.getStorageSmbServerIp();
             if(!ip.isEmpty()) {
                 editTextSmbServerIp.setText(ip);
             }
 
-            String sharedPath = appMem.getStorageSmbServerSharedPath();
+            String sharedPath = mAppMem.getStorageSmbServerSharedPath();
             editTextSharedPath.setText(sharedPath);
 
-            String smbUser = appMem.getStorageSmbServerUsername();
+            String smbUser = mAppMem.getStorageSmbServerUsername();
             editTextSmbServerUser.setText(smbUser);
 
-            String smbPass = appMem.getStorageSmbServerPassword();
+            String smbPass = mAppMem.getStorageSmbServerPassword();
             editTextSmbServerPass.setText(smbPass);
         }
         catch (Exception e){
@@ -216,6 +261,54 @@ public class SettingsFragment extends Fragment {
                     Toast.LENGTH_LONG
             ).show();
         }
+    }
 
+    ActivityResultLauncher<Intent> mIntentResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            if(result.getResultCode() == Activity.RESULT_OK){
+                Intent data = result.getData();
+                if(data==null){
+                    mAppMem.RecordStatusSingle(RecordedStatus.STATUS_BASE_STORAGE+12);
+                    return;
+                }
+                Uri uriToZip = data.getData();
+                ExtractLocalZipFile extractLocalZipFile = new ExtractLocalZipFile(
+                        requireActivity().getContentResolver(),
+                        uriToZip,
+                        mAppMem.getPreparation().getPredefinedPrivateStorageLocalScoped(),
+                        true,
+                        new ExtractLocalZipFile.Listener() {
+                    @Override
+                    public void onFinished() {
+                        Toast.makeText(requireContext(), "Finished importing the database.", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onProgressTick(int percent) {
+                        mAppMem.getProgressBar().setProgress(percent);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        mAppMem.RecordStatusSingle("Exception during extraction: " + e.toString());
+                    }
+                });
+                extractLocalZipFile.RunInBackground();
+            }
+        }
+    });
+
+    private void ImportZippedZoteroDbAndroid10Friendly(){
+        try{
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("application/zip");
+            mIntentResultLauncher.launch(intent);
+        }catch (Exception e){
+            mAppMem.RecordStatusSingle(
+                    "Failed to launch ACTION_GET_CONTENT to import Zotero DB to the predefined private storage with: " +
+                            e.toString()
+            );
+        }
     }
 }

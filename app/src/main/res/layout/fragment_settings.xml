@@ -28,20 +28,47 @@
         <LinearLayout
             android:layout_width="0mm"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_weight="0.8"
             >
-            <RadioButton
-                android:layout_width="wrap_content"
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/fragsettings_radio_local"
-                android:text="Local"
-                android:checked="true"/>
-            <RadioButton
-                android:layout_width="wrap_content"
+                >
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/fragsettings_radio_local_scoped"
+                    android:text="Local (Android 10+ Friendly)"
+                    android:checked="false"/>
+
+                <com.github.nikartm.button.FitButton
+                    android:id="@+id/fragsettings_import_localscp_btn"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    app:fb_icon="@drawable/ic_import"
+                    app:fb_iconHeight="45dp"
+
+                    app:fb_iconPosition="center"
+                    app:fb_iconWidth="45dp"
+                    app:fb_rippleColor="@color/theme_dark_red_primary_color" />
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/fragsettings_radio_smb"
-                android:text="Shared over MS-SMB"/>
+                >
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/fragsettings_radio_smb"
+                    android:text="Shared over MS-SMB"/>
+            </RelativeLayout>
+
+
+
         </LinearLayout>
     </LinearLayout>
 

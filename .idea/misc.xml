@@ -13,7 +13,7 @@
         <entry key="app/src/main/res/layout/fragment_main.xml" value="0.1953125" />
         <entry key="app/src/main/res/layout/fragment_main_item_detailed.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/fragment_main_items.xml" value="0.35260416666666666" />
-        <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.322463768115942" />
+        <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_status.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/fragment_welcome.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/row_attachments_recycler.xml" value="0.35260416666666666" />
