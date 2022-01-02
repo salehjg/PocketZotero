@@ -1,4 +1,5 @@
 <resources>
+    <string name="ApplicationName">Pocket Zotero</string>
     <string name="DefaultPreferenceFile">pzDefPref</string>
 
     <string name="PrivateDirNameLocal">LocalDatabaseCopy</string>
