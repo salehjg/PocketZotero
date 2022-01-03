@@ -141,16 +141,10 @@ public class MainActivity extends AppCompatActivity {
         linearLayoutCollections = findViewById(R.id.activitymain_collections_linearlayout);
 
         List<String> permissions = new Vector<>();
-        if (SDK_INT >= Build.VERSION_CODES.R) {
-            if(SDK_INT<=Build.VERSION_CODES.P) {
-                permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            }
-            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-            permissions.add(Manifest.permission.INTERNET);
-        }else{
+        permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        permissions.add(Manifest.permission.INTERNET);
+        if (SDK_INT <= Build.VERSION_CODES.P) {
             permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-            permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
-            permissions.add(Manifest.permission.INTERNET);
         }
 
         PermissionX.init(this)
@@ -291,5 +285,18 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        Toast.makeText(getApplicationContext(), "on Pause", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Toast.makeText(getApplicationContext(), "on Resume", Toast.LENGTH_LONG).show();
     }
 }

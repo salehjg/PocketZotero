@@ -199,7 +199,7 @@ public class MainItemDetailedFragment extends Fragment {
             return;
         }
 
-        String dirDest = dirPendingAbs.getPath() + File.separator + attachment.getFileKey();
+        String dirDest = dirPendingAbs.getPath() + File.separator + attachment.ExtractStorageDirName() + "." + attachment.getFileKey();
         String fileDestPath = dirDest + File.separator + extractedFileName;
 
         String fileSrcSmb =
