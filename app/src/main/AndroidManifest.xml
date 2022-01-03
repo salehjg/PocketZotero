@@ -9,9 +9,9 @@
     <uses-permission android:name="android.permission.INTERNET"  />
     <application
         android:allowBackup="true"
-        android:icon="@drawable/ic_appicon"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/ApplicationName"
-        android:roundIcon="@drawable/ic_appicon"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PocketZotero"
         android:name=".AppMem" >

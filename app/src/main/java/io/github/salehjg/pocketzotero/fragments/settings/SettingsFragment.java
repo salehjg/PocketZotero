@@ -192,7 +192,7 @@ public class SettingsFragment extends Fragment {
                             case DialogInterface.BUTTON_NEGATIVE: {
                                 //No button clicked
                                 ///TODO : IMPLEMENT EXPORT DATABASE
-                                Toast.makeText(requireContext(), "In case you do not have a backup of the currently loaded database, please use the export database button to get a compressed zip file of it", Toast.LENGTH_LONG).show();
+                                Toast.makeText(requireContext(), mAppMem.getPreparation().getResourceString(R.string.MsgSettingsImportDb2), Toast.LENGTH_LONG).show();
                                 break;
                             }
                         }
@@ -200,7 +200,7 @@ public class SettingsFragment extends Fragment {
                 };
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-                builder.setMessage("All the data belonging to any previously imported database will be lost. Do you still want to continue?").setPositiveButton("Yes", dialogClickListener)
+                builder.setMessage(mAppMem.getPreparation().getResourceString(R.string.MsgSettingsImportDb1)).setPositiveButton("Yes", dialogClickListener)
                         .setNegativeButton("No", dialogClickListener).show();
 
             }
@@ -216,14 +216,14 @@ public class SettingsFragment extends Fragment {
                     mAppMem.setStorageSmbServerPassword(editTextSmbServerPass.getText().toString());
                     Toast.makeText(
                             requireContext(),
-                            "The settings are saved. Please restart the application.",
+                            mAppMem.getPreparation().getResourceString(R.string.MsgSettingsSave1),
                             Toast.LENGTH_SHORT
                     ).show();
 
                 }catch (Exception e){
                     Toast.makeText(
                             requireContext(),
-                            "Failed to save the settings.",
+                            mAppMem.getPreparation().getResourceString(R.string.MsgSettingsSave2),
                             Toast.LENGTH_LONG
                     ).show();
                 }
@@ -257,7 +257,7 @@ public class SettingsFragment extends Fragment {
         catch (Exception e){
             Toast.makeText(
                     requireContext(),
-                    "Failed to retrieve the settings.",
+                    mAppMem.getPreparation().getResourceString(R.string.MsgSettingsLoad1),
                     Toast.LENGTH_LONG
             ).show();
         }
@@ -281,7 +281,7 @@ public class SettingsFragment extends Fragment {
                         new ExtractLocalZipFile.Listener() {
                     @Override
                     public void onFinished() {
-                        Toast.makeText(requireContext(), "Finished importing the database.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(requireContext(), mAppMem.getPreparation().getResourceString(R.string.MsgSettingsImportDb3), Toast.LENGTH_LONG).show();
                     }
 
                     @Override

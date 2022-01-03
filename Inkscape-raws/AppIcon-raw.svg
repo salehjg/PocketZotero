@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="594mm"
-   height="841mm"
-   viewBox="0 0 2245.0393 3178.5828"
+   width="44mm"
+   height="44mm"
+   viewBox="0 0 166.29921 166.29922"
    version="1.1"
    id="svg5"
    inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20, custom)"
@@ -24,17 +24,39 @@
      inkscape:pagecheckerboard="0"
      inkscape:document-units="mm"
      showgrid="false"
-     inkscape:zoom="2.9649439"
-     inkscape:cx="51.265726"
-     inkscape:cy="92.075943"
+     inkscape:zoom="3.6203867"
+     inkscape:cx="47.508737"
+     inkscape:cy="93.636406"
      inkscape:window-width="1920"
      inkscape:window-height="1011"
      inkscape:window-x="0"
      inkscape:window-y="32"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer2" />
+     inkscape:current-layer="layer1" />
   <defs
      id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient3069">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop3065" />
+      <stop
+         style="stop-color:#420055;stop-opacity:1"
+         offset="1"
+         id="stop3067" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient61767"
+       id="linearGradient61769"
+       x1="64.287033"
+       y1="215.28288"
+       x2="55.970032"
+       y2="168.05402"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(7.8508265,-83.087069)" />
     <linearGradient
        inkscape:collect="always"
        id="linearGradient61767">
@@ -49,6 +71,16 @@
     </linearGradient>
     <linearGradient
        inkscape:collect="always"
+       xlink:href="#linearGradient58690"
+       id="linearGradient58692"
+       x1="68.59948"
+       y1="143.93999"
+       x2="95.792854"
+       y2="180.26971"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(7.9733653,-81.810144)" />
+    <linearGradient
+       inkscape:collect="always"
        id="linearGradient58690">
       <stop
          style="stop-color:#000080;stop-opacity:1;"
@@ -59,52 +91,23 @@
          offset="1"
          id="stop58688" />
     </linearGradient>
-    <linearGradient
-       inkscape:collect="always"
-       id="linearGradient54941">
-      <stop
-         style="stop-color:#000080;stop-opacity:1;"
-         offset="0"
-         id="stop54937" />
-      <stop
-         style="stop-color:#1b0000;stop-opacity:1"
-         offset="1"
-         id="stop54939" />
-    </linearGradient>
     <radialGradient
        inkscape:collect="always"
-       xlink:href="#linearGradient54941"
-       id="radialGradient54943"
-       cx="75.362999"
-       cy="166.92191"
-       fx="75.362999"
-       fy="166.92191"
-       r="75.590553"
-       gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient58690"
-       id="linearGradient58692"
-       x1="68.59948"
-       y1="143.93999"
-       x2="95.792854"
-       y2="180.26971"
-       gradientUnits="userSpaceOnUse" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient61767"
-       id="linearGradient61769"
-       x1="64.287033"
-       y1="215.28288"
-       x2="55.970032"
-       y2="168.05402"
-       gradientUnits="userSpaceOnUse" />
+       xlink:href="#linearGradient3069"
+       id="radialGradient2871"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.1951379,0.00644732,-0.00659851,1.2231661,-15.676976,-19.092257)"
+       cx="83.149597"
+       cy="83.149605"
+       fx="83.149597"
+       fy="83.149605"
+       r="75.590546" />
   </defs>
   <g
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Layer 2"
-     style="display:inline">
+     style="display:none">
     <circle
        style="fill:#000080;stroke-width:2.89134;stroke-linecap:round"
        id="path36546-5"
@@ -116,7 +119,7 @@
      inkscape:groupmode="layer"
      id="layer3"
      inkscape:label="Layer 3"
-     style="display:inline">
+     style="display:none">
     <circle
        style="display:inline;fill:#ffffff;stroke-width:2.75991;stroke-linecap:round"
        id="path36546-5-5"
@@ -129,61 +132,63 @@
      inkscape:groupmode="layer"
      id="layer1"
      style="display:inline">
+    <rect
+       style="fill:url(#radialGradient2871);fill-opacity:1;stroke:#240029;stroke-width:1.34499;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect878"
+       width="164.95422"
+       height="164.95422"
+       x="0.67249501"
+       y="0.67249501" />
     <g
-       id="g51716"
-       transform="translate(7.7866095,-83.772297)">
-      <circle
-         style="fill:url(#radialGradient54943);stroke-width:2.89134;stroke-linecap:round"
-         id="path36546"
-         cx="75.362999"
-         cy="166.92191"
-         r="75.590553" />
+       id="g1128"
+       style="display:inline"
+       transform="translate(-0.19570501,0.38616871)">
       <text
          xml:space="preserve"
          style="font-style:normal;font-weight:normal;font-size:70.084px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1.7521"
-         x="48.992317"
-         y="213.69183"
+         x="56.778927"
+         y="129.91954"
          id="text5270"><tspan
            sodipodi:role="line"
            id="tspan5268"
-           x="48.992317"
-           y="213.69183"
+           x="56.778927"
+           y="129.91954"
            style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:70.084px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ff0000;stroke-width:1.7521">Z</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-weight:normal;font-size:64.4655px;line-height:1.25;font-family:sans-serif;display:inline;fill:url(#linearGradient61769);fill-opacity:1;stroke:none;stroke-width:1.61165"
-         x="51.315304"
-         y="210.05478"
+         x="59.16613"
+         y="126.96771"
          id="text5270-7"
          transform="scale(0.99182035,1.0082471)"><tspan
            sodipodi:role="line"
            id="tspan5268-5"
-           x="51.315304"
-           y="210.05478"
+           x="59.16613"
+           y="126.96771"
            style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:64.4655px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:url(#linearGradient61769);fill-opacity:1;stroke-width:1.61165">Z</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-weight:normal;font-size:69.6912px;line-height:1.25;font-family:sans-serif;fill:#f9f9f9;fill-opacity:1;stroke:none;stroke-width:1.74228"
-         x="44.656765"
-         y="171.77036"
+         x="52.418575"
+         y="87.7304"
          id="text13222-5"
          transform="scale(1.0031951,0.99681508)"><tspan
            sodipodi:role="line"
            id="tspan13220-5"
-           x="44.656765"
-           y="171.77036"
+           x="52.418575"
+           y="87.7304"
            style="font-style:italic;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:69.6912px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#f9f9f9;stroke-width:1.74228">P</tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-weight:normal;font-size:68.7905px;line-height:1.25;font-family:sans-serif;display:inline;fill:url(#linearGradient58692);fill-opacity:1;stroke:none;stroke-width:1.71976"
-         x="46.792534"
-         y="169.1772"
+         x="54.7659"
+         y="87.36705"
          id="text13222-5-1"
-         transform="scale(0.97657752,1.0239842)"><tspan
+         transform="scale(0.97657754,1.0239842)"><tspan
            sodipodi:role="line"
            id="tspan13220-5-0"
-           x="46.792534"
-           y="169.1772"
+           x="54.7659"
+           y="87.36705"
            style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:68.7905px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:url(#linearGradient58692);fill-opacity:1;stroke-width:1.71976">P</tspan></text>
     </g>
   </g>
