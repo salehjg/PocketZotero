@@ -142,6 +142,10 @@ public class RecordedStatus {
                     msgDetailed = "Failed to create a new folder for a new pending attachment.";
                     break;
                 }
+                case 14: {
+                    msgDetailed = "Failed to process the correct file paths on the SMB host and on the device to process the pending attachments.";
+                    break;
+                }
                 default:{
                     msgDetailed = "Unknown Details.";
                     break;

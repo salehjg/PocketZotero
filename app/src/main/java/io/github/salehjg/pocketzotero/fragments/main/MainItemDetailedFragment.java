@@ -192,7 +192,7 @@ public class MainItemDetailedFragment extends Fragment {
         if(!
             mAppMem.getPreparation().MakeDirAtPrivateBase(
                     mAppMem.getPreparation().getPredefinedPrivateStorageDirNamePending(),
-                    attachment.getFileKey()
+                    attachment.ExtractStorageDirName() + "." + attachment.getFileKey()
             )
         ){
             mAppMem.RecordStatusSingle(RecordedStatus.STATUS_BASE_STORAGE+13);

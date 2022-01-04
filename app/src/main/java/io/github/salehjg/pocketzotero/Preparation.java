@@ -2,27 +2,32 @@ package io.github.salehjg.pocketzotero;
 
 import static android.os.Build.VERSION.SDK_INT;
 
-import static io.github.salehjg.pocketzotero.RecordedStatus.STATUS_BASE_PERMISSIONS;
 import static io.github.salehjg.pocketzotero.RecordedStatus.STATUS_BASE_PREFERENCES;
 import static io.github.salehjg.pocketzotero.RecordedStatus.STATUS_BASE_STORAGE;
 
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.os.Environment;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+
 import java.io.File;
+import java.io.FileReader;
 import java.util.Vector;
 
 import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterItems;
 import io.github.salehjg.pocketzotero.smbutils.SmbReceiveFileFromHost;
+import io.github.salehjg.pocketzotero.smbutils.SmbSendMultipleFilesToHost;
 import io.github.salehjg.pocketzotero.smbutils.SmbServerInfo;
 import io.github.salehjg.pocketzotero.zoteroengine.ZoteroEngine;
 import io.github.salehjg.pocketzotero.zoteroengine.types.Collection;
 import io.github.salehjg.pocketzotero.zoteroengine.types.CollectionItem;
+import io.github.salehjg.pocketzotero.zoteroengine.types.ItemAttachment;
 
 public class Preparation {
     private AppMem mAppMem;
@@ -115,6 +120,9 @@ public class Preparation {
                                     // LOAD THE DATABASE AT `DbFileNameSmb`
                                     StartZoteroEngine(dbPathSmb + File.separator + getResourceString(R.string.DbFileNameSmb), linearLayoutCollections);
                                     mAppMem.RecordStatusSingle(STATUS_BASE_STORAGE+10);
+
+                                    // Since we are managed to connect to the host, lets process all the pending attachments
+                                    ProcessPendingAttachments();
                                 }else{
                                     // ERROR FAILED TO RENAME `DbFileNameSmbTemp` TO `DbFileNameSmb`
                                     mAppMem.RecordStatusSingle(STATUS_BASE_STORAGE + 6);
@@ -178,6 +186,81 @@ public class Preparation {
                         })
         );
         mAppMem.getZoteroEngine().GuiCollections(linearLayoutCollections);
+    }
+
+    public void ProcessPendingAttachments(){
+        File[] pendingsDir = getPredefinedPrivateStoragePending().listFiles();
+        Gson gson = new Gson();
+        if(pendingsDir!=null) {
+            Vector<String> filePathsToSend = new Vector<>();
+            Vector<String> filePendingDirNames = new Vector<>();
+            Vector<String> filePathsOnHost = new Vector<>();
+
+            for (File pendingAttachmentDir : pendingsDir) {
+                try {
+                    if (!pendingAttachmentDir.isDirectory()) {
+                        throw new Exception("Malformed pending attachment directory with key: " + pendingAttachmentDir.getName() + ". ");
+                    }
+                    File gsonFile = new File(pendingAttachmentDir, "attachment.json");
+                    if (!gsonFile.exists()) {
+                        throw new Exception("Missing the json file for the pending attachment with key: " + pendingAttachmentDir.getName() + ". ");
+                    }
+                    JsonReader reader = new JsonReader(new FileReader(gsonFile));
+                    ItemAttachment itemAttachment = gson.fromJson(reader, new TypeToken<ItemAttachment>() {
+                    }.getType());
+
+                    filePathsToSend.add(pendingAttachmentDir + File.separator + itemAttachment.ExtractFileName());
+                    filePendingDirNames.add(pendingAttachmentDir.getName());
+                    filePathsOnHost.add(getSharedSmbBase() + File.separator +
+                            itemAttachment.ExtractStorageDirName() + File.separator +
+                            itemAttachment.getFileKey() + File.separator +
+                            itemAttachment.ExtractFileName()
+                    );
+                }catch (Exception e){
+                    mAppMem.RecordStatusSingle(e.toString());
+                }
+            }
+
+            if(filePathsToSend.size() != filePathsOnHost.size()){
+                mAppMem.RecordStatusSingle(STATUS_BASE_STORAGE+14);
+            }
+
+            if(filePathsToSend.size()>0) {
+                mAppMem.RecordStatusSingle("Pending attachments found: " + filePathsToSend.size());
+                SmbSendMultipleFilesToHost smbSendMultipleFilesToHost = new SmbSendMultipleFilesToHost(
+                        new SmbServerInfo("foo", mAppMem.getStorageSmbServerUsername(), mAppMem.getStorageSmbServerPassword(), mAppMem.getStorageSmbServerIp()),
+                        filePathsToSend,
+                        filePathsOnHost,
+                        true,
+                        new SmbSendMultipleFilesToHost.Listener() {
+                            @Override
+                            public void onFinished(boolean wasTerminated, boolean wasTotalSuccess, Vector<Boolean> hasSucceeded, Vector<String> filePathsToSend, Vector<String> filePathsOnHost, Vector<Boolean> overWrite) {
+                                Toast.makeText(mContext, "Finished processing pendings, wasTerminated=" + wasTerminated + ", wasTotalSuccess=" + wasTotalSuccess, Toast.LENGTH_LONG).show();
+                                int count = hasSucceeded.size();
+                                for(int i=0; i<count; i++){
+                                    if(hasSucceeded.get(i)){
+                                        if(!DeleteDirAndContentAtPrivateBase(getPredefinedPrivateStorageDirNamePending(), filePendingDirNames.get(i))){
+                                            mAppMem.RecordStatusSingle("Failed to remove the processed pending attachment: " + filePendingDirNames.get(i));
+                                        }
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onProgressTick(int percent) {
+                                mAppMem.getProgressBar().setProgress(percent);
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                mAppMem.RecordStatusSingle("Pending attachment processing: " + e.toString());
+                            }
+                        }
+                );
+
+                smbSendMultipleFilesToHost.RunAllSequentially();
+            }
+        }
     }
 
     private int CheckPreferencesSmb(){
@@ -273,6 +356,27 @@ public class Preparation {
             retVal = folder.mkdirs();
         }
         return retVal;
+    }
+
+    public boolean DeleteDirAndContentAtPrivateBase(String parentDir, String dirName) {
+        File folder = new File(getPredefinedPrivateStorageBase().getPath() + File.separator + parentDir + File.separator + dirName);
+        return _deleteDirAndContentAbsPath(folder);
+    }
+
+    private boolean _deleteDirAndContentAbsPath(File folder){
+        File[] files = folder.listFiles();
+        boolean result = true;
+        if(files!=null) { //some JVMs return null for empty dirs
+            for(File f: files) {
+                if(f.isDirectory()) {
+                    result &= _deleteDirAndContentAbsPath(f);
+                } else {
+                    result &= f.delete();
+                }
+            }
+        }
+        result &= folder.delete();
+        return result;
     }
 
     public boolean MakeDirAtPrivateBase(File dir){
