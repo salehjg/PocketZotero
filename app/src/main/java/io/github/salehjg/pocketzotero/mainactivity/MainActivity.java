@@ -14,46 +14,33 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
 import android.Manifest;
-import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
 import com.github.nikartm.button.FitButton;
 import com.google.android.material.navigation.NavigationView;
 import com.permissionx.guolindev.PermissionX;
 import com.permissionx.guolindev.callback.ExplainReasonCallback;
 import com.permissionx.guolindev.callback.RequestCallback;
 import com.permissionx.guolindev.request.ExplainScope;
-import java.io.File;
 import java.util.List;
 import java.util.Vector;
 import io.github.salehjg.pocketzotero.AppMem;
-import io.github.salehjg.pocketzotero.Preparation;
 import io.github.salehjg.pocketzotero.R;
 import io.github.salehjg.pocketzotero.fragments.about.AboutFragment;
 import io.github.salehjg.pocketzotero.fragments.main.MainFragment;
 import io.github.salehjg.pocketzotero.fragments.settings.SettingsFragment;
 import io.github.salehjg.pocketzotero.fragments.status.StatusFragment;
 import io.github.salehjg.pocketzotero.fragments.welcome.WelcomeFragment;
-import io.github.salehjg.pocketzotero.smbutils.SmbReceiveFileFromHost;
-import io.github.salehjg.pocketzotero.smbutils.SmbSendFileToHost;
-import io.github.salehjg.pocketzotero.smbutils.SmbServerInfo;
-import io.github.salehjg.pocketzotero.zoteroengine.ZoteroEngine;
+
 
 public class MainActivity extends AppCompatActivity {
     static Boolean mTwoPane;

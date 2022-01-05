@@ -22,7 +22,7 @@ import java.util.Vector;
 
 import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterItems;
 import io.github.salehjg.pocketzotero.smbutils.SmbReceiveFileFromHost;
-import io.github.salehjg.pocketzotero.smbutils.SmbSendMultipleFilesToHost;
+import io.github.salehjg.pocketzotero.smbutils.SmbSendMultipleToHost;
 import io.github.salehjg.pocketzotero.smbutils.SmbServerInfo;
 import io.github.salehjg.pocketzotero.zoteroengine.ZoteroEngine;
 import io.github.salehjg.pocketzotero.zoteroengine.types.Collection;
@@ -227,15 +227,17 @@ public class Preparation {
 
             if(filePathsToSend.size()>0) {
                 mAppMem.RecordStatusSingle("Pending attachments found: " + filePathsToSend.size());
-                SmbSendMultipleFilesToHost smbSendMultipleFilesToHost = new SmbSendMultipleFilesToHost(
+
+                SmbSendMultipleToHost smbSendMultipleToHost = new SmbSendMultipleToHost(
                         new SmbServerInfo("foo", mAppMem.getStorageSmbServerUsername(), mAppMem.getStorageSmbServerPassword(), mAppMem.getStorageSmbServerIp()),
                         filePathsToSend,
                         filePathsOnHost,
                         true,
-                        new SmbSendMultipleFilesToHost.Listener() {
+                        1,
+                        new SmbSendMultipleToHost.Listener() {
                             @Override
-                            public void onFinished(boolean wasTerminated, boolean wasTotalSuccess, Vector<Boolean> hasSucceeded, Vector<String> filePathsToSend, Vector<String> filePathsOnHost, Vector<Boolean> overWrite) {
-                                Toast.makeText(mContext, "Finished processing pendings, wasTerminated=" + wasTerminated + ", wasTotalSuccess=" + wasTotalSuccess, Toast.LENGTH_LONG).show();
+                            public void onFinished(boolean wasTotalSuccess, Vector<Boolean> hasSucceeded, Vector<String> filePathsToSend, Vector<String> filePathsOnHost, Vector<Boolean> overWrite) {
+                                Toast.makeText(mContext, "Finished processing pendings" + ", wasTotalSuccess=" + wasTotalSuccess, Toast.LENGTH_LONG).show();
                                 int count = hasSucceeded.size();
                                 for(int i=0; i<count; i++){
                                     if(hasSucceeded.get(i)){
@@ -257,8 +259,8 @@ public class Preparation {
                             }
                         }
                 );
+                smbSendMultipleToHost.enqueueToRunAll();
 
-                smbSendMultipleFilesToHost.RunAllSequentially();
             }
         }
     }
