@@ -1,14 +1,14 @@
 package io.github.salehjg.pocketzotero.zoteroengine.types;
 
 public class ItemTag {
-    private String tagName;
-    private int tagId, itemId, type;
+    protected String mTagName;
+    protected int mTagId, mItemId, mType;
 
     public ItemTag(){
-        this.itemId = -1;
-        this.tagId = -1;
-        this.type = -1;
-        this.tagName = "?";
+        this.mItemId = -1;
+        this.mTagId = -1;
+        this.mType = -1;
+        this.mTagName = "?";
     }
 
     public ItemTag(
@@ -16,41 +16,41 @@ public class ItemTag {
             int tagId,
             String tagName,
             int type){
-        this.itemId = itemId;
-        this.tagId = tagId;
-        this.type = type;
-        this.tagName = tagName;
+        this.mItemId = itemId;
+        this.mTagId = tagId;
+        this.mType = type;
+        this.mTagName = tagName;
     }
 
     public String getTagName() {
-        return tagName;
+        return mTagName;
     }
 
     public void setTagName(String tagName) {
-        this.tagName = tagName;
+        this.mTagName = tagName;
     }
 
     public int getTagId() {
-        return tagId;
+        return mTagId;
     }
 
     public void setTagId(int tagId) {
-        this.tagId = tagId;
+        this.mTagId = tagId;
     }
 
     public int getItemId() {
-        return itemId;
+        return mItemId;
     }
 
     public void setItemId(int itemId) {
-        this.itemId = itemId;
+        this.mItemId = itemId;
     }
 
     public int getType() {
-        return type;
+        return mType;
     }
 
     public void setType(int type) {
-        this.type = type;
+        this.mType = type;
     }
 }

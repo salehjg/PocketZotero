@@ -1,52 +1,52 @@
 package io.github.salehjg.pocketzotero.zoteroengine.types;
 
 public class ItemNote {
-    private int noteItemId, parentItemId;
-    private String note, title;
+    protected int mNoteItemId, mParentItemId;
+    protected String mNote, mTitle;
 
     public ItemNote(int noteItemId, int parentItemId, String note, String title){
-        this.noteItemId = noteItemId;
-        this.parentItemId = parentItemId;
-        this.note = note;
-        this.title = title;
+        this.mNoteItemId = noteItemId;
+        this.mParentItemId = parentItemId;
+        this.mNote = note;
+        this.mTitle = title;
     }
 
     public ItemNote(){
-        this.noteItemId = -1;
-        this.parentItemId = -1;
-        this.note = "?";
-        this.title = "?";
+        this.mNoteItemId = -1;
+        this.mParentItemId = -1;
+        this.mNote = "?";
+        this.mTitle = "?";
     }
 
     public int getNoteItemId() {
-        return noteItemId;
+        return mNoteItemId;
     }
 
     public void setNoteItemId(int noteItemId) {
-        this.noteItemId = noteItemId;
+        this.mNoteItemId = noteItemId;
     }
 
     public int getParentItemId() {
-        return parentItemId;
+        return mParentItemId;
     }
 
     public void setParentItemId(int parentItemId) {
-        this.parentItemId = parentItemId;
+        this.mParentItemId = parentItemId;
     }
 
     public String getNote() {
-        return note;
+        return mNote;
     }
 
     public void setNote(String note) {
-        this.note = note;
+        this.mNote = note;
     }
 
     public String getTitle() {
-        return title;
+        return mTitle;
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.mTitle = title;
     }
 }

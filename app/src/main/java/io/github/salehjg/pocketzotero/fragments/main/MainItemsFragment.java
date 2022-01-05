@@ -18,9 +18,9 @@ import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
 
 public class MainItemsFragment extends Fragment {
 
-    private RecyclerView recyclerViewItems;
-    private RecyclerAdapterItems recyclerAdapterItems;
-    private AppMem appMem;
+    private RecyclerView mRecyclerViewItems;
+    private RecyclerAdapterItems mRecyclerAdapterItems;
+    private AppMem mAppMem;
 
     public MainItemsFragment() {
         // Required empty public constructor
@@ -38,27 +38,27 @@ public class MainItemsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        appMem = (AppMem) requireActivity().getApplication();
+        mAppMem = (AppMem) requireActivity().getApplication();
 
-        recyclerViewItems = view.findViewById(R.id.fragmainitems_recycler);
-        recyclerViewItems.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        mRecyclerViewItems = view.findViewById(R.id.fragmainitems_recycler);
+        mRecyclerViewItems.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
-        recyclerAdapterItems = appMem.getRecyclerAdapterItems();
-        recyclerAdapterItems.setClickListener(new RecyclerAdapterItems.ItemClickListener() {
+        mRecyclerAdapterItems = mAppMem.getRecyclerAdapterItems();
+        mRecyclerAdapterItems.setClickListener(new RecyclerAdapterItems.ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 // Show the details of the selected Item of the recyclerView for CollectionItems
-                CollectionItem item = recyclerAdapterItems.getDataCollectionItem(position);
-                ZoteroEngine engine = appMem.getZoteroEngine();
-                if(appMem.getSelectedCollection()!=null){
-                    ItemDetailed itemDetailed = engine.getDetailsForItemId(appMem.getSelectedCollection(), item);
-                    appMem.setSelectedItemDetailed(itemDetailed);
+                CollectionItem item = mRecyclerAdapterItems.getDataCollectionItem(position);
+                ZoteroEngine engine = mAppMem.getZoteroEngine();
+                if(mAppMem.getSelectedCollection()!=null){
+                    ItemDetailed itemDetailed = engine.getDetailsForItemId(mAppMem.getSelectedCollection(), item);
+                    mAppMem.setSelectedItemDetailed(itemDetailed);
                 }
                 ((AppMem) requireActivity().getApplication()).getViewPager().setCurrentItem(1);
             }
         });
 
-        recyclerViewItems.setAdapter(recyclerAdapterItems);
+        mRecyclerViewItems.setAdapter(mRecyclerAdapterItems);
     }
 
     @Override

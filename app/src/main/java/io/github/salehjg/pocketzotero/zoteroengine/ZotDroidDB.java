@@ -41,36 +41,27 @@ public class ZotDroidDB extends SQLiteOpenHelper {
     private static String DATABASE_NAME = "zotdroid.sqlite";
 
     public static final String TAG = "zotdroid.ZotDroidDB";
-    private SQLiteDatabase _db;
+    private SQLiteDatabase mDb;
 
-    private Collections _collectionsTable               = new Collections();
-    private CollectionsItems _collectionsItemsTable     = new CollectionsItems();
-    private ItemData _itemDataTable                     = new ItemData();
-    private ItemDataValues _itemDataValueTable          = new ItemDataValues();
-    private Fields _fieldsTable                         = new Fields();
-    private Items _items                                = new Items();
-    private ItemTypes _itemTypes                        = new ItemTypes();
-    private ItemAttachments _itemAttachments            = new ItemAttachments();
-    private CreatorTypes _creatorTypes                  = new CreatorTypes();
-    private Creators _creators                          = new Creators();
-    private ItemCreators _itemCreators                  = new ItemCreators();
-    private ItemTags _itemTags                          = new ItemTags();
-    private Tags _tags                                  = new Tags();
-    private ItemNotes _itemNotes                        = new ItemNotes();
-
-    // A small class to hold caching info
-    private class SearchCache {
-        public String last_search;
-        public int last_num_results;
-        public boolean valid = false;
-    }
-
-    private SearchCache             _cache = new SearchCache();
+    private Collections mCollectionsTable = new Collections();
+    private CollectionsItems mCollectionsItemsTable = new CollectionsItems();
+    private ItemData mItemDataTable = new ItemData();
+    private ItemDataValues mItemDataValueTable = new ItemDataValues();
+    private Fields mFieldsTable = new Fields();
+    private Items mItems = new Items();
+    private ItemTypes mItemTypes = new ItemTypes();
+    private ItemAttachments mItemAttachments = new ItemAttachments();
+    private CreatorTypes mCreatorTypes = new CreatorTypes();
+    private Creators mCreators = new Creators();
+    private ItemCreators mItemCreators = new ItemCreators();
+    private ItemTags mItemTags = new ItemTags();
+    private Tags mTags = new Tags();
+    private ItemNotes mItemNotes = new ItemNotes();
 
     public ZotDroidDB(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this._db = getWritableDatabase(); // Should kickstart all the creation we need :S
-        _check_and_create();
+        this.mDb = getWritableDatabase(); // Should kickstart all the creation we need :S
+        checkTablesAndCreateIfNeeded();
     }
 
     /**
@@ -81,12 +72,12 @@ public class ZotDroidDB extends SQLiteOpenHelper {
     public ZotDroidDB(Context context, String alternativeFname) {
         // Double check we have no trailing slash
         super(context, alternativeFname, null, DATABASE_VERSION);
-        this._db = getWritableDatabase();
-        _check_and_create();
+        this.mDb = getWritableDatabase();
+        checkTablesAndCreateIfNeeded();
     }
 
     protected boolean checkTableExists(String tablename){
-        Cursor cursor = _db.rawQuery("SELECT tbl_name FROM sqlite_master WHERE type=\"table\" AND tbl_name = \""+ tablename +"\"", null);
+        Cursor cursor = mDb.rawQuery("SELECT tbl_name FROM sqlite_master WHERE type=\"table\" AND tbl_name = \""+ tablename +"\"", null);
         if(cursor!=null) {
             if(cursor.getCount()>0) {
                 cursor.close();
@@ -102,62 +93,62 @@ public class ZotDroidDB extends SQLiteOpenHelper {
      * TODO - odd split of requirements here, with passing this db into the table classes
      */
 
-    private void _check_and_create() {
+    private void checkTablesAndCreateIfNeeded() {
 
-        if (!checkTableExists(_itemNotes.get_table_name())) {
-            _itemNotes.createTable(_db);
+        if (!checkTableExists(mItemNotes.get_table_name())) {
+            mItemNotes.createTable(mDb);
         }
 
-        if (!checkTableExists(_itemTags.get_table_name())) {
-            _itemTags.createTable(_db);
+        if (!checkTableExists(mItemTags.get_table_name())) {
+            mItemTags.createTable(mDb);
         }
 
-        if (!checkTableExists(_tags.get_table_name())) {
-            _tags.createTable(_db);
+        if (!checkTableExists(mTags.get_table_name())) {
+            mTags.createTable(mDb);
         }
 
-        if (!checkTableExists(_creatorTypes.get_table_name())) {
-            _creatorTypes.createTable(_db);
+        if (!checkTableExists(mCreatorTypes.get_table_name())) {
+            mCreatorTypes.createTable(mDb);
         }
 
-        if (!checkTableExists(_creators.get_table_name())) {
-            _creators.createTable(_db);
+        if (!checkTableExists(mCreators.get_table_name())) {
+            mCreators.createTable(mDb);
         }
 
-        if (!checkTableExists(_itemCreators.get_table_name())) {
-            _itemCreators.createTable(_db);
+        if (!checkTableExists(mItemCreators.get_table_name())) {
+            mItemCreators.createTable(mDb);
         }
 
-        if (!checkTableExists(_itemAttachments.get_table_name())) {
-            _itemAttachments.createTable(_db);
+        if (!checkTableExists(mItemAttachments.get_table_name())) {
+            mItemAttachments.createTable(mDb);
         }
 
-        if (!checkTableExists(_items.get_table_name())) {
-            _items.createTable(_db);
+        if (!checkTableExists(mItems.get_table_name())) {
+            mItems.createTable(mDb);
         }
 
-        if (!checkTableExists(_itemTypes.get_table_name())) {
-            _itemTypes.createTable(_db);
+        if (!checkTableExists(mItemTypes.get_table_name())) {
+            mItemTypes.createTable(mDb);
         }
 
-        if (!checkTableExists(_itemDataTable.get_table_name())) {
-            _itemDataTable.createTable(_db);
+        if (!checkTableExists(mItemDataTable.get_table_name())) {
+            mItemDataTable.createTable(mDb);
         }
 
-        if (!checkTableExists(_itemDataValueTable.get_table_name())) {
-            _itemDataValueTable.createTable(_db);
+        if (!checkTableExists(mItemDataValueTable.get_table_name())) {
+            mItemDataValueTable.createTable(mDb);
         }
 
-        if (!checkTableExists(_fieldsTable.get_table_name())) {
-            _fieldsTable.createTable(_db);
+        if (!checkTableExists(mFieldsTable.get_table_name())) {
+            mFieldsTable.createTable(mDb);
         }
 
-        if (!checkTableExists(_collectionsTable.get_table_name())) {
-            _collectionsTable.createTable(_db);
+        if (!checkTableExists(mCollectionsTable.get_table_name())) {
+            mCollectionsTable.createTable(mDb);
         }
 
-        if (!checkTableExists(_collectionsItemsTable.get_table_name())) {
-            _collectionsItemsTable.createTable(_db);
+        if (!checkTableExists(mCollectionsItemsTable.get_table_name())) {
+            mCollectionsItemsTable.createTable(mDb);
         }
     }
 
@@ -165,23 +156,23 @@ public class ZotDroidDB extends SQLiteOpenHelper {
      * Destroy all the saved data and recreate if needed.
      */
     public void reset() {
-        if (_db != null){ _db.close();}
+        if (mDb != null){ mDb.close();}
 
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DROP TABLE IF EXISTS \"" + _collectionsTable.get_table_name() + "\"");
-        db.execSQL("DROP TABLE IF EXISTS \"" + _collectionsItemsTable.get_table_name() + "\"");
-        db.execSQL("DROP TABLE IF EXISTS \"" + _itemDataTable.get_table_name() + "\"");
-        db.execSQL("DROP TABLE IF EXISTS \"" + _itemDataValueTable.get_table_name() + "\"");
-        db.execSQL("DROP TABLE IF EXISTS \"" + _fieldsTable.get_table_name() + "\"");
-        db.execSQL("DROP TABLE IF EXISTS \"" + _items.get_table_name() + "\"");
-        db.execSQL("DROP TABLE IF EXISTS \"" + _itemTypes.get_table_name() + "\"");
-        db.execSQL("DROP TABLE IF EXISTS \"" + _itemAttachments.get_table_name() + "\"");
-        db.execSQL("DROP TABLE IF EXISTS \"" + _creatorTypes.get_table_name() + "\"");
-        db.execSQL("DROP TABLE IF EXISTS \"" + _creators.get_table_name() + "\"");
-        db.execSQL("DROP TABLE IF EXISTS \"" + _itemCreators.get_table_name() + "\"");
-        db.execSQL("DROP TABLE IF EXISTS \"" + _itemTags.get_table_name() + "\"");
-        db.execSQL("DROP TABLE IF EXISTS \"" + _tags.get_table_name() + "\"");
-        db.execSQL("DROP TABLE IF EXISTS \"" + _itemNotes.get_table_name() + "\"");
+        db.execSQL("DROP TABLE IF EXISTS \"" + mCollectionsTable.get_table_name() + "\"");
+        db.execSQL("DROP TABLE IF EXISTS \"" + mCollectionsItemsTable.get_table_name() + "\"");
+        db.execSQL("DROP TABLE IF EXISTS \"" + mItemDataTable.get_table_name() + "\"");
+        db.execSQL("DROP TABLE IF EXISTS \"" + mItemDataValueTable.get_table_name() + "\"");
+        db.execSQL("DROP TABLE IF EXISTS \"" + mFieldsTable.get_table_name() + "\"");
+        db.execSQL("DROP TABLE IF EXISTS \"" + mItems.get_table_name() + "\"");
+        db.execSQL("DROP TABLE IF EXISTS \"" + mItemTypes.get_table_name() + "\"");
+        db.execSQL("DROP TABLE IF EXISTS \"" + mItemAttachments.get_table_name() + "\"");
+        db.execSQL("DROP TABLE IF EXISTS \"" + mCreatorTypes.get_table_name() + "\"");
+        db.execSQL("DROP TABLE IF EXISTS \"" + mCreators.get_table_name() + "\"");
+        db.execSQL("DROP TABLE IF EXISTS \"" + mItemCreators.get_table_name() + "\"");
+        db.execSQL("DROP TABLE IF EXISTS \"" + mItemTags.get_table_name() + "\"");
+        db.execSQL("DROP TABLE IF EXISTS \"" + mTags.get_table_name() + "\"");
+        db.execSQL("DROP TABLE IF EXISTS \"" + mItemNotes.get_table_name() + "\"");
 
         onCreate(db);
     }
@@ -190,40 +181,40 @@ public class ZotDroidDB extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // Create all the tables, presumably in memory
         // We double check to see if we have any database tables already]
-        this._db = db;
-        _check_and_create();
+        this.mDb = db;
+        checkTablesAndCreateIfNeeded();
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         // Drop older table if existed
-        db.execSQL("DROP TABLE IF EXISTS " + _collectionsTable.get_table_name());
-        db.execSQL("DROP TABLE IF EXISTS " + _collectionsItemsTable.get_table_name());
-        db.execSQL("DROP TABLE IF EXISTS " + _itemDataTable.get_table_name());
-        db.execSQL("DROP TABLE IF EXISTS " + _itemDataValueTable.get_table_name());
-        db.execSQL("DROP TABLE IF EXISTS " + _fieldsTable.get_table_name());
-        db.execSQL("DROP TABLE IF EXISTS " + _items.get_table_name());
-        db.execSQL("DROP TABLE IF EXISTS " + _itemTypes.get_table_name());
-        db.execSQL("DROP TABLE IF EXISTS " + _itemAttachments.get_table_name());
-        db.execSQL("DROP TABLE IF EXISTS " + _creatorTypes.get_table_name());
-        db.execSQL("DROP TABLE IF EXISTS " + _creators.get_table_name());
-        db.execSQL("DROP TABLE IF EXISTS " + _itemCreators.get_table_name());
-        db.execSQL("DROP TABLE IF EXISTS " + _itemTags.get_table_name());
-        db.execSQL("DROP TABLE IF EXISTS " + _tags.get_table_name());
-        db.execSQL("DROP TABLE IF EXISTS " + _itemNotes.get_table_name());
+        db.execSQL("DROP TABLE IF EXISTS " + mCollectionsTable.get_table_name());
+        db.execSQL("DROP TABLE IF EXISTS " + mCollectionsItemsTable.get_table_name());
+        db.execSQL("DROP TABLE IF EXISTS " + mItemDataTable.get_table_name());
+        db.execSQL("DROP TABLE IF EXISTS " + mItemDataValueTable.get_table_name());
+        db.execSQL("DROP TABLE IF EXISTS " + mFieldsTable.get_table_name());
+        db.execSQL("DROP TABLE IF EXISTS " + mItems.get_table_name());
+        db.execSQL("DROP TABLE IF EXISTS " + mItemTypes.get_table_name());
+        db.execSQL("DROP TABLE IF EXISTS " + mItemAttachments.get_table_name());
+        db.execSQL("DROP TABLE IF EXISTS " + mCreatorTypes.get_table_name());
+        db.execSQL("DROP TABLE IF EXISTS " + mCreators.get_table_name());
+        db.execSQL("DROP TABLE IF EXISTS " + mItemCreators.get_table_name());
+        db.execSQL("DROP TABLE IF EXISTS " + mItemTags.get_table_name());
+        db.execSQL("DROP TABLE IF EXISTS " + mTags.get_table_name());
+        db.execSQL("DROP TABLE IF EXISTS " + mItemNotes.get_table_name());
 
         // Create tables again
         onCreate(db);
     }
 
     protected void clearTable(String tablename){
-        _db.execSQL("DELETE from " + tablename);
+        mDb.execSQL("DELETE from " + tablename);
     }
 
     // Get the number of rows in a table
     public int getNumRows(String tablename){
         int result = 0;
-        Cursor cursor = _db.rawQuery("select count(*) from \"" + tablename + "\";", null);
+        Cursor cursor = mDb.rawQuery("select count(*) from \"" + tablename + "\";", null);
         if (cursor != null) {
             cursor.moveToFirst();
             result = cursor.getInt(0);
@@ -237,7 +228,7 @@ public class ZotDroidDB extends SQLiteOpenHelper {
     public ContentValues readRow(String tablename, int rownumber) {
         int result = 0;
         ContentValues values = new ContentValues();
-        Cursor cursor = _db.rawQuery("select * from \"" + tablename + "\";", null);
+        Cursor cursor = mDb.rawQuery("select * from \"" + tablename + "\";", null);
         cursor.moveToPosition(rownumber);
 
         for (int i = 0; i < cursor.getColumnCount(); i++){
@@ -251,7 +242,7 @@ public class ZotDroidDB extends SQLiteOpenHelper {
     public Vector<ContentValues> readRowsWhere(String tablename, String whereClause) {
         int result = 0;
         Vector<ContentValues> vecOfValues = new Vector<ContentValues>();
-        Cursor cursor = _db.rawQuery(
+        Cursor cursor = mDb.rawQuery(
                 "SELECT * FROM \"" + tablename + "\" WHERE "+ whereClause +";", null);
 
         cursor.moveToFirst();
@@ -270,11 +261,11 @@ public class ZotDroidDB extends SQLiteOpenHelper {
     }
 
     // Existence methods
-    public boolean collectionExists(Collection c) { return _collectionsTable.collectionExists(c,_db); }
+    public boolean collectionExists(Collection c) { return mCollectionsTable.collectionExists(c, mDb); }
 
     // Update methods
     public void updateCollection(Collection collection) {
-        _collectionsTable.updateCollection(collection,_db);
+        mCollectionsTable.updateCollection(collection, mDb);
     }
 
     ///TODO IMPLEMENT
@@ -289,17 +280,17 @@ public class ZotDroidDB extends SQLiteOpenHelper {
     */
 
     public Collection getCollection(String key) {
-        return _collectionsTable.getCollection(key,_db);
+        return mCollectionsTable.getCollection(key, mDb);
     }
 
     public Collection getCollection(int rownum) {
-        return Collections.getCollectionFromValues(readRow(_collectionsTable.get_table_name(),rownum));
+        return Collections.getCollectionFromValues(readRow(mCollectionsTable.get_table_name(),rownum));
     }
 
     public Vector<Collection> getCollectionTree(){
         Vector<Collection> topParents = Collections.getCollectionFromVectorOfValues(
                 readRowsWhere(
-                        _collectionsTable.get_table_name(),
+                        mCollectionsTable.get_table_name(),
                         "parentCollectionID is NULL"
                 )
         );
@@ -316,7 +307,7 @@ public class ZotDroidDB extends SQLiteOpenHelper {
 
         Vector<Collection> children = Collections.getCollectionFromVectorOfValues(
                 readRowsWhere(
-                        _collectionsTable.get_table_name(),
+                        mCollectionsTable.get_table_name(),
                         "parentCollectionID="+id
                 )
         );
@@ -358,7 +349,7 @@ public class ZotDroidDB extends SQLiteOpenHelper {
     */
 
     public Vector<CollectionItem> getCollectionItemsFor (int collectionId){
-        return  _collectionsItemsTable.getItemsForCollection(collectionId, _db);
+        return  mCollectionsItemsTable.getItemsForCollection(collectionId, mDb);
     }
 
     ///TODO IMPLEMENT
@@ -435,12 +426,12 @@ public class ZotDroidDB extends SQLiteOpenHelper {
     */
 
     // Get number methods
-    public int getNumCollections () { return getNumRows(_collectionsTable.get_table_name()); }
-    public int getNumCollectionsItems () { return getNumRows(_collectionsItemsTable.get_table_name()); }
+    public int getNumCollections () { return getNumRows(mCollectionsTable.get_table_name()); }
+    public int getNumCollectionsItems () { return getNumRows(mCollectionsItemsTable.get_table_name()); }
 
     // Write methods
-    public void writeCollection(Collection collection){ _collectionsTable.writeCollection(collection,_db); }
-    public void writeCollectionItem(CollectionItem ic){ _collectionsItemsTable.writeCollection(ic,_db); }
+    public void writeCollection(Collection collection){ mCollectionsTable.writeCollection(collection, mDb); }
+    public void writeCollectionItem(CollectionItem ic){ mCollectionsItemsTable.writeCollection(ic, mDb); }
 
 
 
@@ -464,16 +455,16 @@ public class ZotDroidDB extends SQLiteOpenHelper {
     */
 
     public Vector<String> getTitlesWithItemIds(Vector<Integer> itemIds){
-        int fieldIdForTitle = _fieldsTable.getFieldIdFor("title", _db);
+        int fieldIdForTitle = mFieldsTable.getFieldIdFor("title", mDb);
         Vector<String> values = new Vector<String>();
         for(int id:itemIds){
-            Cursor cursor = _db.rawQuery(
-                    "SELECT valueID FROM \"" + _itemDataTable.get_table_name() + "\" WHERE " +
+            Cursor cursor = mDb.rawQuery(
+                    "SELECT valueID FROM \"" + mItemDataTable.get_table_name() + "\" WHERE " +
                             "itemID=\"" + id + "\" AND fieldID=\""+ fieldIdForTitle +"\";",
                     null);
             while (cursor.moveToNext()){
                 int vIndex = cursor.getColumnIndex("valueID");
-                values.add(_itemDataValueTable.getValueFor(vIndex,_db));
+                values.add(mItemDataValueTable.getValueFor(vIndex, mDb));
             }
             cursor.close();
         }
@@ -482,16 +473,16 @@ public class ZotDroidDB extends SQLiteOpenHelper {
     }
 
     public Vector<String> getTitlesWithCollectionItems(Vector<CollectionItem> items){
-        int fieldIdForTitle = _fieldsTable.getFieldIdFor("title", _db);
+        int fieldIdForTitle = mFieldsTable.getFieldIdFor("title", mDb);
         Vector<String> values = new Vector<String>();
         for(CollectionItem item:items){
-            Cursor cursor = _db.rawQuery(
-                    "SELECT valueID FROM \"" + _itemDataTable.get_table_name() + "\" WHERE " +
+            Cursor cursor = mDb.rawQuery(
+                    "SELECT valueID FROM \"" + mItemDataTable.get_table_name() + "\" WHERE " +
                             "itemID=\"" + item.get_itemId() + "\" AND fieldID=\""+ fieldIdForTitle +"\";",
                     null);
             while (cursor.moveToNext()){
                 int _valueID = cursor.getInt(0);
-                values.add(_itemDataValueTable.getValueFor(_valueID,_db));
+                values.add(mItemDataValueTable.getValueFor(_valueID, mDb));
             }
             cursor.close();
         }
@@ -511,7 +502,7 @@ public class ZotDroidDB extends SQLiteOpenHelper {
         Vector<Integer> typeIds = new Vector<Integer>();
         for(CollectionItem item:items){
             // we are getting typeID for the item not it's attachments so we use _items.getTypeIdFor and not _itemAttachments.getFileItemIdFast
-            int itemTypeId = _items.getTypeIdFor(item.get_itemId(), _db);
+            int itemTypeId = mItems.getTypeIdFor(item.get_itemId(), mDb);
             typeIds.add(itemTypeId);
         }
         return typeIds;
@@ -524,30 +515,30 @@ public class ZotDroidDB extends SQLiteOpenHelper {
         itemDetailed.setCollectionItem(collectionItem);
         itemDetailed.setItemTitle(getTitlesWithCollectionItems(collectionItem)); // title
 
-        int itemTypeId__ = _items.getTypeIdFor(collectionItem.get_itemId(), _db);
+        int itemTypeId__ = mItems.getTypeIdFor(collectionItem.get_itemId(), mDb);
         itemDetailed.setItemTypeId(itemTypeId__); //typeId
-        itemDetailed.setItemType(_itemTypes.getTypeNameFor(itemTypeId__, _db)); //typeName
+        itemDetailed.setItemType(mItemTypes.getTypeNameFor(itemTypeId__, mDb)); //typeName
 
-        Vector<FieldValuePair> fields =  _itemDataTable.getFieldValuePairsFor(collectionItem.get_itemId(), _db); //fieldId, valueId
-        fields = _fieldsTable.resolveFieldNamesFor(fields,_db); //fieldName
-        fields = _itemDataValueTable.resolveFieldValuesFor(fields, _db); //fieldValue
+        Vector<FieldValuePair> fields =  mItemDataTable.getFieldValuePairsFor(collectionItem.get_itemId(), mDb); //fieldId, valueId
+        fields = mFieldsTable.resolveFieldNamesFor(fields, mDb); //fieldName
+        fields = mItemDataValueTable.resolveFieldValuesFor(fields, mDb); //fieldValue
         itemDetailed.setItemFields(fields); //fields including abstract (index 90)
 
         itemDetailed.setItemCreators(getCreatorsFor(collectionItem)); // creators (authors)
 
-        Vector<ItemTag> tags = _itemTags.getTagsFor(collectionItem.get_itemId(), _db);
-        tags= _tags.getTagsDetails(tags, _db);
+        Vector<ItemTag> tags = mItemTags.getTagsFor(collectionItem.get_itemId(), mDb);
+        tags= mTags.getTagsDetails(tags, mDb);
         itemDetailed.setItemTags(tags);
 
-        Vector<ItemNote> notes = _itemNotes.getNotesFor(collectionItem.get_itemId(), _db);
+        Vector<ItemNote> notes = mItemNotes.getNotesFor(collectionItem.get_itemId(), mDb);
         itemDetailed.setItemNotes(notes);
 
-        Vector<ItemAttachment> attachments = _itemAttachments.getAttachmentFor(collectionItem, _db);
-        attachments = _items.getDetailsOfAttachmentsFor(attachments, _db);
+        Vector<ItemAttachment> attachments = mItemAttachments.getAttachmentFor(collectionItem, mDb);
+        attachments = mItems.getDetailsOfAttachmentsFor(attachments, mDb);
         for(ItemAttachment attachment:attachments){
-            int __typeId = _items.getTypeIdFor(attachment.getFileItemId(), _db);
+            int __typeId = mItems.getTypeIdFor(attachment.getFileItemId(), mDb);
             attachment.setFileItemTypeId(__typeId);
-            attachment.setFileItemType(_itemTypes.getTypeNameFor(__typeId, _db));
+            attachment.setFileItemType(mItemTypes.getTypeNameFor(__typeId, mDb));
         }
         itemDetailed.setItemAttachments(attachments);
 
@@ -555,9 +546,9 @@ public class ZotDroidDB extends SQLiteOpenHelper {
     }
 
     public Vector<Creator> getCreatorsFor(CollectionItem collectionItem){
-        Vector<Creator> creators = _itemCreators.getCreatorsIdsFor(collectionItem.get_itemId(), _db);
-        creators = _creators.getCreatorsDetails(creators, _db);
-        creators = _creatorTypes.getCreatorsTypes(creators, _db);
+        Vector<Creator> creators = mItemCreators.getCreatorsIdsFor(collectionItem.get_itemId(), mDb);
+        creators = mCreators.getCreatorsDetails(creators, mDb);
+        creators = mCreatorTypes.getCreatorsTypes(creators, mDb);
 
         return creators;
     }

@@ -13,13 +13,12 @@ import io.github.salehjg.pocketzotero.zoteroengine.types.CollectionItem;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
 
 public class ZoteroEngine {
-    private ZotDroidDB zotDroidDB;
-
-    private Context context;
-    private Activity activity;
-    private Vector<Collection> collectionTree;
-    private Listeners listeners;
-    private TreeNode treeRoot;
+    private ZotDroidDB mZotDroidDB;
+    private Context mContext;
+    private Activity mActivity;
+    private Vector<Collection> mCollectionTree;
+    private Listeners mListeners;
+    private TreeNode mTreeRoot;
 
     public interface Listeners{
         void onCollectionSelected(
@@ -36,23 +35,23 @@ public class ZoteroEngine {
             Context context,
             String sqliteDbPath,
             Listeners listeners){
-        this.activity = activity;
-        this.context = context;
-        this.listeners = listeners;
-        zotDroidDB = new ZotDroidDB(context, sqliteDbPath);
+        this.mActivity = activity;
+        this.mContext = context;
+        this.mListeners = listeners;
+        mZotDroidDB = new ZotDroidDB(context, sqliteDbPath);
     }
 
     public void getGuiCollections(LinearLayout collectionsTreeView){
-        collectionTree = this.zotDroidDB.getCollectionTree();
-        treeRoot = TreeNode.root();
+        mCollectionTree = this.mZotDroidDB.getCollectionTree();
+        mTreeRoot = TreeNode.root();
 
         // go through all of the top parents
-        for(Collection collection:collectionTree){
+        for(Collection collection: mCollectionTree){
             TreeNode node = getGuiCollectionRecursive(collection, 0);
-            treeRoot.addChild(node);
+            mTreeRoot.addChild(node);
         }
 
-        AndroidTreeView tView = new AndroidTreeView(context, treeRoot);
+        AndroidTreeView tView = new AndroidTreeView(mContext, mTreeRoot);
         tView.setDefaultNodeClickListener(new TreeNode.TreeNodeClickListener() {
             @Override
             public void onClick(TreeNode node, Object value) {
@@ -63,7 +62,7 @@ public class ZoteroEngine {
     }
 
     public void getGuiCollectionsLast(LinearLayout collectionsTreeView){
-        AndroidTreeView tView = new AndroidTreeView(context, treeRoot);
+        AndroidTreeView tView = new AndroidTreeView(mContext, mTreeRoot);
         tView.setDefaultNodeClickListener(new TreeNode.TreeNodeClickListener() {
             @Override
             public void onClick(TreeNode node, Object value) {
@@ -81,8 +80,8 @@ public class ZoteroEngine {
         Vector<Integer> ids = getItemIdsForRecyclerItems(items);
         Vector<Integer> types = getTypesForRecyclerItems(items);
 
-        if(listeners!=null) {
-            listeners.onCollectionSelected(
+        if(mListeners !=null) {
+            mListeners.onCollectionSelected(
                     tmp.collectionObject,
                     items,
                     titles,
@@ -98,12 +97,12 @@ public class ZoteroEngine {
                     level==0? R.drawable.ic_arrow_drop_down: R.drawable.ic_folder,
                     crntCollection.get_collection_name(), crntCollection.get_collection_id(), crntCollection
             );
-            return new TreeNode(entryData).setViewHolder(new TreeItemHolder(context, false, R.layout.row_tree_child, level*50));
+            return new TreeNode(entryData).setViewHolder(new TreeItemHolder(mContext, false, R.layout.row_tree_child, level*50));
         }else{
             TreeItemHolder.IconTreeItem entryData = new TreeItemHolder.IconTreeItem(
                     level==0? R.drawable.ic_arrow_drop_down: R.drawable.ic_folder,
                     crntCollection.get_collection_name(), crntCollection.get_collection_id(), crntCollection);
-            TreeNode nodeWithChildren = new TreeNode(entryData).setViewHolder(new TreeItemHolder(context, false, R.layout.row_tree_child, level*50));
+            TreeNode nodeWithChildren = new TreeNode(entryData).setViewHolder(new TreeItemHolder(mContext, false, R.layout.row_tree_child, level*50));
             for(Collection child:crntCollection.get_sub_collections()){
                 nodeWithChildren.addChild(getGuiCollectionRecursive(child, level+1));
             }
@@ -112,15 +111,15 @@ public class ZoteroEngine {
     }
 
     public Vector<CollectionItem> getItemsForRecyclerItems(Collection collection){
-        return this.zotDroidDB.getCollectionItemsFor(collection.get_collection_id());
+        return this.mZotDroidDB.getCollectionItemsFor(collection.get_collection_id());
     }
 
     public Vector<String> getTitlesForRecyclerItems(Vector<CollectionItem> items){
-        return zotDroidDB.getTitlesWithCollectionItems(items);
+        return mZotDroidDB.getTitlesWithCollectionItems(items);
     }
 
     public Vector<Integer> getTypesForRecyclerItems(Vector<CollectionItem> items){
-        return this.zotDroidDB.getTypeIdsWithCollectionItems(items);
+        return this.mZotDroidDB.getTypeIdsWithCollectionItems(items);
     }
 
     public Vector<Integer> getItemIdsForRecyclerItems(Vector<CollectionItem> items){
@@ -132,7 +131,7 @@ public class ZoteroEngine {
     }
 
     public ItemDetailed getDetailsForItemId(Collection parentCollection, CollectionItem collectionItem){
-        return zotDroidDB.getDetailsForItemId(parentCollection, collectionItem);
+        return mZotDroidDB.getDetailsForItemId(parentCollection, collectionItem);
     }
 
 }

@@ -37,12 +37,12 @@ import io.github.salehjg.pocketzotero.zoteroengine.types.ItemAttachment;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
 
 public class MainItemDetailedFragment extends Fragment {
-    ImageView imageView;
-    TextView textViewTitle, textViewType, textViewAbstract;
-    RecyclerView recyclerViewElements;
-    RecyclerAdapterElements recyclerAdapterElements;
-    RecyclerView recyclerViewAttachments;
-    RecyclerAdapterAttachments recyclerAdapterAttachments;
+    ImageView mImageView;
+    TextView mTextViewTitle, mTextViewType, mTextViewAbstract;
+    RecyclerView mRecyclerViewElements;
+    RecyclerAdapterElements mRecyclerAdapterElements;
+    RecyclerView mRecyclerViewAttachments;
+    RecyclerAdapterAttachments mRecyclerAdapterAttachments;
     AppMem mAppMem;
     
     public MainItemDetailedFragment() {
@@ -72,47 +72,47 @@ public class MainItemDetailedFragment extends Fragment {
 
         mAppMem = (AppMem)(requireActivity().getApplication());
 
-        imageView = view.findViewById(R.id.fragmainitemdetailed_titleimage);
-        textViewType = view.findViewById(R.id.fragmainitemdetailed_itemtype);
-        textViewTitle = view.findViewById(R.id.fragmainitemdetailed_itemtitle);
-        textViewAbstract = view.findViewById(R.id.fragmainitemdetailed_itemabstract);
-        recyclerViewElements = view.findViewById(R.id.fragmainitemdetailed_listelements);
-        recyclerViewAttachments = view.findViewById(R.id.fragmainitemdetailed_listattachements);
+        mImageView = view.findViewById(R.id.fragmainitemdetailed_titleimage);
+        mTextViewType = view.findViewById(R.id.fragmainitemdetailed_itemtype);
+        mTextViewTitle = view.findViewById(R.id.fragmainitemdetailed_itemtitle);
+        mTextViewAbstract = view.findViewById(R.id.fragmainitemdetailed_itemabstract);
+        mRecyclerViewElements = view.findViewById(R.id.fragmainitemdetailed_listelements);
+        mRecyclerViewAttachments = view.findViewById(R.id.fragmainitemdetailed_listattachements);
 
         // Elements Recycler's Stuff
-        recyclerViewElements.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        recyclerAdapterElements = new RecyclerAdapterElements(view.getContext(), null, false);
-        recyclerAdapterElements.setClickListener(new RecyclerAdapterElements.ItemClickListener() {
+        mRecyclerViewElements.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        mRecyclerAdapterElements = new RecyclerAdapterElements(view.getContext(), null, false);
+        mRecyclerAdapterElements.setClickListener(new RecyclerAdapterElements.ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
                 ///TODO COPY THE CLICKED FIELD PAIR TO THE CLIPBOARD
             }
         });
-        recyclerViewElements.setAdapter(recyclerAdapterElements);
+        mRecyclerViewElements.setAdapter(mRecyclerAdapterElements);
 
         // Attachments Recycler's Stuff
         LinearLayoutManager layoutManagerAttachments = new LinearLayoutManager(
                 view.getContext(), LinearLayoutManager.HORIZONTAL, false);
-        recyclerViewAttachments.setLayoutManager(layoutManagerAttachments);
-        recyclerAdapterAttachments = new RecyclerAdapterAttachments(view.getContext(), null);
-        recyclerAdapterAttachments.setClickListener(new RecyclerAdapterAttachments.ItemClickListener() {
+        mRecyclerViewAttachments.setLayoutManager(layoutManagerAttachments);
+        mRecyclerAdapterAttachments = new RecyclerAdapterAttachments(view.getContext(), null);
+        mRecyclerAdapterAttachments.setClickListener(new RecyclerAdapterAttachments.ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                ItemAttachment attachment =  recyclerAdapterAttachments.getDataAttachment(position);
+                ItemAttachment attachment =  mRecyclerAdapterAttachments.getDataAttachment(position);
                 openAttachmentFile(attachment);
             }
         });
-        recyclerAdapterAttachments.setLongClickListener(new RecyclerAdapterAttachments.ItemLongClickListener() {
+        mRecyclerAdapterAttachments.setLongClickListener(new RecyclerAdapterAttachments.ItemLongClickListener() {
             @Override
             public void onItemLongClick(View view, int position) {
                 Toast.makeText(
                         view.getContext(),
-                        recyclerAdapterAttachments.getDataAttachment(position).getFilePath(),
+                        mRecyclerAdapterAttachments.getDataAttachment(position).getFilePath(),
                         Toast.LENGTH_LONG
                 ).show();
             }
         });
-        recyclerViewAttachments.setAdapter(recyclerAdapterAttachments);
+        mRecyclerViewAttachments.setAdapter(mRecyclerAdapterAttachments);
 
         ((AppMem) requireActivity().getApplication()).setOnSelectedItemDetailedChangedListener(
                 new AppMem.ItemDetailedChangedListener() {
@@ -155,17 +155,17 @@ public class MainItemDetailedFragment extends Fragment {
                 imgResId = R.drawable.ic_other;
             }
         }
-        imageView.setBackgroundResource(imgResId);
+        mImageView.setBackgroundResource(imgResId);
 
-        textViewTitle.setText(itemDetailed.getItemTitle());
-        textViewType.setText(itemDetailed.getItemType());
-        textViewAbstract.setText(itemDetailed.getAbstractTry());
+        mTextViewTitle.setText(itemDetailed.getItemTitle());
+        mTextViewType.setText(itemDetailed.getItemType());
+        mTextViewAbstract.setText(itemDetailed.getAbstractTry());
 
-        recyclerAdapterElements.setElements(itemDetailed.getUnifiedElements());
-        recyclerAdapterAttachments.setmAttachments(itemDetailed.getItemAttachments());
+        mRecyclerAdapterElements.setElements(itemDetailed.getUnifiedElements());
+        mRecyclerAdapterAttachments.setmAttachments(itemDetailed.getItemAttachments());
 
-        recyclerAdapterElements.notifyDataSetChanged();
-        recyclerAdapterAttachments.notifyDataSetChanged();
+        mRecyclerAdapterElements.notifyDataSetChanged();
+        mRecyclerAdapterAttachments.notifyDataSetChanged();
     }
 
     ActivityResultLauncher<Intent> mIntentResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {

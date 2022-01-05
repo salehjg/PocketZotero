@@ -1,30 +1,14 @@
 package io.github.salehjg.pocketzotero;
 
-import static android.os.Build.VERSION.SDK_INT;
-
-import android.Manifest;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
-import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.permissionx.guolindev.PermissionX;
-import com.permissionx.guolindev.callback.ExplainReasonCallback;
-import com.permissionx.guolindev.callback.RequestCallback;
-import com.permissionx.guolindev.request.ExplainScope;
-
-import java.util.List;
 import java.util.Vector;
-import java.util.logging.ErrorManager;
 
-import io.github.salehjg.pocketzotero.mainactivity.MainActivity;
 import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterItems;
 import io.github.salehjg.pocketzotero.zoteroengine.ZoteroEngine;
 import io.github.salehjg.pocketzotero.zoteroengine.types.Collection;
@@ -33,103 +17,103 @@ import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
 // This class is used to hold global stuff in memory.
 public class AppMem extends Application {
 
-    private Vector<RecordedStatus> recordedStatuses;
-    private ZoteroEngine zoteroEngine;
+    private Vector<RecordedStatus> mRecordedStatuses;
+    private ZoteroEngine mZoteroEngine;
 
-    private ViewPager2 viewPager;
-    private ItemDetailed selectedItemDetailed;
-    private ItemDetailedChangedListener selectedItemDetailedChangedListener = null;
-    private ProgressBar progressBar;
-    private RecyclerAdapterItems recyclerAdapterItems;
-    private Collection selectedCollection;
-    private Preparation preparation;
+    private ViewPager2 mViewPager;
+    private ItemDetailed mSelectedItemDetailed;
+    private ItemDetailedChangedListener mSelectedItemDetailedChangedListener = null;
+    private ProgressBar mProgressBar;
+    private RecyclerAdapterItems mRecyclerAdapterItems;
+    private Collection mSelectedCollection;
+    private Preparation mPreparation;
 
     @Override
     public void onCreate() {
-        recyclerAdapterItems = new RecyclerAdapterItems(
+        mRecyclerAdapterItems = new RecyclerAdapterItems(
                 getApplicationContext(),
                 null,
                 null,
                 null,
                 null);
 
-        preparation = new Preparation();
-        recordedStatuses = new Vector<>();
+        mPreparation = new Preparation();
+        mRecordedStatuses = new Vector<>();
         super.onCreate();
     }
 
     public void recordStatusSingle(int statusCode){
-        recordedStatuses.add(new RecordedStatus(statusCode));
+        mRecordedStatuses.add(new RecordedStatus(statusCode));
     }
 
     public void recordStatusSingle(String customStatusMessage){
-        recordedStatuses.add(new RecordedStatus(customStatusMessage));
+        mRecordedStatuses.add(new RecordedStatus(customStatusMessage));
     }
 
     public void recordStatusSingle(RecordedStatus status){
-        recordedStatuses.add(status);
+        mRecordedStatuses.add(status);
     }
 
     public Vector<RecordedStatus> getAllRecordedStatuses(){
-        return recordedStatuses;
+        return mRecordedStatuses;
     }
 
     public Vector<String> getAllRecordedStatusesStrings(){
         Vector<String> s = new Vector<>();
-        for(RecordedStatus r:recordedStatuses){
+        for(RecordedStatus r: mRecordedStatuses){
             s.add(r.toString());
         }
         return s;
     }
 
     public Preparation getPreparation() {
-        return preparation;
+        return mPreparation;
     }
 
     public Collection getSelectedCollection() {
-        return selectedCollection;
+        return mSelectedCollection;
     }
 
     public void setSelectedCollection(Collection selectedCollection) {
-        this.selectedCollection = selectedCollection;
+        this.mSelectedCollection = selectedCollection;
     }
 
     public RecyclerAdapterItems getRecyclerAdapterItems() {
-        return recyclerAdapterItems;
+        return mRecyclerAdapterItems;
     }
 
     public ProgressBar getProgressBar() {
-        return progressBar;
+        return mProgressBar;
     }
 
     public void setProgressBar(ProgressBar progressBar) {
-        this.progressBar = progressBar;
+        this.mProgressBar = progressBar;
     }
 
     public ZoteroEngine getZoteroEngine() {
-        return zoteroEngine;
+        return mZoteroEngine;
     }
 
     public void setZoteroEngine(ZoteroEngine zoteroEngine) {
-        this.zoteroEngine = zoteroEngine;
+        this.mZoteroEngine = zoteroEngine;
     }
 
     public ViewPager2 getViewPager() {
-        return viewPager;
+        return mViewPager;
     }
 
     public void setViewPager(ViewPager2 viewPager) {
-        this.viewPager = viewPager;
+        this.mViewPager = viewPager;
     }
 
     public ItemDetailed getSelectedItemDetailed() {
-        return selectedItemDetailed;
+        return mSelectedItemDetailed;
     }
 
     public void setSelectedItemDetailed(ItemDetailed selectedItemDetailed) {
-        this.selectedItemDetailed = selectedItemDetailed;
-        if(this.selectedItemDetailedChangedListener!=null) {
-            this.selectedItemDetailedChangedListener.onItemDetailedChanged(this.selectedItemDetailed);
+        this.mSelectedItemDetailed = selectedItemDetailed;
+        if(this.mSelectedItemDetailedChangedListener !=null) {
+            this.mSelectedItemDetailedChangedListener.onItemDetailedChanged(this.mSelectedItemDetailed);
         }
     }
 
@@ -138,7 +122,7 @@ public class AppMem extends Application {
     }
 
     public void setOnSelectedItemDetailedChangedListener(ItemDetailedChangedListener selectedItemDetailedChangedListener) {
-        this.selectedItemDetailedChangedListener = selectedItemDetailedChangedListener;
+        this.mSelectedItemDetailedChangedListener = selectedItemDetailedChangedListener;
     }
 
     private SharedPreferences.Editor getPreferenceEditor(){

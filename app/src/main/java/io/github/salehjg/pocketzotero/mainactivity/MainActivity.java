@@ -43,28 +43,28 @@ public class MainActivity extends AppCompatActivity {
     Toolbar mToolbar;
     NavigationView mNavigationView;
     DrawerLayout mDrawerLayout;
-    FitButton btnMain, btnSettings, btnAbout, btnStatus;
-    LinearLayout linearLayoutCollections;
+    FitButton mImageButtonMain, mImageButtonSettings, mImageButtonAbout, mImageButtonStatus;
+    LinearLayout mLinearLayoutCollections;
     ProgressBar mProgressBar;
     AppMem mAppMem;
-    boolean doubleBackToExitPressedOnce = false;
+    boolean mDoubleBackToExitPressedOnce = false;
 
     @Override
     public void onBackPressed() {
-        if (doubleBackToExitPressedOnce) {
+        if (mDoubleBackToExitPressedOnce) {
             //this.finishAffinity();
             System.exit(0);
             return;
         }
 
-        this.doubleBackToExitPressedOnce = true;
+        this.mDoubleBackToExitPressedOnce = true;
         Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
 
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
 
             @Override
             public void run() {
-                doubleBackToExitPressedOnce=false;
+                mDoubleBackToExitPressedOnce =false;
             }
         }, 2000);
     }
@@ -92,36 +92,36 @@ public class MainActivity extends AppCompatActivity {
         mProgressBar.setProgress(0);
         mAppMem.setProgressBar(mProgressBar);
 
-        btnMain = findViewById(R.id.activitymain_btn_main);
-        btnSettings = findViewById(R.id.activitymain_btn_settings);
-        btnAbout = findViewById(R.id.activitymain_btn_about);
-        btnStatus = findViewById(R.id.activitymain_btn_status);
-        btnMain.setOnClickListener(new View.OnClickListener() {
+        mImageButtonMain = findViewById(R.id.activitymain_btn_main);
+        mImageButtonSettings = findViewById(R.id.activitymain_btn_settings);
+        mImageButtonAbout = findViewById(R.id.activitymain_btn_about);
+        mImageButtonStatus = findViewById(R.id.activitymain_btn_status);
+        mImageButtonMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showFragment(new MainFragment());
             }
         });
-        btnSettings.setOnClickListener(new View.OnClickListener() {
+        mImageButtonSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showFragment(new settingsFragment());
             }
         });
-        btnAbout.setOnClickListener(new View.OnClickListener() {
+        mImageButtonAbout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showFragment(new AboutFragment());
             }
         });
-        btnStatus.setOnClickListener(new View.OnClickListener() {
+        mImageButtonStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showFragment(new StatusFragment());
             }
         });
 
-        linearLayoutCollections = findViewById(R.id.activitymain_collections_linearlayout);
+        mLinearLayoutCollections = findViewById(R.id.activitymain_collections_linearlayout);
 
         List<String> permissions = new Vector<>();
         permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE);
@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
     private void runStartupSequence(){
         // Forced = true : force to re-run the sequence even if it has been run before. (inc. downloading db, decoding collections, ...)
         // Forced = false: in case the sequence has been run before, re-use the data. This is useful for situations like display rotation, dynamic ui, ...
-        mAppMem.getPreparation().startupSequence(getApplication(), this, linearLayoutCollections, false);
+        mAppMem.getPreparation().startupSequence(getApplication(), this, mLinearLayoutCollections, false);
 
     }
 

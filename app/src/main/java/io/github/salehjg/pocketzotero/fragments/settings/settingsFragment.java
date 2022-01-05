@@ -38,21 +38,21 @@ import io.github.salehjg.pocketzotero.RecordedStatus;
 import io.github.salehjg.pocketzotero.smbutils.SmbScanner;
 
 public class settingsFragment extends Fragment {
-    RadioButton radioButtonLocalScoped, radioButtonSmb;
-    Spinner spinnerSmbServerIp;
-    EditText editTextSmbServerIp, editTextSmbServerUser, editTextSmbServerPass;
-    FitButton imageButtonSearchServer, imageButtonStopSearching;
-    FitButton imageButtonImportLocalScoped;
-    FitButton buttonSave;
-    EditText editTextSharedPath;
+    RadioButton mRadioButtonLocalScoped, mRadioButtonSmb;
+    Spinner mSpinnerSmbServerIp;
+    EditText mEditTextSmbServerIp, mEditTextSmbServerUser, mEditTextSmbServerPass;
+    FitButton mImageButtonSearchServer, mImageButtonStopSearching;
+    FitButton mImageButtonImportLocalScoped;
+    FitButton mButtonSave;
+    EditText mEditTextSharedPath;
 
-    boolean isLocalScoped;
-    boolean isSharedSmb;
+    boolean mIsLocalScoped;
+    boolean mIsSharedSmb;
 
-    List<String> spinnerSmbServerIpItems;
-    ArrayAdapter<String> spinnerSmbServerIpAdapter;
-    SmbScanner smbScanner;
-    ProgressBar progressBar;
+    List<String> mSpinnerSmbServerIpItems;
+    ArrayAdapter<String> mSpinnerSmbServerIpAdapter;
+    SmbScanner mSmbScanner;
+    ProgressBar mProgressBar;
 
     AppMem mAppMem;
 
@@ -78,8 +78,8 @@ public class settingsFragment extends Fragment {
     }
 
     private void scanRadioButtons(){
-        isLocalScoped = radioButtonLocalScoped.isChecked();
-        isSharedSmb = radioButtonSmb.isChecked();
+        mIsLocalScoped = mRadioButtonLocalScoped.isChecked();
+        mIsSharedSmb = mRadioButtonSmb.isChecked();
     }
 
     @Override
@@ -88,40 +88,40 @@ public class settingsFragment extends Fragment {
 
         mAppMem = ((AppMem)requireActivity().getApplication());
 
-        spinnerSmbServerIpItems = new Vector<>();
-        radioButtonLocalScoped = view.findViewById(R.id.fragsettings_radio_local_scoped);
-        radioButtonSmb = view.findViewById(R.id.fragsettings_radio_smb);
-        spinnerSmbServerIp = view.findViewById(R.id.fragsettings_spinner_smbserver);
-        editTextSmbServerIp = view.findViewById(R.id.fragsettings_edittext_smbserver);
-        imageButtonSearchServer = view.findViewById(R.id.fragsettings_searchserver_btn);
-        imageButtonStopSearching = view.findViewById(R.id.fragsettings_stopsearching_btn);
-        imageButtonImportLocalScoped = view.findViewById(R.id.fragsettings_import_localscp_btn);
-        buttonSave = view.findViewById(R.id.fragsettings_save_btn);
-        editTextSharedPath = view.findViewById(R.id.fragsettings_text_sharedpath);
-        editTextSmbServerUser = view.findViewById(R.id.fragsettings_text_user);
-        editTextSmbServerPass = view.findViewById(R.id.fragsettings_text_pass);
-        progressBar = mAppMem.getProgressBar();
+        mSpinnerSmbServerIpItems = new Vector<>();
+        mRadioButtonLocalScoped = view.findViewById(R.id.fragsettings_radio_local_scoped);
+        mRadioButtonSmb = view.findViewById(R.id.fragsettings_radio_smb);
+        mSpinnerSmbServerIp = view.findViewById(R.id.fragsettings_spinner_smbserver);
+        mEditTextSmbServerIp = view.findViewById(R.id.fragsettings_edittext_smbserver);
+        mImageButtonSearchServer = view.findViewById(R.id.fragsettings_searchserver_btn);
+        mImageButtonStopSearching = view.findViewById(R.id.fragsettings_stopsearching_btn);
+        mImageButtonImportLocalScoped = view.findViewById(R.id.fragsettings_import_localscp_btn);
+        mButtonSave = view.findViewById(R.id.fragsettings_save_btn);
+        mEditTextSharedPath = view.findViewById(R.id.fragsettings_text_sharedpath);
+        mEditTextSmbServerUser = view.findViewById(R.id.fragsettings_text_user);
+        mEditTextSmbServerPass = view.findViewById(R.id.fragsettings_text_pass);
+        mProgressBar = mAppMem.getProgressBar();
 
-        radioButtonLocalScoped.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mRadioButtonLocalScoped.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 scanRadioButtons();
-                radioButtonSmb.setChecked(!b);
+                mRadioButtonSmb.setChecked(!b);
             }
         });
-        radioButtonSmb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mRadioButtonSmb.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 scanRadioButtons();
-                radioButtonLocalScoped.setChecked(!b);
+                mRadioButtonLocalScoped.setChecked(!b);
             }
         });
-        spinnerSmbServerIpAdapter = new ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, spinnerSmbServerIpItems);
-        spinnerSmbServerIp.setAdapter(spinnerSmbServerIpAdapter);
-        spinnerSmbServerIp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        mSpinnerSmbServerIpAdapter = new ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, mSpinnerSmbServerIpItems);
+        mSpinnerSmbServerIp.setAdapter(mSpinnerSmbServerIpAdapter);
+        mSpinnerSmbServerIp.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                editTextSmbServerIp.setText(spinnerSmbServerIpAdapter.getItem(i));
+                mEditTextSmbServerIp.setText(mSpinnerSmbServerIpAdapter.getItem(i));
             }
 
             @Override
@@ -129,31 +129,31 @@ public class settingsFragment extends Fragment {
 
             }
         });
-        imageButtonSearchServer.setOnClickListener(new View.OnClickListener() {
+        mImageButtonSearchServer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(smbScanner!=null){
+                if(mSmbScanner !=null){
                     // skip if there is a scan already running in background!
-                    if(!smbScanner.isTerminated()) return;
+                    if(!mSmbScanner.isTerminated()) return;
                 }
-                smbScanner = new SmbScanner(false, new SmbScanner.Listener() {
+                mSmbScanner = new SmbScanner(false, new SmbScanner.Listener() {
                     @Override
                     public void onFinished(Vector<String> serversFound) {
-                        spinnerSmbServerIpItems.clear();
-                        spinnerSmbServerIpItems.addAll(serversFound);
-                        spinnerSmbServerIpAdapter.notifyDataSetChanged();
+                        mSpinnerSmbServerIpItems.clear();
+                        mSpinnerSmbServerIpItems.addAll(serversFound);
+                        mSpinnerSmbServerIpAdapter.notifyDataSetChanged();
                     }
 
                     @Override
                     public void onServerFound(String theNewServer, Vector<String> serversFound) {
-                        spinnerSmbServerIpItems.clear();
-                        spinnerSmbServerIpItems.addAll(serversFound);
-                        spinnerSmbServerIpAdapter.notifyDataSetChanged();
+                        mSpinnerSmbServerIpItems.clear();
+                        mSpinnerSmbServerIpItems.addAll(serversFound);
+                        mSpinnerSmbServerIpAdapter.notifyDataSetChanged();
                     }
 
                     @Override
                     public void onProgressTick(int percent) {
-                        progressBar.setProgress(percent);
+                        mProgressBar.setProgress(percent);
                     }
 
                     @Override
@@ -165,18 +165,18 @@ public class settingsFragment extends Fragment {
                     }
                 });
 
-                smbScanner.runInBackground();
+                mSmbScanner.runInBackground();
             }
         });
-        imageButtonStopSearching.setOnClickListener(new View.OnClickListener() {
+        mImageButtonStopSearching.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(smbScanner!=null){
-                    smbScanner.shutdownNow();
+                if(mSmbScanner !=null){
+                    mSmbScanner.shutdownNow();
                 }
             }
         });
-        imageButtonImportLocalScoped.setOnClickListener(new View.OnClickListener() {
+        mImageButtonImportLocalScoped.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
@@ -205,15 +205,15 @@ public class settingsFragment extends Fragment {
 
             }
         });
-        buttonSave.setOnClickListener(new View.OnClickListener() {
+        mButtonSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 try {
-                    mAppMem.setStorageMode(isLocalScoped, isSharedSmb);
-                    mAppMem.setStorageSmbServerIp(editTextSmbServerIp.getText().toString());
-                    mAppMem.setStorageSmbServerSharedPath(editTextSharedPath.getText().toString());
-                    mAppMem.setStorageSmbServerUsername(editTextSmbServerUser.getText().toString());
-                    mAppMem.setStorageSmbServerPassword(editTextSmbServerPass.getText().toString());
+                    mAppMem.setStorageMode(mIsLocalScoped, mIsSharedSmb);
+                    mAppMem.setStorageSmbServerIp(mEditTextSmbServerIp.getText().toString());
+                    mAppMem.setStorageSmbServerSharedPath(mEditTextSharedPath.getText().toString());
+                    mAppMem.setStorageSmbServerUsername(mEditTextSmbServerUser.getText().toString());
+                    mAppMem.setStorageSmbServerPassword(mEditTextSmbServerPass.getText().toString());
                     Toast.makeText(
                             requireContext(),
                             mAppMem.getPreparation().getResourceString(R.string.MsgSettingsSave1),
@@ -235,24 +235,24 @@ public class settingsFragment extends Fragment {
 
     private void loadSettings(){
         try {
-            isLocalScoped = mAppMem.getStorageModeIsLocalScoped();
-            isSharedSmb = mAppMem.getStorageModeIsSharedSmb();
-            radioButtonLocalScoped.setChecked(isLocalScoped);
-            radioButtonSmb.setChecked(isSharedSmb);
+            mIsLocalScoped = mAppMem.getStorageModeIsLocalScoped();
+            mIsSharedSmb = mAppMem.getStorageModeIsSharedSmb();
+            mRadioButtonLocalScoped.setChecked(mIsLocalScoped);
+            mRadioButtonSmb.setChecked(mIsSharedSmb);
 
             String ip = mAppMem.getStorageSmbServerIp();
             if(!ip.isEmpty()) {
-                editTextSmbServerIp.setText(ip);
+                mEditTextSmbServerIp.setText(ip);
             }
 
             String sharedPath = mAppMem.getStorageSmbServerSharedPath();
-            editTextSharedPath.setText(sharedPath);
+            mEditTextSharedPath.setText(sharedPath);
 
             String smbUser = mAppMem.getStorageSmbServerUsername();
-            editTextSmbServerUser.setText(smbUser);
+            mEditTextSmbServerUser.setText(smbUser);
 
             String smbPass = mAppMem.getStorageSmbServerPassword();
-            editTextSmbServerPass.setText(smbPass);
+            mEditTextSmbServerPass.setText(smbPass);
         }
         catch (Exception e){
             Toast.makeText(

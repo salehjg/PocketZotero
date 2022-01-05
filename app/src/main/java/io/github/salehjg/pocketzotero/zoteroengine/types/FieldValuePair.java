@@ -2,51 +2,51 @@ package io.github.salehjg.pocketzotero.zoteroengine.types;
 
 public class FieldValuePair {
     public FieldValuePair(int fieldId, int valueId, String fieldName, String value){
-        this._fieldId = fieldId;
-        this._valueId = valueId;
-        this._fieldName = fieldName;
-        this._value = value;
+        this.mFieldId = fieldId;
+        this.mValueId = valueId;
+        this.mFieldName = fieldName;
+        this.mValue = value;
     }
 
     public FieldValuePair(){
-        this._fieldId = -1;
-        this._valueId = -1;
-        this._fieldName = "?";
-        this._value = "?";
+        this.mFieldId = -1;
+        this.mValueId = -1;
+        this.mFieldName = "?";
+        this.mValue = "?";
     }
 
     public int get_fieldId() {
-        return _fieldId;
+        return mFieldId;
     }
 
     public int get_valueId() {
-        return _valueId;
+        return mValueId;
     }
 
     public String get_fieldName() {
-        return _fieldName;
+        return mFieldName;
     }
 
     public String get_value() {
-        return _value;
+        return mValue;
     }
 
     public void set_fieldId(int _fieldId) {
-        this._fieldId = _fieldId;
+        this.mFieldId = _fieldId;
     }
 
     public void set_valueId(int _valueId) {
-        this._valueId = _valueId;
+        this.mValueId = _valueId;
     }
 
     public void set_fieldName(String _fieldName) {
-        this._fieldName = _fieldName;
+        this.mFieldName = _fieldName;
     }
 
     public void set_value(String _value) {
-        this._value = _value;
+        this.mValue = _value;
     }
 
-    protected int _fieldId, _valueId;
-    protected String _fieldName, _value;
+    protected int mFieldId, mValueId;
+    protected String mFieldName, mValue;
 }

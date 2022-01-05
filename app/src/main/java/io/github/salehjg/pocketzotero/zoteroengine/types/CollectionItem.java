@@ -2,34 +2,34 @@ package io.github.salehjg.pocketzotero.zoteroengine.types;
 
 public class CollectionItem {
     public int get_collectionId() {
-        return _collectionId;
+        return mCollectionId;
     }
 
     public void set_collectionId(int _collectionId) {
-        this._collectionId = _collectionId;
+        this.mCollectionId = _collectionId;
     }
 
     public int get_itemId() {
-        return _itemId;
+        return mItemId;
     }
 
     public void set_itemId(int _itemId) {
-        this._itemId = _itemId;
+        this.mItemId = _itemId;
     }
 
     public int get_orderIndex() {
-        return _orderIndex;
+        return mOrderIndex;
     }
 
     public void set_orderIndex(int _orderIndex) {
-        this._orderIndex = _orderIndex;
+        this.mOrderIndex = _orderIndex;
     }
 
-    protected int    _collectionId;
-    protected int    _itemId;
-    protected int    _orderIndex;
+    protected int mCollectionId;
+    protected int mItemId;
+    protected int mOrderIndex;
 
     public String toString() {
-        return _collectionId + " -> " + _itemId;
+        return mCollectionId + " -> " + mItemId;
     }
 }

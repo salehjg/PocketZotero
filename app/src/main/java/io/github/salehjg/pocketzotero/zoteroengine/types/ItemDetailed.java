@@ -5,60 +5,60 @@ import java.util.Vector;
 import io.github.salehjg.pocketzotero.utils.UnifiedTypes;
 
 public class ItemDetailed {
-    private Collection parentCollection;
-    private CollectionItem collectionItem;
-    private String itemTitle, itemType;
-    private int itemTypeId;
-    private Vector<FieldValuePair> itemFields;
-    private Vector<Creator> itemCreators;
-    private Vector<ItemTag> itemTags;
-    private Vector<ItemNote> itemNotes;
-    private Vector<ItemAttachment> itemAttachments;
+    protected Collection mParentCollection;
+    protected CollectionItem mCollectionItem;
+    protected String mItemTitle, mItemType;
+    protected int mItemTypeId;
+    protected Vector<FieldValuePair> mItemFields;
+    protected Vector<Creator> mItemCreators;
+    protected Vector<ItemTag> mItemTags;
+    protected Vector<ItemNote> mItemNotes;
+    protected Vector<ItemAttachment> mItemAttachments;
 
     public Vector<ItemNote> getItemNotes() {
-        return itemNotes;
+        return mItemNotes;
     }
 
     public void setItemNotes(Vector<ItemNote> itemNotes) {
-        this.itemNotes = itemNotes;
+        this.mItemNotes = itemNotes;
     }
 
     public Vector<ItemTag> getItemTags() {
-        return itemTags;
+        return mItemTags;
     }
 
     public void setItemTags(Vector<ItemTag> itemTags) {
-        this.itemTags = itemTags;
+        this.mItemTags = itemTags;
     }
 
     public Vector<Creator> getItemCreators() {
-        return itemCreators;
+        return mItemCreators;
     }
 
     public void setItemCreators(Vector<Creator> itemCreators) {
-        this.itemCreators = itemCreators;
+        this.mItemCreators = itemCreators;
     }
 
     public Collection getParentCollection() {
-        return parentCollection;
+        return mParentCollection;
     }
 
     public void setParentCollection(Collection parentCollection) {
-        this.parentCollection = parentCollection;
+        this.mParentCollection = parentCollection;
     }
 
     public String getItemTitle() {
-        return itemTitle;
+        return mItemTitle;
     }
 
     public void setItemTitle(String itemTitle) {
-        this.itemTitle = itemTitle;
+        this.mItemTitle = itemTitle;
     }
 
     public int getAbstractsFieldIndex(){
         boolean hasAbstract = false;
         int i=0;
-        for(FieldValuePair pair:itemFields){
+        for(FieldValuePair pair: mItemFields){
             if(pair.get_fieldId()==90) { //abstract
                 hasAbstract = true;
                 break;
@@ -71,60 +71,60 @@ public class ItemDetailed {
     public String getAbstractTry(){
         int abstractFieldIndexIfExists = getAbstractsFieldIndex();
         if(abstractFieldIndexIfExists!=-1){
-            return itemFields.get(abstractFieldIndexIfExists).get_value();
+            return mItemFields.get(abstractFieldIndexIfExists).get_value();
         }else{
             return "";
         }
     }
 
     public String getItemType() {
-        return itemType;
+        return mItemType;
     }
 
     public void setItemType(String itemType) {
-        this.itemType = itemType;
+        this.mItemType = itemType;
     }
 
     public Vector<FieldValuePair> getItemFields() {
-        return itemFields;
+        return mItemFields;
     }
 
     public void setItemFields(Vector<FieldValuePair> itemFields) {
-        this.itemFields = itemFields;
+        this.mItemFields = itemFields;
     }
 
     public Vector<ItemAttachment> getItemAttachments() {
-        return itemAttachments;
+        return mItemAttachments;
     }
 
     public void setItemAttachments(Vector<ItemAttachment> itemAttachments) {
-        this.itemAttachments = itemAttachments;
+        this.mItemAttachments = itemAttachments;
     }
 
     public CollectionItem getCollectionItem() {
-        return collectionItem;
+        return mCollectionItem;
     }
 
     public void setCollectionItem(CollectionItem collectionItem) {
-        this.collectionItem = collectionItem;
+        this.mCollectionItem = collectionItem;
     }
 
     public int getItemTypeId() {
-        return itemTypeId;
+        return mItemTypeId;
     }
 
     public void setItemTypeId(int itemTypeId) {
-        this.itemTypeId = itemTypeId;
+        this.mItemTypeId = itemTypeId;
     }
 
     public ItemDetailed(){
-        parentCollection = null;
-        collectionItem = null;
-        itemTitle = itemType = "";
-        itemFields = new Vector<>();
-        itemAttachments = new Vector<>();
-        itemTags = new Vector<>();
-        itemNotes = new Vector<>();
+        mParentCollection = null;
+        mCollectionItem = null;
+        mItemTitle = mItemType = "";
+        mItemFields = new Vector<>();
+        mItemAttachments = new Vector<>();
+        mItemTags = new Vector<>();
+        mItemNotes = new Vector<>();
     }
 
     public ItemDetailed(
@@ -138,16 +138,16 @@ public class ItemDetailed {
             Vector<ItemTag> itemTags,
             Vector<ItemNote> itemNotes,
             Vector<ItemAttachment> attachments){
-        parentCollection = collection;
-        this.collectionItem = collectionItem;
-        itemTitle = title;
-        itemType = type;
-        itemTypeId = typeId;
-        itemFields = fields;
-        itemCreators = creators;
-        this.itemTags = itemTags;
-        this.itemNotes = itemNotes;
-        itemAttachments = attachments;
+        mParentCollection = collection;
+        this.mCollectionItem = collectionItem;
+        mItemTitle = title;
+        mItemType = type;
+        mItemTypeId = typeId;
+        mItemFields = fields;
+        mItemCreators = creators;
+        this.mItemTags = itemTags;
+        this.mItemNotes = itemNotes;
+        mItemAttachments = attachments;
     }
 
     public Vector<UnifiedElement> getUnifiedElements(){
@@ -155,26 +155,26 @@ public class ItemDetailed {
         // Unifies the Vector members into a single vector of type UnifiedElement
         Vector<UnifiedElement> elements = new Vector<>();
 
-        if(this.itemCreators!=null){
-            for(Creator creator:itemCreators) {
+        if(this.mItemCreators !=null){
+            for(Creator creator: mItemCreators) {
                 elements.add(new UnifiedElement(UnifiedTypes.AUTHOR, creator, null, null, null));
             }
         }
 
-        if(this.itemFields!=null){
-            for(FieldValuePair field:itemFields) {
+        if(this.mItemFields !=null){
+            for(FieldValuePair field: mItemFields) {
                 elements.add(new UnifiedElement(UnifiedTypes.FIELD, null, field, null, null));
             }
         }
 
-        if(this.itemTags!=null){
-            for(ItemTag itemTag:itemTags) {
+        if(this.mItemTags !=null){
+            for(ItemTag itemTag: mItemTags) {
                 elements.add(new UnifiedElement(UnifiedTypes.TAG, null, null, itemTag, null));
             }
         }
 
-        if(this.itemNotes!=null){
-            for(ItemNote itemNote:itemNotes) {
+        if(this.mItemNotes !=null){
+            for(ItemNote itemNote: mItemNotes) {
                 elements.add(new UnifiedElement(UnifiedTypes.NOTE, null, null, null, itemNote));
             }
         }

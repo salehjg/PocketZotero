@@ -1,66 +1,65 @@
 package io.github.salehjg.pocketzotero.zoteroengine.types;
 
 public class ItemAttachment {
-    private int fileItemId, parentItemId, linkMode, syncState;                      // table: itemAttachments
-    private String contentType, filePath, storageModTime, storageHash, charsetId;   // table: itemAttachments
-
-    private int fileItemTypeId, fileLibraryId, fileVersion, fileSynced;                             // table: items
-    private String fileDateAdded, fileItemType, fileKey, fileDateModified, fileClientModified;      // table: items
+    protected int mFileItemId, mParentItemId, mLinkMode, mSyncState;                      // table: itemAttachments
+    protected String mContentType, mFilePath, mStorageModTime, mStorageHash, mCharsetId;   // table: itemAttachments
+    protected int mFileItemTypeId, mFileLibraryId, mFileVersion, mFileSynced;                             // table: items
+    protected String mFileDateAdded, mFileItemType, mFileKey, mFileDateModified, mFileClientModified;      // table: items
 
     public String getFileItemType() {
-        return fileItemType;
+        return mFileItemType;
     }
 
     public void setFileItemType(String fileItemType) {
-        this.fileItemType = fileItemType;
+        this.mFileItemType = fileItemType;
     }
 
     public int getFileItemId() {
-        return fileItemId;
+        return mFileItemId;
     }
 
     public void setFileItemId(int fileItemId) {
-        this.fileItemId = fileItemId;
+        this.mFileItemId = fileItemId;
     }
 
     public int getParentItemId() {
-        return parentItemId;
+        return mParentItemId;
     }
 
     public void setParentItemId(int parentItemId) {
-        this.parentItemId = parentItemId;
+        this.mParentItemId = parentItemId;
     }
 
     public int getLinkMode() {
-        return linkMode;
+        return mLinkMode;
     }
 
     public void setLinkMode(int linkMode) {
-        this.linkMode = linkMode;
+        this.mLinkMode = linkMode;
     }
 
     public int getSyncState() {
-        return syncState;
+        return mSyncState;
     }
 
     public void setSyncState(int syncState) {
-        this.syncState = syncState;
+        this.mSyncState = syncState;
     }
 
     public String getContentType() {
-        return contentType;
+        return mContentType;
     }
 
     public void setContentType(String contentType) {
-        this.contentType = contentType;
+        this.mContentType = contentType;
     }
 
     public String getFilePath() {
-        return filePath;
+        return mFilePath;
     }
 
     public void setFilePath(String filePath) {
-        this.filePath = filePath;
+        this.mFilePath = filePath;
     }
 
     public String extractFileName(){
@@ -84,91 +83,91 @@ public class ItemAttachment {
     }
 
     public String getStorageModTime() {
-        return storageModTime;
+        return mStorageModTime;
     }
 
     public void setStorageModTime(String storageModTime) {
-        this.storageModTime = storageModTime;
+        this.mStorageModTime = storageModTime;
     }
 
     public String getStorageHash() {
-        return storageHash;
+        return mStorageHash;
     }
 
     public void setStorageHash(String storageHash) {
-        this.storageHash = storageHash;
+        this.mStorageHash = storageHash;
     }
 
     public String getCharsetId() {
-        return charsetId;
+        return mCharsetId;
     }
 
     public void setCharsetId(String charsetId) {
-        this.charsetId = charsetId;
+        this.mCharsetId = charsetId;
     }
 
     public int getFileItemTypeId() {
-        return fileItemTypeId;
+        return mFileItemTypeId;
     }
 
     public void setFileItemTypeId(int fileItemTypeId) {
-        this.fileItemTypeId = fileItemTypeId;
+        this.mFileItemTypeId = fileItemTypeId;
     }
 
     public int getFileLibraryId() {
-        return fileLibraryId;
+        return mFileLibraryId;
     }
 
     public void setFileLibraryId(int fileLibraryId) {
-        this.fileLibraryId = fileLibraryId;
+        this.mFileLibraryId = fileLibraryId;
     }
 
     public int getFileVersion() {
-        return fileVersion;
+        return mFileVersion;
     }
 
     public void setFileVersion(int fileVersion) {
-        this.fileVersion = fileVersion;
+        this.mFileVersion = fileVersion;
     }
 
     public int getFileSynced() {
-        return fileSynced;
+        return mFileSynced;
     }
 
     public void setFileSynced(int fileSynced) {
-        this.fileSynced = fileSynced;
+        this.mFileSynced = fileSynced;
     }
 
     public String getFileKey() {
-        return fileKey;
+        return mFileKey;
     }
 
     public void setFileKey(String fileKey) {
-        this.fileKey = fileKey;
+        this.mFileKey = fileKey;
     }
 
     public String getFileDateAdded() {
-        return fileDateAdded;
+        return mFileDateAdded;
     }
 
     public void setFileDateAdded(String fileDateAdded) {
-        this.fileDateAdded = fileDateAdded;
+        this.mFileDateAdded = fileDateAdded;
     }
 
     public String getFileDateModified() {
-        return fileDateModified;
+        return mFileDateModified;
     }
 
     public void setFileDateModified(String fileDateModified) {
-        this.fileDateModified = fileDateModified;
+        this.mFileDateModified = fileDateModified;
     }
 
     public String getFileClientModified() {
-        return fileClientModified;
+        return mFileClientModified;
     }
 
     public void setFileClientModified(String fileClientModified) {
-        this.fileClientModified = fileClientModified;
+        this.mFileClientModified = fileClientModified;
     }
 
 }

@@ -4,11 +4,11 @@ package io.github.salehjg.pocketzotero.zoteroengine.types;
 import io.github.salehjg.pocketzotero.utils.UnifiedTypes;
 
 public class UnifiedElement {
-    private UnifiedTypes mType;
-    private Creator mCreator;
-    private ItemTag mTag;
-    private ItemNote mNote;
-    private FieldValuePair mField;
+    protected UnifiedTypes mType;
+    protected Creator mCreator;
+    protected ItemTag mTag;
+    protected ItemNote mNote;
+    protected FieldValuePair mField;
 
     public UnifiedElement(
             UnifiedTypes type,

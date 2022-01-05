@@ -18,8 +18,8 @@ import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.R;
 
 public class MainFragment extends Fragment {
-    TabLayout tabLayout;
-    ViewPager2 viewPager;
+    TabLayout mTabLayout;
+    ViewPager2 mViewPager;
 
     public MainFragment() {
         // Required empty public constructor
@@ -50,21 +50,21 @@ public class MainFragment extends Fragment {
         // https://stackoverflow.com/a/58391219/8296604
         // java.lang.IllegalStateException: FragmentManager is already executing transactions
         // Solution : use `getChildFragmentManager` instead of `getParentFragmentManager`
-        viewPager = (ViewPager2) view.findViewById(R.id.fragmain_viewpager);
+        mViewPager = (ViewPager2) view.findViewById(R.id.fragmain_viewpager);
         FragmentManager fm = getChildFragmentManager();
         ViewStateAdapter viewStateAdapter = new ViewStateAdapter(fm, getLifecycle());
-        viewPager.setAdapter(viewStateAdapter);
+        mViewPager.setAdapter(viewStateAdapter);
 
-        tabLayout = (TabLayout) view.findViewById(R.id.fragmain_tablayout);
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-        tabLayout.addTab(tabLayout.newTab().setText("Items"));
-        tabLayout.addTab(tabLayout.newTab().setText("Details"));
+        mTabLayout = (TabLayout) view.findViewById(R.id.fragmain_tablayout);
+        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        mTabLayout.addTab(mTabLayout.newTab().setText("Items"));
+        mTabLayout.addTab(mTabLayout.newTab().setText("Details"));
 
         // perform setOnTabSelectedListener event on TabLayout
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
+                mViewPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
@@ -78,14 +78,14 @@ public class MainFragment extends Fragment {
             }
         });
 
-        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+        mViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
-                tabLayout.selectTab(tabLayout.getTabAt(position));
+                mTabLayout.selectTab(mTabLayout.getTabAt(position));
             }
         });
 
-        ((AppMem) requireActivity().getApplication()).setViewPager(viewPager);
+        ((AppMem) requireActivity().getApplication()).setViewPager(mViewPager);
     }
 
     @Override

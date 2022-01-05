@@ -16,9 +16,9 @@ import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.R;
 
 public class StatusFragment extends Fragment {
-    private RecyclerView recyclerView;
-    private RecyclerAdapterStatus recyclerAdapterStatus;
-    private AppMem appMem;
+    private RecyclerView mRecyclerView;
+    private RecyclerAdapterStatus mRecyclerAdapterStatus;
+    private AppMem mAppMem;
 
     public StatusFragment() {
         // Required empty public constructor
@@ -45,16 +45,16 @@ public class StatusFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        appMem = ((AppMem)requireActivity().getApplication());
-        recyclerView = view.findViewById(R.id.fragstatus_recycler);
-        recyclerAdapterStatus = new RecyclerAdapterStatus(view.getContext(), appMem.getAllRecordedStatusesStrings());
-        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        recyclerAdapterStatus.setClickListener(new RecyclerAdapterStatus.ItemClickListener() {
+        mAppMem = ((AppMem)requireActivity().getApplication());
+        mRecyclerView = view.findViewById(R.id.fragstatus_recycler);
+        mRecyclerAdapterStatus = new RecyclerAdapterStatus(view.getContext(), mAppMem.getAllRecordedStatusesStrings());
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        mRecyclerAdapterStatus.setClickListener(new RecyclerAdapterStatus.ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
 
             }
         });
-        recyclerView.setAdapter(recyclerAdapterStatus);
+        mRecyclerView.setAdapter(mRecyclerAdapterStatus);
     }
 }
