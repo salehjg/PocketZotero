@@ -37,7 +37,7 @@ import io.github.salehjg.pocketzotero.R;
 import io.github.salehjg.pocketzotero.RecordedStatus;
 import io.github.salehjg.pocketzotero.smbutils.SmbScanner;
 
-public class SettingsFragment extends Fragment {
+public class settingsFragment extends Fragment {
     RadioButton radioButtonLocalScoped, radioButtonSmb;
     Spinner spinnerSmbServerIp;
     EditText editTextSmbServerIp, editTextSmbServerUser, editTextSmbServerPass;
@@ -56,12 +56,12 @@ public class SettingsFragment extends Fragment {
 
     AppMem mAppMem;
 
-    public SettingsFragment() {
+    public settingsFragment() {
         // Required empty public constructor
     }
 
-    public static SettingsFragment newInstance() {
-        SettingsFragment fragment = new SettingsFragment();
+    public static settingsFragment newInstance() {
+        settingsFragment fragment = new settingsFragment();
         return fragment;
     }
 
@@ -165,14 +165,14 @@ public class SettingsFragment extends Fragment {
                     }
                 });
 
-                smbScanner.RunInBackground();
+                smbScanner.runInBackground();
             }
         });
         imageButtonStopSearching.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(smbScanner!=null){
-                    smbScanner.TerminateWithForce();
+                    smbScanner.shutdownNow();
                 }
             }
         });
@@ -185,7 +185,7 @@ public class SettingsFragment extends Fragment {
                         switch (which){
                             case DialogInterface.BUTTON_POSITIVE:{
                                 //Yes button clicked
-                                ImportZippedZoteroDbAndroid10Friendly();
+                                importZippedZoteroDbAndroid10Friendly();
                                 break;
                             }
 
@@ -230,10 +230,10 @@ public class SettingsFragment extends Fragment {
             }
         });
 
-        LoadSettings();
+        loadSettings();
     }
 
-    private void LoadSettings(){
+    private void loadSettings(){
         try {
             isLocalScoped = mAppMem.getStorageModeIsLocalScoped();
             isSharedSmb = mAppMem.getStorageModeIsSharedSmb();
@@ -269,7 +269,7 @@ public class SettingsFragment extends Fragment {
             if(result.getResultCode() == Activity.RESULT_OK){
                 Intent data = result.getData();
                 if(data==null){
-                    mAppMem.RecordStatusSingle(RecordedStatus.STATUS_BASE_STORAGE+12);
+                    mAppMem.recordStatusSingle(RecordedStatus.STATUS_BASE_STORAGE+12);
                     return;
                 }
                 Uri uriToZip = data.getData();
@@ -291,21 +291,21 @@ public class SettingsFragment extends Fragment {
 
                     @Override
                     public void onError(Exception e) {
-                        mAppMem.RecordStatusSingle("Exception during extraction: " + e.toString());
+                        mAppMem.recordStatusSingle("Exception during extraction: " + e.toString());
                     }
                 });
-                extractLocalZipFile.RunInBackground();
+                extractLocalZipFile.runInBackground();
             }
         }
     });
 
-    private void ImportZippedZoteroDbAndroid10Friendly(){
+    private void importZippedZoteroDbAndroid10Friendly(){
         try{
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("application/zip");
             mIntentResultLauncher.launch(intent);
         }catch (Exception e){
-            mAppMem.RecordStatusSingle(
+            mAppMem.recordStatusSingle(
                     "Failed to launch ACTION_GET_CONTENT to import Zotero DB to the predefined private storage with: " +
                             e.toString()
             );

@@ -148,11 +148,11 @@ public class ExtractLocalZipFile {
         };
     }
 
-    public void RunInBackground(){
+    public void runInBackground(){
         mExecutor.execute(mRunnable);
     }
 
-    public void TerminateWithForce(){
+    public void shutdownNow(){
         mExecutor.shutdownNow();
     }
 

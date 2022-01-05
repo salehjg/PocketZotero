@@ -58,15 +58,15 @@ public class AppMem extends Application {
         super.onCreate();
     }
 
-    public void RecordStatusSingle(int statusCode){
+    public void recordStatusSingle(int statusCode){
         recordedStatuses.add(new RecordedStatus(statusCode));
     }
 
-    public void RecordStatusSingle(String customStatusMessage){
+    public void recordStatusSingle(String customStatusMessage){
         recordedStatuses.add(new RecordedStatus(customStatusMessage));
     }
 
-    public void RecordStatusSingle(RecordedStatus status){
+    public void recordStatusSingle(RecordedStatus status){
         recordedStatuses.add(status);
     }
 

@@ -63,7 +63,7 @@ public class ItemAttachment {
         this.filePath = filePath;
     }
 
-    public String ExtractFileName(){
+    public String extractFileName(){
         String storageFileNamePair = getFilePath();
         if(!storageFileNamePair.isEmpty()) {
             int i = storageFileNamePair.indexOf(":");
@@ -73,7 +73,7 @@ public class ItemAttachment {
         }
     }
 
-    public String ExtractStorageDirName(){
+    public String extractStorageDirName(){
         String storageFileNamePair = getFilePath();
         if(!storageFileNamePair.isEmpty()) {
             int i = storageFileNamePair.indexOf(":");

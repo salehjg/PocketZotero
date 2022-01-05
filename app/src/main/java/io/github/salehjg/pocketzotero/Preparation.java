@@ -42,7 +42,7 @@ public class Preparation {
 
     public boolean isInitialized(){return mIsInitialized;}
 
-    public void StartupSequence(
+    public void startupSequence(
             Application application,
             Activity mainActivity,
             LinearLayout linearLayoutCollections,
@@ -54,26 +54,26 @@ public class Preparation {
 
         if(!mIsInitialized || forced) {
             if (SDK_INT >= 30) {
-                StartupSequencePermissionGranted(linearLayoutCollections);
+                startupSequencePermissionGranted(linearLayoutCollections);
             }
         }else{
-            mAppMem.getZoteroEngine().GuiCollectionsLast(linearLayoutCollections);
+            mAppMem.getZoteroEngine().getGuiCollectionsLast(linearLayoutCollections);
         }
     }
 
-    public void StartupSequencePermissionGranted(LinearLayout linearLayoutCollections){
+    public void startupSequencePermissionGranted(LinearLayout linearLayoutCollections){
         int state;
 
         // -----------------------------------------------------------------------------------------
-        mAppMem.RecordStatusSingle(state = CheckTheAppDirectories());
+        mAppMem.recordStatusSingle(state = checkTheAppDirectories());
         if(state!=0) return;
 
         // -----------------------------------------------------------------------------------------
-        mAppMem.RecordStatusSingle(state = CheckTheDatabases());
+        mAppMem.recordStatusSingle(state = checkTheDatabases());
         if(state!=0) return;
 
         // -----------------------------------------------------------------------------------------
-        mAppMem.RecordStatusSingle(state = CheckPreferencesSmb());
+        mAppMem.recordStatusSingle(state = checkPreferencesSmb());
         if(state!=0) return;
 
         // -----------------------------------------------------------------------------------------
@@ -82,8 +82,8 @@ public class Preparation {
             // LOAD THE DATABASE AT `DbFileNameLocal`
             String dbPathLocal = getPredefinedPrivateStorageBase()+ File.separator +
                     getResourceString(R.string.PrivateDirNameLocal);
-            StartZoteroEngine(dbPathLocal + File.separator + getResourceString(R.string.DbFileNameLocal), linearLayoutCollections);
-            mAppMem.RecordStatusSingle(STATUS_BASE_STORAGE+11);
+            startZoteroEngine(dbPathLocal + File.separator + getResourceString(R.string.DbFileNameLocal), linearLayoutCollections);
+            mAppMem.recordStatusSingle(STATUS_BASE_STORAGE+11);
         }else{
             String serverIp = mAppMem.getStorageSmbServerIp();
             String serverUser = mAppMem.getStorageSmbServerUsername();
@@ -106,7 +106,7 @@ public class Preparation {
                                 if(dbOldSmbFile.exists()){
                                     if(!dbOldSmbFile.delete()){
                                         // ERROR FAILED TO DELETE THE OLD `DbFileNameSmb`
-                                        mAppMem.RecordStatusSingle(STATUS_BASE_STORAGE + 7);
+                                        mAppMem.recordStatusSingle(STATUS_BASE_STORAGE + 7);
                                         return;
                                     }
                                 }
@@ -118,19 +118,19 @@ public class Preparation {
                                 );
                                 if(retVal){
                                     // LOAD THE DATABASE AT `DbFileNameSmb`
-                                    StartZoteroEngine(dbPathSmb + File.separator + getResourceString(R.string.DbFileNameSmb), linearLayoutCollections);
-                                    mAppMem.RecordStatusSingle(STATUS_BASE_STORAGE+10);
+                                    startZoteroEngine(dbPathSmb + File.separator + getResourceString(R.string.DbFileNameSmb), linearLayoutCollections);
+                                    mAppMem.recordStatusSingle(STATUS_BASE_STORAGE+10);
 
                                     // Since we are managed to connect to the host, lets process all the pending attachments
-                                    ProcessPendingAttachments();
+                                    processPendingAttachments();
                                 }else{
                                     // ERROR FAILED TO RENAME `DbFileNameSmbTemp` TO `DbFileNameSmb`
-                                    mAppMem.RecordStatusSingle(STATUS_BASE_STORAGE + 6);
+                                    mAppMem.recordStatusSingle(STATUS_BASE_STORAGE + 6);
                                     return;
                                 }
                             }else{
                                 //ERROR CANNOT FIND THE NEWLY DOWNLOADED `DbFileNameSmbTemp`
-                                mAppMem.RecordStatusSingle(STATUS_BASE_STORAGE + 8);
+                                mAppMem.recordStatusSingle(STATUS_BASE_STORAGE + 8);
                                 return;
                             }
                         }
@@ -144,29 +144,29 @@ public class Preparation {
                         public void onError(Exception e) {
                             String msg = "Failed to download the database over SMB network with error: " + e.toString();
                             Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
-                            mAppMem.RecordStatusSingle(msg);
+                            mAppMem.recordStatusSingle(msg);
                             File oldSmbDbFile = new File(
                                     getPredefinedPrivateStorageBase(),
                                     getResourceString(R.string.PrivateDirNameSmb)+ File.separator +
                                     getResourceString(R.string.DbFileNameSmb)
                             );
                             if(oldSmbDbFile.exists()){
-                                StartZoteroEngine(dbPathSmb + File.separator + getResourceString(R.string.DbFileNameSmb), linearLayoutCollections);
-                                mAppMem.RecordStatusSingle(STATUS_BASE_STORAGE+9);
+                                startZoteroEngine(dbPathSmb + File.separator + getResourceString(R.string.DbFileNameSmb), linearLayoutCollections);
+                                mAppMem.recordStatusSingle(STATUS_BASE_STORAGE+9);
                             }
                         }
                     }
             );
-            smbReceiveFileFromHost.RunInBackground();
+            smbReceiveFileFromHost.runInBackground();
         }
 
     }
 
-    private void StartZoteroEngine(String dbPath, LinearLayout linearLayoutCollections){
-        StartZoteroEngine(new File(dbPath), linearLayoutCollections);
+    private void startZoteroEngine(String dbPath, LinearLayout linearLayoutCollections){
+        startZoteroEngine(new File(dbPath), linearLayoutCollections);
     }
 
-    private void StartZoteroEngine(File dbFile, LinearLayout linearLayoutCollections){
+    private void startZoteroEngine(File dbFile, LinearLayout linearLayoutCollections){
         mAppMem.setZoteroEngine(
                 new ZoteroEngine(
                         mActivity,
@@ -185,10 +185,10 @@ public class Preparation {
                             }
                         })
         );
-        mAppMem.getZoteroEngine().GuiCollections(linearLayoutCollections);
+        mAppMem.getZoteroEngine().getGuiCollections(linearLayoutCollections);
     }
 
-    public void ProcessPendingAttachments(){
+    public void processPendingAttachments(){
         File[] pendingsDir = getPredefinedPrivateStoragePending().listFiles();
         Gson gson = new Gson();
         if(pendingsDir!=null) {
@@ -209,24 +209,24 @@ public class Preparation {
                     ItemAttachment itemAttachment = gson.fromJson(reader, new TypeToken<ItemAttachment>() {
                     }.getType());
 
-                    filePathsToSend.add(pendingAttachmentDir + File.separator + itemAttachment.ExtractFileName());
+                    filePathsToSend.add(pendingAttachmentDir + File.separator + itemAttachment.extractFileName());
                     filePendingDirNames.add(pendingAttachmentDir.getName());
                     filePathsOnHost.add(getSharedSmbBase() + File.separator +
-                            itemAttachment.ExtractStorageDirName() + File.separator +
+                            itemAttachment.extractStorageDirName() + File.separator +
                             itemAttachment.getFileKey() + File.separator +
-                            itemAttachment.ExtractFileName()
+                            itemAttachment.extractFileName()
                     );
                 }catch (Exception e){
-                    mAppMem.RecordStatusSingle(e.toString());
+                    mAppMem.recordStatusSingle(e.toString());
                 }
             }
 
             if(filePathsToSend.size() != filePathsOnHost.size()){
-                mAppMem.RecordStatusSingle(STATUS_BASE_STORAGE+14);
+                mAppMem.recordStatusSingle(STATUS_BASE_STORAGE+14);
             }
 
             if(filePathsToSend.size()>0) {
-                mAppMem.RecordStatusSingle("Pending attachments found: " + filePathsToSend.size());
+                mAppMem.recordStatusSingle("Pending attachments found: " + filePathsToSend.size());
 
                 SmbSendMultipleToHost smbSendMultipleToHost = new SmbSendMultipleToHost(
                         new SmbServerInfo("foo", mAppMem.getStorageSmbServerUsername(), mAppMem.getStorageSmbServerPassword(), mAppMem.getStorageSmbServerIp()),
@@ -241,8 +241,8 @@ public class Preparation {
                                 int count = hasSucceeded.size();
                                 for(int i=0; i<count; i++){
                                     if(hasSucceeded.get(i)){
-                                        if(!DeleteDirAndContentAtPrivateBase(getPredefinedPrivateStorageDirNamePending(), filePendingDirNames.get(i))){
-                                            mAppMem.RecordStatusSingle("Failed to remove the processed pending attachment: " + filePendingDirNames.get(i));
+                                        if(!deleteDirAndContentAtPrivateBase(getPredefinedPrivateStorageDirNamePending(), filePendingDirNames.get(i))){
+                                            mAppMem.recordStatusSingle("Failed to remove the processed pending attachment: " + filePendingDirNames.get(i));
                                         }
                                     }
                                 }
@@ -255,7 +255,7 @@ public class Preparation {
 
                             @Override
                             public void onError(Exception e) {
-                                mAppMem.RecordStatusSingle("Pending attachment processing: " + e.toString());
+                                mAppMem.recordStatusSingle("Pending attachment processing: " + e.toString());
                             }
                         }
                 );
@@ -265,7 +265,7 @@ public class Preparation {
         }
     }
 
-    private int CheckPreferencesSmb(){
+    private int checkPreferencesSmb(){
         boolean isLocal = mAppMem.getStorageModeIsLocalScoped();
         if(!isLocal) {
             String serverIp = mAppMem.getStorageSmbServerIp();
@@ -280,7 +280,7 @@ public class Preparation {
         return 0;
     }
 
-    private int CheckTheDatabases(){
+    private int checkTheDatabases(){
         boolean isLocal = mAppMem.getStorageModeIsLocalScoped();
         if(isLocal){
             File localDb = new File(
@@ -295,10 +295,10 @@ public class Preparation {
         return 0;
     }
 
-    private int CheckTheAppDirectories(){
-        if(!MakeDirAtPrivateBase(getPredefinedPrivateStorageDirNameLocalScoped())) return STATUS_BASE_STORAGE +2;
-        if(!MakeDirAtPrivateBase(getPredefinedPrivateStorageDirNamePending())) return STATUS_BASE_STORAGE +3;
-        if(!MakeDirAtPrivateBase(getPredefinedPrivateStorageDirNameSharedSmb())) return STATUS_BASE_STORAGE +4;
+    private int checkTheAppDirectories(){
+        if(!makeDirAtPrivateBase(getPredefinedPrivateStorageDirNameLocalScoped())) return STATUS_BASE_STORAGE +2;
+        if(!makeDirAtPrivateBase(getPredefinedPrivateStorageDirNamePending())) return STATUS_BASE_STORAGE +3;
+        if(!makeDirAtPrivateBase(getPredefinedPrivateStorageDirNameSharedSmb())) return STATUS_BASE_STORAGE +4;
         return 0;
     }
 
@@ -342,7 +342,7 @@ public class Preparation {
         return dbPath.substring(0, dbPath.lastIndexOf(File.separator));
     }
 
-    private boolean MakeDirAtPrivateBase(String dirName){
+    private boolean makeDirAtPrivateBase(String dirName){
         File folder = new File(getPredefinedPrivateStorageBase(), dirName);
         boolean retVal = true;
         if (!folder.exists()) {
@@ -351,7 +351,7 @@ public class Preparation {
         return retVal;
     }
 
-    public boolean MakeDirAtPrivateBase(String parentDir, String dirName){
+    public boolean makeDirAtPrivateBase(String parentDir, String dirName){
         File folder = new File(getPredefinedPrivateStorageBase().getPath() + File.separator + parentDir + File.separator + dirName);
         boolean retVal = true;
         if (!folder.exists()) {
@@ -360,7 +360,7 @@ public class Preparation {
         return retVal;
     }
 
-    public boolean DeleteDirAndContentAtPrivateBase(String parentDir, String dirName) {
+    public boolean deleteDirAndContentAtPrivateBase(String parentDir, String dirName) {
         File folder = new File(getPredefinedPrivateStorageBase().getPath() + File.separator + parentDir + File.separator + dirName);
         return _deleteDirAndContentAbsPath(folder);
     }
@@ -381,8 +381,8 @@ public class Preparation {
         return result;
     }
 
-    public boolean MakeDirAtPrivateBase(File dir){
-        return MakeDirAtPrivateBase(dir.getPath());
+    public boolean makeDirAtPrivateBase(File dir){
+        return makeDirAtPrivateBase(dir.getPath());
     }
 
 

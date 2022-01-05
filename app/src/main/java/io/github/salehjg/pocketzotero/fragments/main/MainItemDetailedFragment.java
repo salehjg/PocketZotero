@@ -99,7 +99,7 @@ public class MainItemDetailedFragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 ItemAttachment attachment =  recyclerAdapterAttachments.getDataAttachment(position);
-                OpenAttachmentFile(attachment);
+                openAttachmentFile(attachment);
             }
         });
         recyclerAdapterAttachments.setLongClickListener(new RecyclerAdapterAttachments.ItemLongClickListener() {
@@ -175,36 +175,36 @@ public class MainItemDetailedFragment extends Fragment {
         }
     });
 
-    private void OpenAttachmentFile(ItemAttachment attachment){
+    private void openAttachmentFile(ItemAttachment attachment){
         boolean isLocal = mAppMem.getStorageModeIsLocalScoped();
         if(isLocal){
-            OpenLocalAttachmentFile(attachment);
+            openLocalAttachmentFile(attachment);
         }else{
-            OpenSmbAttachmentFile(attachment);
+            openSmbAttachmentFile(attachment);
         }
     }
 
-    private void OpenSmbAttachmentFile(ItemAttachment attachment){
+    private void openSmbAttachmentFile(ItemAttachment attachment){
         File dirPendingAbs = mAppMem.getPreparation().getPredefinedPrivateStoragePending();
 
-        String extractedFileName = attachment.ExtractFileName();
+        String extractedFileName = attachment.extractFileName();
 
         if(!
-            mAppMem.getPreparation().MakeDirAtPrivateBase(
+            mAppMem.getPreparation().makeDirAtPrivateBase(
                     mAppMem.getPreparation().getPredefinedPrivateStorageDirNamePending(),
-                    attachment.ExtractStorageDirName() + "." + attachment.getFileKey()
+                    attachment.extractStorageDirName() + "." + attachment.getFileKey()
             )
         ){
-            mAppMem.RecordStatusSingle(RecordedStatus.STATUS_BASE_STORAGE+13);
+            mAppMem.recordStatusSingle(RecordedStatus.STATUS_BASE_STORAGE+13);
             return;
         }
 
-        String dirDest = dirPendingAbs.getPath() + File.separator + attachment.ExtractStorageDirName() + "." + attachment.getFileKey();
+        String dirDest = dirPendingAbs.getPath() + File.separator + attachment.extractStorageDirName() + "." + attachment.getFileKey();
         String fileDestPath = dirDest + File.separator + extractedFileName;
 
         String fileSrcSmb =
                 mAppMem.getPreparation().getSharedSmbBase()+File.separator+
-                        attachment.ExtractStorageDirName()+File.separator+
+                        attachment.extractStorageDirName()+File.separator+
                         attachment.getFileKey()+File.separator+
                         extractedFileName;
 
@@ -236,7 +236,7 @@ public class MainItemDetailedFragment extends Fragment {
                             mIntentResultLauncher.launch(intent);
                         }catch (Exception e){
                             String msg = "Failed to write attachment.json or to open the downloaded SMB attachment with: " + e.toString();
-                            mAppMem.RecordStatusSingle(msg);
+                            mAppMem.recordStatusSingle(msg);
                             Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show();
                         }
                     }
@@ -249,17 +249,17 @@ public class MainItemDetailedFragment extends Fragment {
                     @Override
                     public void onError(Exception e) {
                         String msg = "Failed to download the SMB attachment with: " + e.toString();
-                        mAppMem.RecordStatusSingle(msg);
+                        mAppMem.recordStatusSingle(msg);
                         Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show();
                     }
                 }
         );
-        receiveFileFromHost.RunInBackground();
+        receiveFileFromHost.runInBackground();
     }
 
-    private void OpenLocalAttachmentFile(ItemAttachment attachment) {
-        String storageFolderName = attachment.ExtractStorageDirName();
-        String fileName = attachment.ExtractFileName();
+    private void openLocalAttachmentFile(ItemAttachment attachment) {
+        String storageFolderName = attachment.extractStorageDirName();
+        String fileName = attachment.extractFileName();
         String key = attachment.getFileKey();
 
         File path = new File( mAppMem.getPreparation().getPredefinedPrivateStorageLocalScoped(), storageFolderName);

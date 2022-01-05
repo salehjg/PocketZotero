@@ -2,10 +2,6 @@ package io.github.salehjg.pocketzotero.mainactivity;
 
 import static android.os.Build.VERSION.SDK_INT;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -37,7 +33,7 @@ import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.R;
 import io.github.salehjg.pocketzotero.fragments.about.AboutFragment;
 import io.github.salehjg.pocketzotero.fragments.main.MainFragment;
-import io.github.salehjg.pocketzotero.fragments.settings.SettingsFragment;
+import io.github.salehjg.pocketzotero.fragments.settings.settingsFragment;
 import io.github.salehjg.pocketzotero.fragments.status.StatusFragment;
 import io.github.salehjg.pocketzotero.fragments.welcome.WelcomeFragment;
 
@@ -103,25 +99,25 @@ public class MainActivity extends AppCompatActivity {
         btnMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ShowFragment(new MainFragment());
+                showFragment(new MainFragment());
             }
         });
         btnSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ShowFragment(new SettingsFragment());
+                showFragment(new settingsFragment());
             }
         });
         btnAbout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ShowFragment(new AboutFragment());
+                showFragment(new AboutFragment());
             }
         });
         btnStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ShowFragment(new StatusFragment());
+                showFragment(new StatusFragment());
             }
         });
 
@@ -146,19 +142,19 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResult(boolean allGranted, @NonNull List<String> grantedList, @NonNull List<String> deniedList) {
                         if (allGranted) {
-                            StartStartupSequence();
+                            runStartupSequence();
                         } else {
                             String msg = "These permissions are denied: " + deniedList.toString();
                             Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-                            mAppMem.RecordStatusSingle(msg);
+                            mAppMem.recordStatusSingle(msg);
                         }
                     }
                 });
 
         if(!mAppMem.getPreparation().isInitialized()){
-            ShowFragment(new WelcomeFragment());
+            showFragment(new WelcomeFragment());
         }else{
-            ShowFragment(new MainFragment());
+            showFragment(new MainFragment());
         }
 
         /*
@@ -172,32 +168,6 @@ public class MainActivity extends AppCompatActivity {
 
         ((AppMem) this.getApplication()).getZoteroEngine().GuiCollections();
         */
-
-        /*
-        SmbSendFileToHost smbSendFileToHost = new SmbSendFileToHost(
-                new SmbServerInfo("fooname", "xxxxx", "xxxxxx", "192.168.1.7"),
-                "/storage/emulated/0/PocketZotero/zotero.sqlite",
-                "Test1/zotero-from-android.sqlite",
-                true,
-                new SmbSendFileToHost.Listener() {
-                    @Override
-                    public void onFinished() {
-                        Toast.makeText(getApplicationContext(), "copy: FINISHED", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onProgressTick(int percent) {
-                        Toast.makeText(getApplicationContext(), "copy: " + percent, Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        Toast.makeText(getApplicationContext(), "copy: ERROR" + e.toString(), Toast.LENGTH_LONG).show();
-                    }
-                }
-        );
-        smbSendFileToHost.RunInBackground();*/
-
 
         /*
         SmbReceiveFileFromHost smbReceiveFileFromHost = new SmbReceiveFileFromHost(
@@ -226,14 +196,14 @@ public class MainActivity extends AppCompatActivity {
          */
     }
 
-    private void StartStartupSequence(){
+    private void runStartupSequence(){
         // Forced = true : force to re-run the sequence even if it has been run before. (inc. downloading db, decoding collections, ...)
         // Forced = false: in case the sequence has been run before, re-use the data. This is useful for situations like display rotation, dynamic ui, ...
-        mAppMem.getPreparation().StartupSequence(getApplication(), this, linearLayoutCollections, false);
+        mAppMem.getPreparation().startupSequence(getApplication(), this, linearLayoutCollections, false);
 
     }
 
-    private void ShowFragment(Fragment fragment){
+    private void showFragment(Fragment fragment){
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.replace(R.id.activitymain_contentarea, fragment);

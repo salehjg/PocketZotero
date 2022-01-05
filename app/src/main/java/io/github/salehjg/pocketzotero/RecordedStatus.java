@@ -13,7 +13,7 @@ public class RecordedStatus {
     public RecordedStatus(int code){
         mBaseErrorMessage = mDetailedErrorMessage = "";
         mErrorCode = mBaseErrorCode = mDetailedErrorCode = -1;
-        TranslateReturnCode(code);
+        translateReturnCode(code);
     }
 
     public RecordedStatus(String customStatusMessage){
@@ -70,7 +70,7 @@ public class RecordedStatus {
         this.mErrorCode = mErrorCode;
     }
 
-    private void TranslateReturnCode(int retVal){
+    private void translateReturnCode(int retVal){
         String msgBase, msgDetailed = "STATUS_OK";
         int baseError = retVal / 100;
         switch (baseError){
