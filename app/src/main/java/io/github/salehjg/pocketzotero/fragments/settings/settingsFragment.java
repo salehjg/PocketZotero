@@ -151,19 +151,19 @@ public class settingsFragment extends Fragment {
                         mSpinnerSmbServerIpItems.clear();
                         mSpinnerSmbServerIpItems.addAll(serversFound);
                         mSpinnerSmbServerIpAdapter.notifyDataSetChanged();
-                        mAppMem.setProgressDialogMessage(theNewServer);
+                        Toast.makeText(requireContext(), "Found a new SMB host at " + theNewServer, Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onProgressTick(int percent) {
-                        mAppMem.setProgressDialogValue(percent);
+                        Toast.makeText(requireContext(), "Searching for SMB servers: " + percent + "% complete", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onError(Exception e) {
                         Toast.makeText(
                                 requireContext(),
-                                "SMB Server Search Error: " + e.toString(),
+                                "Searching for SMB servers failed with error: " + e.toString(),
                                 Toast.LENGTH_LONG).show();
                     }
                 });
