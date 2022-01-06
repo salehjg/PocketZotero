@@ -169,44 +169,6 @@ public class MainActivity extends AppCompatActivity {
         }else{
             showFragment(new MainFragment());
         }
-
-        /*
-        ((AppMem) this.getApplication()).setZoteroEngine(
-                new ZoteroEngine(
-                        this,
-                        getApplicationContext(),
-                        linearLayoutCollections,
-                        "")
-        );
-
-        ((AppMem) this.getApplication()).getZoteroEngine().GuiCollections();
-        */
-
-        /*
-        SmbReceiveFileFromHost smbReceiveFileFromHost = new SmbReceiveFileFromHost(
-                new SmbServerInfo("fooname", "xxxxx", "xxxxxxx", "192.168.1.7"),
-                "Test1/zotero-from-android.sqlite" ,
-                "/storage/emulated/0/PocketZotero/testReceived.sqlite",
-                new SmbReceiveFileFromHost.Listener() {
-                    @Override
-                    public void onFinished() {
-                        Toast.makeText(getApplicationContext(), "copyR: FINISHED", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onProgressTick(int percent) {
-                        Toast.makeText(getApplicationContext(), "copyR: " + percent, Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onError(Exception e) {
-                        Toast.makeText(getApplicationContext(), "copyR: ERROR" + e.toString(), Toast.LENGTH_LONG).show();
-                    }
-                }
-        );
-        smbReceiveFileFromHost.RunInBackground();
-
-         */
     }
 
     private void runStartupSequence(){
@@ -260,12 +222,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        Toast.makeText(getApplicationContext(), "on Pause", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "on Pause", Toast.LENGTH_LONG).show();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Toast.makeText(getApplicationContext(), "on Resume", Toast.LENGTH_LONG).show();
+        //mAppMem.getPreparation().processPendingAttachments();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
     }
 }

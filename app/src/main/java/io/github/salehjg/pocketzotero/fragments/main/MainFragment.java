@@ -85,7 +85,19 @@ public class MainFragment extends Fragment {
             }
         });
 
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         ((AppMem) requireActivity().getApplication()).setViewPager(mViewPager);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ((AppMem) requireActivity().getApplication()).setViewPager(null);
     }
 
     @Override
