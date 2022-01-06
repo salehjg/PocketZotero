@@ -65,15 +65,24 @@ public class Preparation {
         mAppMem.createProgressDialog(mActivity, false, false, "Running the startup sequence ...", null);
         // -----------------------------------------------------------------------------------------
         mAppMem.recordStatusSingle(state = checkTheAppDirectories());
-        if(state!=0) return;
+        if(state!=0) {
+            mAppMem.closeProgressDialog();
+            return;
+        }
 
         // -----------------------------------------------------------------------------------------
         mAppMem.recordStatusSingle(state = checkTheDatabases());
-        if(state!=0) return;
+        if(state!=0) {
+            mAppMem.closeProgressDialog();
+            return;
+        }
 
         // -----------------------------------------------------------------------------------------
         mAppMem.recordStatusSingle(state = checkPreferencesSmb());
-        if(state!=0) return;
+        if(state!=0) {
+            mAppMem.closeProgressDialog();
+            return;
+        }
 
         // -----------------------------------------------------------------------------------------
         mIsInitialized = true;
