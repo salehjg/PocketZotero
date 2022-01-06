@@ -23,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.github.nikartm.button.FitButton;
 import com.google.android.material.navigation.NavigationView;
+import com.lmntrx.android.library.livin.missme.ProgressDialog;
 import com.permissionx.guolindev.PermissionX;
 import com.permissionx.guolindev.callback.ExplainReasonCallback;
 import com.permissionx.guolindev.callback.RequestCallback;
@@ -36,6 +37,8 @@ import io.github.salehjg.pocketzotero.fragments.main.MainFragment;
 import io.github.salehjg.pocketzotero.fragments.settings.settingsFragment;
 import io.github.salehjg.pocketzotero.fragments.status.StatusFragment;
 import io.github.salehjg.pocketzotero.fragments.welcome.WelcomeFragment;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -45,28 +48,43 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout mDrawerLayout;
     FitButton mImageButtonMain, mImageButtonSettings, mImageButtonAbout, mImageButtonStatus;
     LinearLayout mLinearLayoutCollections;
-    ProgressBar mProgressBar;
     AppMem mAppMem;
     boolean mDoubleBackToExitPressedOnce = false;
 
+
     @Override
     public void onBackPressed() {
-        if (mDoubleBackToExitPressedOnce) {
-            //this.finishAffinity();
-            System.exit(0);
-            return;
-        }
-
-        this.mDoubleBackToExitPressedOnce = true;
-        Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
-
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                mDoubleBackToExitPressedOnce =false;
+        if(mAppMem.isProgressDialogCreated()) {
+            ProgressDialog progressDialog = mAppMem.getProgressDialog();
+            progressDialog.onBackPressed(new Function0<Unit>() {
+                @Override
+                public Unit invoke() {
+                    /// TODO: this is nasty and makes the code dependant on MainActivity.
+                    /// TODO: unfortunately, the library does not support buttons on the dialog.
+                    if(mAppMem.getProgressDialogListener()!=null)
+                        mAppMem.getProgressDialogListener().onCanceled();
+                    MainActivity.super.onBackPressed();
+                    return null;
+                }
+            });
+        }else {
+            if (mDoubleBackToExitPressedOnce) {
+                //this.finishAffinity();
+                System.exit(0);
+                return;
             }
-        }, 2000);
+
+            this.mDoubleBackToExitPressedOnce = true;
+            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    mDoubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
+        }
     }
 
     @Override
@@ -86,11 +104,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         mNavigationView = findViewById(R.id.activitymain_navview);
-
-        mProgressBar = findViewById(R.id.activitymain_progressbar);
-        mProgressBar.setMax(100);
-        mProgressBar.setProgress(0);
-        mAppMem.setProgressBar(mProgressBar);
 
         mImageButtonMain = findViewById(R.id.activitymain_btn_main);
         mImageButtonSettings = findViewById(R.id.activitymain_btn_settings);
@@ -200,7 +213,6 @@ public class MainActivity extends AppCompatActivity {
         // Forced = true : force to re-run the sequence even if it has been run before. (inc. downloading db, decoding collections, ...)
         // Forced = false: in case the sequence has been run before, re-use the data. This is useful for situations like display rotation, dynamic ui, ...
         mAppMem.getPreparation().startupSequence(getApplication(), this, mLinearLayoutCollections, false);
-
     }
 
     private void showFragment(Fragment fragment){

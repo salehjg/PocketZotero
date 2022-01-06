@@ -34,7 +34,6 @@ public class Preparation {
     private Context mContext;
     private boolean mIsInitialized;
     private Activity mActivity;
-    private ProgressBar mProgressBar;
 
     public Preparation(){
         mIsInitialized = false;
@@ -48,14 +47,13 @@ public class Preparation {
             LinearLayout linearLayoutCollections,
             boolean forced){
         mAppMem = (AppMem) application;
-        mProgressBar = mAppMem.getProgressBar();
         mContext = application.getApplicationContext();
         mActivity = mainActivity;
 
         if(!mIsInitialized || forced) {
-            if (SDK_INT >= 30) {
-                startupSequencePermissionGranted(linearLayoutCollections);
-            }
+            // The permission requests are done in the MainActivity.
+            // So if we are here, the permissions are granted.
+            startupSequencePermissionGranted(linearLayoutCollections);
         }else{
             mAppMem.getZoteroEngine().getGuiCollectionsLast(linearLayoutCollections);
         }
@@ -64,6 +62,7 @@ public class Preparation {
     public void startupSequencePermissionGranted(LinearLayout linearLayoutCollections){
         int state;
 
+        mAppMem.createProgressDialog(mActivity, false, false, "Running the startup sequence ...", null);
         // -----------------------------------------------------------------------------------------
         mAppMem.recordStatusSingle(state = checkTheAppDirectories());
         if(state!=0) return;
@@ -84,6 +83,7 @@ public class Preparation {
                     getResourceString(R.string.PrivateDirNameLocal);
             startZoteroEngine(dbPathLocal + File.separator + getResourceString(R.string.DbFileNameLocal), linearLayoutCollections);
             mAppMem.recordStatusSingle(STATUS_BASE_STORAGE+11);
+            mAppMem.closeProgressDialog();
         }else{
             String serverIp = mAppMem.getStorageSmbServerIp();
             String serverUser = mAppMem.getStorageSmbServerUsername();
@@ -107,6 +107,7 @@ public class Preparation {
                                     if(!dbOldSmbFile.delete()){
                                         // ERROR FAILED TO DELETE THE OLD `DbFileNameSmb`
                                         mAppMem.recordStatusSingle(STATUS_BASE_STORAGE + 7);
+                                        mAppMem.closeProgressDialog();
                                         return;
                                     }
                                 }
@@ -120,24 +121,27 @@ public class Preparation {
                                     // LOAD THE DATABASE AT `DbFileNameSmb`
                                     startZoteroEngine(dbPathSmb + File.separator + getResourceString(R.string.DbFileNameSmb), linearLayoutCollections);
                                     mAppMem.recordStatusSingle(STATUS_BASE_STORAGE+10);
+                                    mAppMem.closeProgressDialog();
 
                                     // Since we are managed to connect to the host, lets process all the pending attachments
                                     processPendingAttachments();
                                 }else{
                                     // ERROR FAILED TO RENAME `DbFileNameSmbTemp` TO `DbFileNameSmb`
                                     mAppMem.recordStatusSingle(STATUS_BASE_STORAGE + 6);
+                                    mAppMem.closeProgressDialog();
                                     return;
                                 }
                             }else{
                                 //ERROR CANNOT FIND THE NEWLY DOWNLOADED `DbFileNameSmbTemp`
                                 mAppMem.recordStatusSingle(STATUS_BASE_STORAGE + 8);
+                                mAppMem.closeProgressDialog();
                                 return;
                             }
                         }
 
                         @Override
                         public void onProgressTick(int percent) {
-                            mProgressBar.setProgress(percent);
+                            mAppMem.setProgressDialogValue(percent);
                         }
 
                         @Override
@@ -153,6 +157,7 @@ public class Preparation {
                             if(oldSmbDbFile.exists()){
                                 startZoteroEngine(dbPathSmb + File.separator + getResourceString(R.string.DbFileNameSmb), linearLayoutCollections);
                                 mAppMem.recordStatusSingle(STATUS_BASE_STORAGE+9);
+                                mAppMem.closeProgressDialog();
                             }
                         }
                     }
@@ -195,6 +200,8 @@ public class Preparation {
             Vector<String> filePathsToSend = new Vector<>();
             Vector<String> filePendingDirNames = new Vector<>();
             Vector<String> filePathsOnHost = new Vector<>();
+
+            mAppMem.createProgressDialog(mActivity, false,false, "Processing the pending attachments ...", null);
 
             for (File pendingAttachmentDir : pendingsDir) {
                 try {
@@ -246,11 +253,12 @@ public class Preparation {
                                         }
                                     }
                                 }
+                                mAppMem.closeProgressDialog();
                             }
 
                             @Override
                             public void onProgressTick(int percent) {
-                                mAppMem.getProgressBar().setProgress(percent);
+                                mAppMem.setProgressDialogValue(percent);
                             }
 
                             @Override
@@ -261,6 +269,8 @@ public class Preparation {
                 );
                 smbSendMultipleToHost.enqueueToRunAll();
 
+            }else{
+                mAppMem.closeProgressDialog();
             }
         }
     }

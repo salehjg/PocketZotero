@@ -19,18 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/toolbar"
-            android:layout_above="@id/activitymain_progressbar"/>
-        <ProgressBar
-            android:id="@+id/activitymain_progressbar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_alignParentBottom="true"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:indeterminate="false"
-            android:max="100"
-            android:minHeight="10dp"
-            android:progress="55"
-            android:progressBackgroundTint="@color/colorPrimaryDark" />
+            />
     </RelativeLayout>
 
     <com.google.android.material.navigation.NavigationView

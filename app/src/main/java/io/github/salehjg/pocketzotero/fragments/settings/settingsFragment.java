@@ -35,7 +35,10 @@ import java.util.Vector;
 import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.R;
 import io.github.salehjg.pocketzotero.RecordedStatus;
+import io.github.salehjg.pocketzotero.mainactivity.MainActivity;
 import io.github.salehjg.pocketzotero.smbutils.SmbScanner;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 public class settingsFragment extends Fragment {
     RadioButton mRadioButtonLocalScoped, mRadioButtonSmb;
@@ -52,7 +55,6 @@ public class settingsFragment extends Fragment {
     List<String> mSpinnerSmbServerIpItems;
     ArrayAdapter<String> mSpinnerSmbServerIpAdapter;
     SmbScanner mSmbScanner;
-    ProgressBar mProgressBar;
 
     AppMem mAppMem;
 
@@ -100,7 +102,6 @@ public class settingsFragment extends Fragment {
         mEditTextSharedPath = view.findViewById(R.id.fragsettings_text_sharedpath);
         mEditTextSmbServerUser = view.findViewById(R.id.fragsettings_text_user);
         mEditTextSmbServerPass = view.findViewById(R.id.fragsettings_text_pass);
-        mProgressBar = mAppMem.getProgressBar();
 
         mRadioButtonLocalScoped.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -142,6 +143,7 @@ public class settingsFragment extends Fragment {
                         mSpinnerSmbServerIpItems.clear();
                         mSpinnerSmbServerIpItems.addAll(serversFound);
                         mSpinnerSmbServerIpAdapter.notifyDataSetChanged();
+                        Toast.makeText(requireContext(), "Finished searching for SMB servers.", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -149,11 +151,12 @@ public class settingsFragment extends Fragment {
                         mSpinnerSmbServerIpItems.clear();
                         mSpinnerSmbServerIpItems.addAll(serversFound);
                         mSpinnerSmbServerIpAdapter.notifyDataSetChanged();
+                        mAppMem.setProgressDialogMessage(theNewServer);
                     }
 
                     @Override
                     public void onProgressTick(int percent) {
-                        mProgressBar.setProgress(percent);
+                        mAppMem.setProgressDialogValue(percent);
                     }
 
                     @Override
@@ -273,6 +276,7 @@ public class settingsFragment extends Fragment {
                     return;
                 }
                 Uri uriToZip = data.getData();
+                mAppMem.createProgressDialog(requireActivity(), true,false, "Importing the selected database archive ...", null);
                 ExtractLocalZipFile extractLocalZipFile = new ExtractLocalZipFile(
                         requireActivity().getContentResolver(),
                         uriToZip,
@@ -282,11 +286,12 @@ public class settingsFragment extends Fragment {
                     @Override
                     public void onFinished() {
                         Toast.makeText(requireContext(), mAppMem.getPreparation().getResourceString(R.string.MsgSettingsImportDb3), Toast.LENGTH_LONG).show();
+                        mAppMem.closeProgressDialog();
                     }
 
                     @Override
                     public void onProgressTick(int percent) {
-                        mAppMem.getProgressBar().setProgress(percent);
+                        mAppMem.setProgressDialogValue(percent);
                     }
 
                     @Override

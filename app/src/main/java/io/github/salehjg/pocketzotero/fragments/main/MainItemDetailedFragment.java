@@ -214,6 +214,7 @@ public class MainItemDetailedFragment extends Fragment {
                 mAppMem.getStorageSmbServerPassword(),
                 mAppMem.getStorageSmbServerIp());
 
+        mAppMem.createProgressDialog(requireActivity(), false,false,"Downloading the requested attachment from the SMB host ...", null);
         SmbReceiveFileFromHost receiveFileFromHost = new SmbReceiveFileFromHost(
                 serverInfo,
                 fileSrcSmb,
@@ -239,11 +240,12 @@ public class MainItemDetailedFragment extends Fragment {
                             mAppMem.recordStatusSingle(msg);
                             Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show();
                         }
+                        mAppMem.closeProgressDialog();
                     }
 
                     @Override
                     public void onProgressTick(int percent) {
-                        mAppMem.getProgressBar().setProgress(percent);
+                        mAppMem.setProgressDialogValue(percent);
                     }
 
                     @Override

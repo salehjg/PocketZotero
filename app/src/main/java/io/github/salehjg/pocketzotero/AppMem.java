@@ -1,11 +1,14 @@
 package io.github.salehjg.pocketzotero;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.widget.ProgressBar;
 
 import androidx.viewpager2.widget.ViewPager2;
+
+import com.lmntrx.android.library.livin.missme.ProgressDialog;
 
 import java.util.Vector;
 
@@ -28,6 +31,11 @@ public class AppMem extends Application {
     private Collection mSelectedCollection;
     private Preparation mPreparation;
 
+    private ProgressDialog mProgressDialog;
+    private boolean mProgressDialogCreated;
+    private ProgressDialogListener mProgressDialogListener;
+
+
     @Override
     public void onCreate() {
         mRecyclerAdapterItems = new RecyclerAdapterItems(
@@ -40,6 +48,62 @@ public class AppMem extends Application {
         mPreparation = new Preparation();
         mRecordedStatuses = new Vector<>();
         super.onCreate();
+    }
+
+    public interface ProgressDialogListener{
+        public void onCanceled();
+    }
+    public void createProgressDialog(Activity activity, boolean isIndeterminate, boolean isCancellable, String msg, ProgressDialogListener listener){
+        if(!mProgressDialogCreated) {
+            mProgressDialogCreated = true;
+            mProgressDialogListener = listener;
+            mProgressDialog = new ProgressDialog(activity);
+            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+            mProgressDialog.setMessage(msg);
+            mProgressDialog.setMax(100);
+            mProgressDialog.setProgress(0);
+            mProgressDialog.setIndeterminate(isIndeterminate);
+            mProgressDialog.setCancelable(isCancellable);
+            mProgressDialog.show();
+        }else{
+            closeProgressDialog();
+            createProgressDialog(activity, isIndeterminate, isCancellable, msg, listener);
+        }
+    }
+
+    public void closeProgressDialog(){
+        if(mProgressDialogCreated) {
+            mProgressDialogCreated = false;
+            mProgressDialog.dismiss();
+            mProgressDialogListener = null;
+        }
+    }
+
+    public void setProgressDialogValue(int percent){
+        if(mProgressDialogCreated) {
+            mProgressDialog.setProgress(percent);
+        }
+    }
+
+    public void setProgressDialogMessage(String msg){
+        if(mProgressDialogCreated) {
+            mProgressDialog.setMessage(msg);
+        }
+    }
+
+    public boolean isProgressDialogCreated(){
+        return mProgressDialogCreated;
+    }
+
+    public ProgressDialog getProgressDialog(){
+        return mProgressDialog;
+    }
+
+    public ProgressDialogListener getProgressDialogListener(){
+        if(mProgressDialogCreated)
+            return mProgressDialogListener;
+        else
+            return null;
     }
 
     public void recordStatusSingle(int statusCode){
@@ -80,14 +144,6 @@ public class AppMem extends Application {
 
     public RecyclerAdapterItems getRecyclerAdapterItems() {
         return mRecyclerAdapterItems;
-    }
-
-    public ProgressBar getProgressBar() {
-        return mProgressBar;
-    }
-
-    public void setProgressBar(ProgressBar progressBar) {
-        this.mProgressBar = progressBar;
     }
 
     public ZoteroEngine getZoteroEngine() {
