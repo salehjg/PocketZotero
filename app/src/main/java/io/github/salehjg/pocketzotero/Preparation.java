@@ -28,35 +28,39 @@ import io.github.salehjg.pocketzotero.zoteroengine.ZoteroEngine;
 import io.github.salehjg.pocketzotero.zoteroengine.types.Collection;
 import io.github.salehjg.pocketzotero.zoteroengine.types.CollectionItem;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemAttachment;
+import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
 
 public class Preparation {
     private AppMem mAppMem;
     private Context mContext;
-    private boolean mIsInitialized;
     private Activity mActivity;
+    private Listeners mListeners;
+    private ZoteroEngine mZoteroEngine;
 
-    public Preparation(){
-        mIsInitialized = false;
+    public interface Listeners{
+        void onCollectionSelected(Collection selectedCollectionObject, Vector<CollectionItem> items, Vector<String> titles, Vector<Integer> ids, Vector<Integer> types);
     }
 
-    public boolean isInitialized(){return mIsInitialized;}
+    public Preparation(){
+    }
 
     public void startupSequence(
             Application application,
             Activity mainActivity,
             LinearLayout linearLayoutCollections,
-            boolean forced){
+            Listeners listeners){
         mAppMem = (AppMem) application;
         mContext = application.getApplicationContext();
         mActivity = mainActivity;
+        mListeners = listeners;
 
-        if(!mIsInitialized || forced) {
-            // The permission requests are done in the MainActivity.
-            // So if we are here, the permissions are granted.
-            startupSequencePermissionGranted(linearLayoutCollections);
-        }else{
-            mAppMem.getZoteroEngine().getGuiCollectionsLast(linearLayoutCollections);
-        }
+        // The permission requests are done in the MainActivity.
+        // So if we are here, the permissions are granted.
+        startupSequencePermissionGranted(linearLayoutCollections);
+    }
+
+    public void getGuiCollectionsLast(LinearLayout linearLayoutCollections){
+        mZoteroEngine.getGuiCollectionsLast(linearLayoutCollections);
     }
 
     public void startupSequencePermissionGranted(LinearLayout linearLayoutCollections){
@@ -85,10 +89,9 @@ public class Preparation {
         }
 
         // -----------------------------------------------------------------------------------------
-        mIsInitialized = true;
         if(mAppMem.getStorageModeIsLocalScoped()){
             // LOAD THE DATABASE AT `DbFileNameLocal`
-            String dbPathLocal = getPredefinedPrivateStorageBase()+ File.separator +
+            String dbPathLocal = AppDirs.getPredefinedPrivateStorageBase(mContext)+ File.separator +
                     getResourceString(R.string.PrivateDirNameLocal);
             startZoteroEngine(dbPathLocal + File.separator + getResourceString(R.string.DbFileNameLocal), linearLayoutCollections);
             mAppMem.recordStatusSingle(STATUS_BASE_STORAGE+11);
@@ -98,7 +101,7 @@ public class Preparation {
             String serverUser = mAppMem.getStorageSmbServerUsername();
             String serverPass = mAppMem.getStorageSmbServerPassword();
 
-            String dbPathSmb = getPredefinedPrivateStorageBase()+ File.separator +
+            String dbPathSmb = AppDirs.getPredefinedPrivateStorageBase(mContext)+ File.separator +
                     getResourceString(R.string.PrivateDirNameSmb);
 
             SmbReceiveFileFromHost smbReceiveFileFromHost = new SmbReceiveFileFromHost(
@@ -159,7 +162,7 @@ public class Preparation {
                             Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
                             mAppMem.recordStatusSingle(msg);
                             File oldSmbDbFile = new File(
-                                    getPredefinedPrivateStorageBase(),
+                                    AppDirs.getPredefinedPrivateStorageBase(mContext),
                                     getResourceString(R.string.PrivateDirNameSmb)+ File.separator +
                                     getResourceString(R.string.DbFileNameSmb)
                             );
@@ -181,7 +184,7 @@ public class Preparation {
     }
 
     private void startZoteroEngine(File dbFile, LinearLayout linearLayoutCollections){
-        mAppMem.setZoteroEngine(
+        mZoteroEngine =
                 new ZoteroEngine(
                         mActivity,
                         mContext,
@@ -189,21 +192,17 @@ public class Preparation {
                         new ZoteroEngine.Listeners() {
                             @Override
                             public void onCollectionSelected(Collection selectedCollectionObject, Vector<CollectionItem> items, Vector<String> titles, Vector<Integer> ids, Vector<Integer> types) {
-                                mAppMem.setSelectedCollection(selectedCollectionObject);
-                                RecyclerAdapterItems recyclerAdapterItems = mAppMem.getRecyclerAdapterItems();
-                                recyclerAdapterItems.setmItems(items);
-                                recyclerAdapterItems.setmItemsTitles(titles);
-                                recyclerAdapterItems.setmItemsIDs(ids);
-                                recyclerAdapterItems.setmItemsTypes(types);
-                                recyclerAdapterItems.notifyDataSetChanged();
+                                if(mListeners!=null){
+                                    mListeners.onCollectionSelected(selectedCollectionObject, items, titles, ids, types);
+                                }
                             }
                         })
-        );
-        mAppMem.getZoteroEngine().getGuiCollections(linearLayoutCollections);
+        ;
+        mZoteroEngine.getGuiCollections(linearLayoutCollections);
     }
 
     public void processPendingAttachments(){
-        File[] pendingsDir = getPredefinedPrivateStoragePending().listFiles();
+        File[] pendingsDir = AppDirs.getPredefinedPrivateStoragePending(mContext).listFiles();
         Gson gson = new Gson();
         if(pendingsDir!=null) {
             Vector<String> filePathsToSend = new Vector<>();
@@ -227,7 +226,7 @@ public class Preparation {
 
                     filePathsToSend.add(pendingAttachmentDir + File.separator + itemAttachment.extractFileName());
                     filePendingDirNames.add(pendingAttachmentDir.getName());
-                    filePathsOnHost.add(getSharedSmbBase() + File.separator +
+                    filePathsOnHost.add(AppDirs.getSharedSmbBase(mContext) + File.separator +
                             itemAttachment.extractStorageDirName() + File.separator +
                             itemAttachment.getFileKey() + File.separator +
                             itemAttachment.extractFileName()
@@ -257,7 +256,7 @@ public class Preparation {
                                 int count = hasSucceeded.size();
                                 for(int i=0; i<count; i++){
                                     if(hasSucceeded.get(i)){
-                                        if(!deleteDirAndContentAtPrivateBase(getPredefinedPrivateStorageDirNamePending(), filePendingDirNames.get(i))){
+                                        if(!AppDirs.deleteDirAndContentAtPrivateBase(mContext, AppDirs.getPredefinedPrivateStorageDirNamePending(mContext), filePendingDirNames.get(i))){
                                             mAppMem.recordStatusSingle("Failed to remove the processed pending attachment: " + filePendingDirNames.get(i));
                                         }
                                     }
@@ -303,7 +302,7 @@ public class Preparation {
         boolean isLocal = mAppMem.getStorageModeIsLocalScoped();
         if(isLocal){
             File localDb = new File(
-                    getPredefinedPrivateStorageBase() + File.separator +
+                    AppDirs.getPredefinedPrivateStorageBase(mContext) + File.separator +
                             getResourceString(R.string.PrivateDirNameLocal) + File.separator +
                             getResourceString(R.string.DbFileNameLocal)
             );
@@ -315,94 +314,18 @@ public class Preparation {
     }
 
     private int checkTheAppDirectories(){
-        if(!makeDirAtPrivateBase(getPredefinedPrivateStorageDirNameLocalScoped())) return STATUS_BASE_STORAGE +2;
-        if(!makeDirAtPrivateBase(getPredefinedPrivateStorageDirNamePending())) return STATUS_BASE_STORAGE +3;
-        if(!makeDirAtPrivateBase(getPredefinedPrivateStorageDirNameSharedSmb())) return STATUS_BASE_STORAGE +4;
+        if(!AppDirs.makeDirAtPrivateBase(mContext, AppDirs.getPredefinedPrivateStorageDirNameLocalScoped(mContext))) return STATUS_BASE_STORAGE +2;
+        if(!AppDirs.makeDirAtPrivateBase(mContext, AppDirs.getPredefinedPrivateStorageDirNamePending(mContext))) return STATUS_BASE_STORAGE +3;
+        if(!AppDirs.makeDirAtPrivateBase(mContext, AppDirs.getPredefinedPrivateStorageDirNameSharedSmb(mContext))) return STATUS_BASE_STORAGE +4;
         return 0;
     }
 
-    public String getResourceString(int id){
+    private String getResourceString(int id){
         return mContext.getResources().getString(id);
     }
 
-    public File getPredefinedPrivateStorageBase(){
-        // getCacheDir : the data could be lost if the device is running low on storage.
-        // getFilesDir : the data will only be lost if the user uninstalls the application.
-        // getExternalFilesDir(null): the data will persist even after app's uninstallation.
-        return mContext.getFilesDir();
+    public ItemDetailed getDetailsForItemId(Collection parentCollection, CollectionItem collectionItem){
+        return mZoteroEngine.getDetailsForItemId(parentCollection, collectionItem);
     }
-
-    public File getPredefinedPrivateStorageLocalScoped(){
-        return new File(getPredefinedPrivateStorageBase(), getResourceString(R.string.PrivateDirNameLocal));
-    }
-
-    public File getPredefinedPrivateStorageSharedSmb(){
-        return new File(getPredefinedPrivateStorageBase(), getResourceString(R.string.PrivateDirNameSmb));
-    }
-
-    public File getPredefinedPrivateStoragePending(){
-        return new File(getPredefinedPrivateStorageBase(), getResourceString(R.string.PrivateDirNamePending));
-    }
-
-    public String getPredefinedPrivateStorageDirNameLocalScoped(){
-        return getResourceString(R.string.PrivateDirNameLocal);
-    }
-
-    public String getPredefinedPrivateStorageDirNameSharedSmb(){
-        return getResourceString(R.string.PrivateDirNameSmb);
-    }
-
-    public String getPredefinedPrivateStorageDirNamePending(){
-        return getResourceString(R.string.PrivateDirNamePending);
-    }
-
-    public String getSharedSmbBase(){
-        String dbPath = mAppMem.getStorageSmbServerSharedPath();
-        return dbPath.substring(0, dbPath.lastIndexOf(File.separator));
-    }
-
-    private boolean makeDirAtPrivateBase(String dirName){
-        File folder = new File(getPredefinedPrivateStorageBase(), dirName);
-        boolean retVal = true;
-        if (!folder.exists()) {
-            retVal = folder.mkdirs();
-        }
-        return retVal;
-    }
-
-    public boolean makeDirAtPrivateBase(String parentDir, String dirName){
-        File folder = new File(getPredefinedPrivateStorageBase().getPath() + File.separator + parentDir + File.separator + dirName);
-        boolean retVal = true;
-        if (!folder.exists()) {
-            retVal = folder.mkdirs();
-        }
-        return retVal;
-    }
-
-    public boolean deleteDirAndContentAtPrivateBase(String parentDir, String dirName) {
-        File folder = new File(getPredefinedPrivateStorageBase().getPath() + File.separator + parentDir + File.separator + dirName);
-        return _deleteDirAndContentAbsPath(folder);
-    }
-
-    private boolean _deleteDirAndContentAbsPath(File folder){
-        File[] files = folder.listFiles();
-        boolean result = true;
-        if(files!=null) { //some JVMs return null for empty dirs
-            for(File f: files) {
-                if(f.isDirectory()) {
-                    result &= _deleteDirAndContentAbsPath(f);
-                } else {
-                    result &= f.delete();
-                }
-            }
-        }
-        result &= folder.delete();
-        return result;
-    }
-
-    public boolean makeDirAtPrivateBase(File dir){
-        return makeDirAtPrivateBase(dir.getPath());
-    }
-
 
 }

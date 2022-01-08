@@ -1,9 +1,11 @@
 package io.github.salehjg.pocketzotero.zoteroengine.types;
 
 
+import java.io.Serializable;
+
 import io.github.salehjg.pocketzotero.utils.UnifiedTypes;
 
-public class UnifiedElement {
+public class UnifiedElement implements Serializable {
     protected UnifiedTypes mType;
     protected Creator mCreator;
     protected ItemTag mTag;

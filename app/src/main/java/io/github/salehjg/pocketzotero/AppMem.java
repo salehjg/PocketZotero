@@ -12,7 +12,6 @@ import com.lmntrx.android.library.livin.missme.ProgressDialog;
 
 import java.util.Vector;
 
-import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterItems;
 import io.github.salehjg.pocketzotero.zoteroengine.ZoteroEngine;
 import io.github.salehjg.pocketzotero.zoteroengine.types.Collection;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
@@ -21,14 +20,10 @@ import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
 public class AppMem extends Application {
 
     private Vector<RecordedStatus> mRecordedStatuses;
-    private ZoteroEngine mZoteroEngine;
 
     private ViewPager2 mViewPager;
     private ItemDetailed mSelectedItemDetailed;
     private ItemDetailedChangedListener mSelectedItemDetailedChangedListener = null;
-    private ProgressBar mProgressBar;
-    private RecyclerAdapterItems mRecyclerAdapterItems;
-    private Collection mSelectedCollection;
     private Preparation mPreparation;
 
     private ProgressDialog mProgressDialog;
@@ -38,13 +33,6 @@ public class AppMem extends Application {
 
     @Override
     public void onCreate() {
-        mRecyclerAdapterItems = new RecyclerAdapterItems(
-                getApplicationContext(),
-                null,
-                null,
-                null,
-                null);
-
         mPreparation = new Preparation();
         mRecordedStatuses = new Vector<>();
         super.onCreate();
@@ -132,26 +120,6 @@ public class AppMem extends Application {
 
     public Preparation getPreparation() {
         return mPreparation;
-    }
-
-    public Collection getSelectedCollection() {
-        return mSelectedCollection;
-    }
-
-    public void setSelectedCollection(Collection selectedCollection) {
-        this.mSelectedCollection = selectedCollection;
-    }
-
-    public RecyclerAdapterItems getRecyclerAdapterItems() {
-        return mRecyclerAdapterItems;
-    }
-
-    public ZoteroEngine getZoteroEngine() {
-        return mZoteroEngine;
-    }
-
-    public void setZoteroEngine(ZoteroEngine zoteroEngine) {
-        this.mZoteroEngine = zoteroEngine;
     }
 
     public ViewPager2 getViewPager() {

@@ -19,7 +19,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.github.nikartm.button.FitButton;
 import com.google.android.material.navigation.NavigationView;
@@ -34,7 +33,7 @@ import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.R;
 import io.github.salehjg.pocketzotero.fragments.about.AboutFragment;
 import io.github.salehjg.pocketzotero.fragments.main.MainFragment;
-import io.github.salehjg.pocketzotero.fragments.settings.settingsFragment;
+import io.github.salehjg.pocketzotero.fragments.settings.SettingsFragment;
 import io.github.salehjg.pocketzotero.fragments.status.StatusFragment;
 import io.github.salehjg.pocketzotero.fragments.welcome.WelcomeFragment;
 import kotlin.Unit;
@@ -118,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         mImageButtonSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showFragment(new settingsFragment());
+                showFragment(new SettingsFragment());
             }
         });
         mImageButtonAbout.setOnClickListener(new View.OnClickListener() {
@@ -164,17 +163,19 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+        /*
         if(!mAppMem.getPreparation().isInitialized()){
             showFragment(new WelcomeFragment());
         }else{
             showFragment(new MainFragment());
-        }
+        }*/
     }
 
     private void runStartupSequence(){
         // Forced = true : force to re-run the sequence even if it has been run before. (inc. downloading db, decoding collections, ...)
         // Forced = false: in case the sequence has been run before, re-use the data. This is useful for situations like display rotation, dynamic ui, ...
-        mAppMem.getPreparation().startupSequence(getApplication(), this, mLinearLayoutCollections, false);
+
+        /// TODO mAppMem.getPreparation().startupSequence(getApplication(), this, mLinearLayoutCollections, false);
     }
 
     private void showFragment(Fragment fragment){

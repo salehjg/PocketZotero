@@ -1,116 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout
+<RelativeLayout
+    android:id="@+id/activitymain_root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/activitymain_drawer"
-    android:fitsSystemWindows="true"
-    android:layout_gravity="start">
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <RelativeLayout
+    <androidx.drawerlayout.widget.DrawerLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <include layout="@layout/toolbar" />
-
-        <FrameLayout
-            android:id="@+id/activitymain_contentarea"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/toolbar"
-            />
-    </RelativeLayout>
-
-    <com.google.android.material.navigation.NavigationView
-        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:id="@+id/activitymain_navview"
-        android:fitsSystemWindows="true">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/activitymain_drawer"
+        android:fitsSystemWindows="true"
+        android:layout_gravity="start">
 
         <RelativeLayout
             android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <include layout="@layout/toolbar" />
+
+            <FrameLayout
+                android:id="@+id/activitymain_contentarea"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/toolbar"
+                />
+        </RelativeLayout>
+
+        <com.google.android.material.navigation.NavigationView
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_gravity="start"
+            android:id="@+id/activitymain_navview"
+            android:fitsSystemWindows="true">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="20mm"
-                android:layout_alignParentTop="true"
-                android:id="@+id/activitymain_drawer_header"
-                >
-                <TextView
-                    android:gravity="center"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="20mm"
+                    android:layout_alignParentTop="true"
+                    android:id="@+id/activitymain_drawer_header"
+                    >
+                    <TextView
+                        android:gravity="center"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:text="Pocket Zotero"
+                        android:textSize="7mm"        xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        android:background="@color/dark_grey"
+                        />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/activitymain_collections_linearlayout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:text="Pocket Zotero"
-                    android:textSize="7mm"
-                    android:textColor="@color/white"
-                    android:textStyle="bold"
-                    android:background="@color/dark_grey"
-                    />
+                    android:layout_above="@+id/activitymain_drawer_toolbar"
+                    android:layout_below="@id/activitymain_drawer_header"
+                    android:background="@color/gray"
+                    android:orientation="vertical" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:id="@+id/activitymain_drawer_toolbar"
+                    android:gravity="end"
+                    android:layout_margin="10dp"
+                    >
+                    <com.github.nikartm.button.FitButton
+                        android:id="@+id/activitymain_btn_main"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        app:fb_icon="@drawable/ic_library"
+                        app:fb_iconHeight="33dp"
+                        android:layout_marginEnd="20dp"
+                        app:fb_iconPosition="center"
+                        app:fb_iconWidth="33dp"
+                        app:fb_rippleColor="@color/theme_dark_red_primary_color" />
+                    <com.github.nikartm.button.FitButton
+                        android:id="@+id/activitymain_btn_settings"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        app:fb_icon="@drawable/ic_settings"
+                        app:fb_iconHeight="33dp"
+                        android:layout_marginEnd="20dp"
+                        app:fb_iconPosition="center"
+                        app:fb_iconWidth="33dp"
+                        app:fb_rippleColor="@color/theme_dark_red_primary_color" />
+                    <com.github.nikartm.button.FitButton
+                        android:id="@+id/activitymain_btn_about"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        app:fb_icon="@drawable/ic_about"
+                        app:fb_iconHeight="33dp"
+                        android:layout_marginEnd="20dp"
+                        app:fb_iconPosition="center"
+                        app:fb_iconWidth="33dp"
+                        app:fb_rippleColor="@color/theme_dark_red_primary_color" />
+                    <com.github.nikartm.button.FitButton
+                        android:id="@+id/activitymain_btn_status"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        app:fb_icon="@drawable/ic_status"
+                        app:fb_iconColor="@color/black"
+                        app:fb_iconHeight="33dp"
+                        app:fb_iconPosition="center"
+                        app:fb_iconWidth="33dp"
+                        app:fb_rippleColor="@color/theme_dark_red_primary_color" />
+                </LinearLayout>
             </RelativeLayout>
+        </com.google.android.material.navigation.NavigationView>
 
-            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:id="@+id/activitymain_collections_linearlayout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_above="@+id/activitymain_drawer_toolbar"
-                android:layout_below="@id/activitymain_drawer_header"
-                android:background="@color/gray"
-                android:orientation="vertical" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:id="@+id/activitymain_drawer_toolbar"
-                android:gravity="end"
-                android:layout_margin="10dp"
-                >
-                <com.github.nikartm.button.FitButton
-                    android:id="@+id/activitymain_btn_main"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    app:fb_icon="@drawable/ic_library"
-                    app:fb_iconHeight="33dp"
-                    android:layout_marginEnd="20dp"
-                    app:fb_iconPosition="center"
-                    app:fb_iconWidth="33dp"
-                    app:fb_rippleColor="@color/theme_dark_red_primary_color" />
-                <com.github.nikartm.button.FitButton
-                    android:id="@+id/activitymain_btn_settings"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    app:fb_icon="@drawable/ic_settings"
-                    app:fb_iconHeight="33dp"
-                    android:layout_marginEnd="20dp"
-                    app:fb_iconPosition="center"
-                    app:fb_iconWidth="33dp"
-                    app:fb_rippleColor="@color/theme_dark_red_primary_color" />
-                <com.github.nikartm.button.FitButton
-                    android:id="@+id/activitymain_btn_about"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    app:fb_icon="@drawable/ic_about"
-                    app:fb_iconHeight="33dp"
-                    android:layout_marginEnd="20dp"
-                    app:fb_iconPosition="center"
-                    app:fb_iconWidth="33dp"
-                    app:fb_rippleColor="@color/theme_dark_red_primary_color" />
-                <com.github.nikartm.button.FitButton
-                    android:id="@+id/activitymain_btn_status"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    app:fb_icon="@drawable/ic_status"
-                    app:fb_iconColor="@color/black"
-                    app:fb_iconHeight="33dp"
-                    app:fb_iconPosition="center"
-                    app:fb_iconWidth="33dp"
-                    app:fb_rippleColor="@color/theme_dark_red_primary_color" />
-            </LinearLayout>
-        </RelativeLayout>
-    </com.google.android.material.navigation.NavigationView>
-
-</androidx.drawerlayout.widget.DrawerLayout>
+    </androidx.drawerlayout.widget.DrawerLayout>
+</RelativeLayout>

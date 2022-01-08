@@ -1,6 +1,8 @@
 package io.github.salehjg.pocketzotero.zoteroengine.types;
 
-public class ItemNote {
+import java.io.Serializable;
+
+public class ItemNote implements Serializable {
     protected int mNoteItemId, mParentItemId;
     protected String mNote, mTitle;
 

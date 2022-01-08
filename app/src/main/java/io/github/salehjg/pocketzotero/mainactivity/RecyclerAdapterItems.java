@@ -20,19 +20,19 @@ public class RecyclerAdapterItems extends RecyclerView.Adapter<RecyclerAdapterIt
         return mItems;
     }
 
-    public void setmItems(Vector<CollectionItem> mItems) {
+    public void setItems(Vector<CollectionItem> mItems) {
         this.mItems = mItems;
     }
 
-    public void setmItemsTitles(Vector<String> mItemsTitles) {
+    public void setItemsTitles(Vector<String> mItemsTitles) {
         this.mItemsTitles = mItemsTitles;
     }
 
-    public void setmItemsTypes(Vector<Integer> mItemsTypes) {
+    public void setItemsTypes(Vector<Integer> mItemsTypes) {
         this.mItemsTypes = mItemsTypes;
     }
 
-    public void setmItemsIDs(Vector<Integer> mItemsIDs) {
+    public void setItemsIds(Vector<Integer> mItemsIDs) {
         this.mItemsIDs = mItemsIDs;
     }
 

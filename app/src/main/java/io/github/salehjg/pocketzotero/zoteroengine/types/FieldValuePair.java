@@ -1,6 +1,8 @@
 package io.github.salehjg.pocketzotero.zoteroengine.types;
 
-public class FieldValuePair {
+import java.io.Serializable;
+
+public class FieldValuePair implements Serializable {
     public FieldValuePair(int fieldId, int valueId, String fieldName, String value){
         this.mFieldId = fieldId;
         this.mValueId = valueId;

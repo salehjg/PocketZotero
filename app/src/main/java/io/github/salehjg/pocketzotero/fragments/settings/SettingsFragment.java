@@ -22,7 +22,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -32,15 +31,13 @@ import com.github.nikartm.button.FitButton;
 import java.util.List;
 import java.util.Vector;
 
+import io.github.salehjg.pocketzotero.AppDirs;
 import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.R;
 import io.github.salehjg.pocketzotero.RecordedStatus;
-import io.github.salehjg.pocketzotero.mainactivity.MainActivity;
 import io.github.salehjg.pocketzotero.smbutils.SmbScanner;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
 
-public class settingsFragment extends Fragment {
+public class SettingsFragment extends Fragment {
     RadioButton mRadioButtonLocalScoped, mRadioButtonSmb;
     Spinner mSpinnerSmbServerIp;
     EditText mEditTextSmbServerIp, mEditTextSmbServerUser, mEditTextSmbServerPass;
@@ -58,12 +55,12 @@ public class settingsFragment extends Fragment {
 
     AppMem mAppMem;
 
-    public settingsFragment() {
+    public SettingsFragment() {
         // Required empty public constructor
     }
 
-    public static settingsFragment newInstance() {
-        settingsFragment fragment = new settingsFragment();
+    public static SettingsFragment newInstance() {
+        SettingsFragment fragment = new SettingsFragment();
         return fragment;
     }
 
@@ -195,7 +192,7 @@ public class settingsFragment extends Fragment {
                             case DialogInterface.BUTTON_NEGATIVE: {
                                 //No button clicked
                                 ///TODO : IMPLEMENT EXPORT DATABASE
-                                Toast.makeText(requireContext(), mAppMem.getPreparation().getResourceString(R.string.MsgSettingsImportDb2), Toast.LENGTH_LONG).show();
+                                Toast.makeText(requireContext(), getResourceString(R.string.MsgSettingsImportDb2), Toast.LENGTH_LONG).show();
                                 break;
                             }
                         }
@@ -203,7 +200,7 @@ public class settingsFragment extends Fragment {
                 };
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
-                builder.setMessage(mAppMem.getPreparation().getResourceString(R.string.MsgSettingsImportDb1)).setPositiveButton("Yes", dialogClickListener)
+                builder.setMessage(getResourceString(R.string.MsgSettingsImportDb1)).setPositiveButton("Yes", dialogClickListener)
                         .setNegativeButton("No", dialogClickListener).show();
 
             }
@@ -219,14 +216,14 @@ public class settingsFragment extends Fragment {
                     mAppMem.setStorageSmbServerPassword(mEditTextSmbServerPass.getText().toString());
                     Toast.makeText(
                             requireContext(),
-                            mAppMem.getPreparation().getResourceString(R.string.MsgSettingsSave1),
+                            getResourceString(R.string.MsgSettingsSave1),
                             Toast.LENGTH_SHORT
                     ).show();
 
                 }catch (Exception e){
                     Toast.makeText(
                             requireContext(),
-                            mAppMem.getPreparation().getResourceString(R.string.MsgSettingsSave2),
+                            getResourceString(R.string.MsgSettingsSave2),
                             Toast.LENGTH_LONG
                     ).show();
                 }
@@ -260,7 +257,7 @@ public class settingsFragment extends Fragment {
         catch (Exception e){
             Toast.makeText(
                     requireContext(),
-                    mAppMem.getPreparation().getResourceString(R.string.MsgSettingsLoad1),
+                    getResourceString(R.string.MsgSettingsLoad1),
                     Toast.LENGTH_LONG
             ).show();
         }
@@ -280,12 +277,12 @@ public class settingsFragment extends Fragment {
                 ExtractLocalZipFile extractLocalZipFile = new ExtractLocalZipFile(
                         requireActivity().getContentResolver(),
                         uriToZip,
-                        mAppMem.getPreparation().getPredefinedPrivateStorageLocalScoped(),
+                        AppDirs.getPredefinedPrivateStorageLocalScoped(requireContext()),
                         true,
                         new ExtractLocalZipFile.Listener() {
                     @Override
                     public void onFinished() {
-                        Toast.makeText(requireContext(), mAppMem.getPreparation().getResourceString(R.string.MsgSettingsImportDb3), Toast.LENGTH_LONG).show();
+                        Toast.makeText(requireContext(), getResourceString(R.string.MsgSettingsImportDb3), Toast.LENGTH_LONG).show();
                         mAppMem.closeProgressDialog();
                     }
 
@@ -315,5 +312,9 @@ public class settingsFragment extends Fragment {
                             e.toString()
             );
         }
+    }
+    
+    private String getResourceString(int id){
+        return requireContext().getResources().getString(id);
     }
 }

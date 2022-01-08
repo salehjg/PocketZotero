@@ -1,7 +1,8 @@
 package io.github.salehjg.pocketzotero.zoteroengine.types;
+import java.io.Serializable;
 import java.util.Vector;
 
-public class Collection {
+public class Collection implements Serializable {
     public void add_sub_collection(Collection c) { mSub_collections.add(c); }
     public Vector<Collection> get_sub_collections() { return mSub_collections;}
 

@@ -23,4 +23,7 @@
     <string name="MsgSettingsSave2">Failed to save the settings.</string>
     <string name="MsgSettingsLoad1">Failed to retrieve the settings.</string>
     <string name="MsgSettingsImportDb3">Finished importing the database.</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
 </resources>

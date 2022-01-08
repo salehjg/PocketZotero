@@ -1,6 +1,8 @@
 package io.github.salehjg.pocketzotero.zoteroengine.types;
 
-public class ItemTag {
+import java.io.Serializable;
+
+public class ItemTag implements Serializable {
     protected String mTagName;
     protected int mTagId, mItemId, mType;
 

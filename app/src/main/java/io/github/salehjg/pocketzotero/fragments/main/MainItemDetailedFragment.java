@@ -2,7 +2,6 @@ package io.github.salehjg.pocketzotero.fragments.main;
 
 import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
@@ -13,19 +12,18 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.gson.Gson;
-
 import java.io.File;
 import java.io.FileWriter;
 
+import io.github.salehjg.pocketzotero.AppDirs;
 import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.R;
 import io.github.salehjg.pocketzotero.RecordedStatus;
@@ -37,14 +35,29 @@ import io.github.salehjg.pocketzotero.zoteroengine.types.ItemAttachment;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
 
 public class MainItemDetailedFragment extends Fragment {
+
+    // User Interface
     ImageView mImageView;
     TextView mTextViewTitle, mTextViewType, mTextViewAbstract;
     RecyclerView mRecyclerViewElements;
     RecyclerAdapterElements mRecyclerAdapterElements;
+    LinearLayoutManager mRecyclerViewElementsLayoutManager;
     RecyclerView mRecyclerViewAttachments;
     RecyclerAdapterAttachments mRecyclerAdapterAttachments;
-    AppMem mAppMem;
-    
+    LinearLayoutManager mRecyclerAttachmentsLayoutManager;
+
+    // State Keys
+    private static final String STATE_RECYCLER_ELEMENTS_STATE = "STATE.KEY.recyclerElementsLayoutMngrState";
+    private static final String STATE_RECYCLER_ATTACHMENTS_STATE = "STATE.KEY.recyclerAttachmentsLayoutMngrState";
+    private static final String STATE_DATA_ITEM_DETAILED = "STATE.KEY.itemDetailed";
+
+    // States
+    private ItemDetailed mDataItemDetailed;
+
+    // Misc
+    private AppMem mAppMem;
+
+
     public MainItemDetailedFragment() {
         // Required empty public constructor
     }
@@ -80,8 +93,10 @@ public class MainItemDetailedFragment extends Fragment {
         mRecyclerViewAttachments = view.findViewById(R.id.fragmainitemdetailed_listattachements);
 
         // Elements Recycler's Stuff
-        mRecyclerViewElements.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        mRecyclerViewElementsLayoutManager = new LinearLayoutManager(view.getContext());
+        mRecyclerViewElements.setLayoutManager(mRecyclerViewElementsLayoutManager);
         mRecyclerAdapterElements = new RecyclerAdapterElements(view.getContext(), null, false);
+        mRecyclerAdapterElements.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
         mRecyclerAdapterElements.setClickListener(new RecyclerAdapterElements.ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -89,12 +104,18 @@ public class MainItemDetailedFragment extends Fragment {
             }
         });
         mRecyclerViewElements.setAdapter(mRecyclerAdapterElements);
+        if(savedInstanceState!=null){
+            Parcelable state = savedInstanceState.getParcelable(STATE_RECYCLER_ELEMENTS_STATE);
+            mRecyclerViewElementsLayoutManager.onRestoreInstanceState(state);
+        }
+
 
         // Attachments Recycler's Stuff
-        LinearLayoutManager layoutManagerAttachments = new LinearLayoutManager(
+        mRecyclerAttachmentsLayoutManager = new LinearLayoutManager(
                 view.getContext(), LinearLayoutManager.HORIZONTAL, false);
-        mRecyclerViewAttachments.setLayoutManager(layoutManagerAttachments);
+        mRecyclerViewAttachments.setLayoutManager(mRecyclerAttachmentsLayoutManager);
         mRecyclerAdapterAttachments = new RecyclerAdapterAttachments(view.getContext(), null);
+        mRecyclerAdapterAttachments.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
         mRecyclerAdapterAttachments.setClickListener(new RecyclerAdapterAttachments.ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -113,7 +134,13 @@ public class MainItemDetailedFragment extends Fragment {
             }
         });
         mRecyclerViewAttachments.setAdapter(mRecyclerAdapterAttachments);
+        if(savedInstanceState!=null){
+            mDataItemDetailed = (ItemDetailed) savedInstanceState.getSerializable(STATE_DATA_ITEM_DETAILED);
+            Parcelable state = savedInstanceState.getParcelable(STATE_RECYCLER_ATTACHMENTS_STATE);
+            mRecyclerAttachmentsLayoutManager.onRestoreInstanceState(state);
+        }
 
+        /*
         ((AppMem) requireActivity().getApplication()).setOnSelectedItemDetailedChangedListener(
                 new AppMem.ItemDetailedChangedListener() {
                     @Override
@@ -121,15 +148,14 @@ public class MainItemDetailedFragment extends Fragment {
                         updateGuiItemDetailed(itemDetailed);
                     }
                 }
-        );
+        );*/
 
-        // To update the GUI when the fragment is instantiated just now.
-        updateGuiItemDetailed(((AppMem) requireActivity().getApplication()).getSelectedItemDetailed());
+        updateGuiItemDetailed(mDataItemDetailed);
     }
 
     private void updateGuiItemDetailed(ItemDetailed itemDetailed){
         if(itemDetailed==null) return;
-        int imgResId = -1;
+        int imgResId;
         switch (itemDetailed.getItemTypeId() ){
             case 33:{//conference
                 imgResId = R.drawable.ic_conference;
@@ -185,13 +211,14 @@ public class MainItemDetailedFragment extends Fragment {
     }
 
     private void openSmbAttachmentFile(ItemAttachment attachment){
-        File dirPendingAbs = mAppMem.getPreparation().getPredefinedPrivateStoragePending();
+        File dirPendingAbs = AppDirs.getPredefinedPrivateStoragePending(requireContext());
 
         String extractedFileName = attachment.extractFileName();
 
         if(!
-            mAppMem.getPreparation().makeDirAtPrivateBase(
-                    mAppMem.getPreparation().getPredefinedPrivateStorageDirNamePending(),
+            AppDirs.makeDirAtPrivateBase(
+                    requireContext(),
+                    AppDirs.getPredefinedPrivateStorageDirNamePending(requireContext()),
                     attachment.extractStorageDirName() + "." + attachment.getFileKey()
             )
         ){
@@ -203,7 +230,7 @@ public class MainItemDetailedFragment extends Fragment {
         String fileDestPath = dirDest + File.separator + extractedFileName;
 
         String fileSrcSmb =
-                mAppMem.getPreparation().getSharedSmbBase()+File.separator+
+                AppDirs.getSharedSmbBase(requireContext())+File.separator+
                         attachment.extractStorageDirName()+File.separator+
                         attachment.getFileKey()+File.separator+
                         extractedFileName;
@@ -264,7 +291,7 @@ public class MainItemDetailedFragment extends Fragment {
         String fileName = attachment.extractFileName();
         String key = attachment.getFileKey();
 
-        File path = new File( mAppMem.getPreparation().getPredefinedPrivateStorageLocalScoped(), storageFolderName);
+        File path = new File( AppDirs.getPredefinedPrivateStorageLocalScoped(requireContext()), storageFolderName);
         File targetFile = new File(path, key + File.separator + fileName);
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setData(FileProvider.getUriForFile(requireActivity().getApplicationContext(), requireContext().getPackageName()+".provider", targetFile));
@@ -284,8 +311,15 @@ public class MainItemDetailedFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        ((AppMem) requireActivity().getApplication()).setOnSelectedItemDetailedChangedListener(null);
-        super.onDestroy();
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(STATE_RECYCLER_ELEMENTS_STATE, mRecyclerViewElementsLayoutManager.onSaveInstanceState());
+        outState.putParcelable(STATE_RECYCLER_ATTACHMENTS_STATE, mRecyclerAttachmentsLayoutManager.onSaveInstanceState());
+        outState.putSerializable(STATE_DATA_ITEM_DETAILED, mDataItemDetailed);
+    }
+
+    public void updateData(ItemDetailed itemDetailed){
+        mDataItemDetailed = itemDetailed;
+        if(isAdded()) updateGuiItemDetailed(mDataItemDetailed);
     }
 }

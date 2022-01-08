@@ -1,6 +1,8 @@
 package io.github.salehjg.pocketzotero.zoteroengine.types;
 
-public class Creator {
+import java.io.Serializable;
+
+public class Creator implements Serializable {
     protected String mFirstName, mLastName, mType;
     protected int mCreatorId, mCreatorTypeId, mOrderIndex;
 

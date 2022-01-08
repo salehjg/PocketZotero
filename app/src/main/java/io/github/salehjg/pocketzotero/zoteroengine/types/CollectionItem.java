@@ -1,6 +1,8 @@
 package io.github.salehjg.pocketzotero.zoteroengine.types;
 
-public class CollectionItem {
+import java.io.Serializable;
+
+public class CollectionItem implements Serializable {
     public int get_collectionId() {
         return mCollectionId;
     }

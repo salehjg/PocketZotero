@@ -24,7 +24,7 @@ public class StatusFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static StatusFragment newInstance(String param1, String param2) {
+    public static StatusFragment newInstance() {
         StatusFragment fragment = new StatusFragment();
         return fragment;
     }

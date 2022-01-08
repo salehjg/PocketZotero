@@ -1,6 +1,8 @@
 package io.github.salehjg.pocketzotero.zoteroengine.types;
 
-public class ItemAttachment {
+import java.io.Serializable;
+
+public class ItemAttachment implements Serializable {
     protected int mFileItemId, mParentItemId, mLinkMode, mSyncState;                      // table: itemAttachments
     protected String mContentType, mFilePath, mStorageModTime, mStorageHash, mCharsetId;   // table: itemAttachments
     protected int mFileItemTypeId, mFileLibraryId, mFileVersion, mFileSynced;                             // table: items
