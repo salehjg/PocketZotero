@@ -47,7 +47,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="To use PocketZotero in this mode, all you have to do is to copy the content of your Zotero Data-folder into `LocalStorage/PocketZotero/LocalDatabaseCopy/. Also, make sure that the Local Mode is selected in PocketZotero's settings. To do so, go to settings, select the Local Mode, and press Save button. Then, close the application and re-open it. Your database should be automatically loaded."
+                android:text="To use PocketZotero in this mode, all you have to do is to compress the content of Zotero Data-folder into a single *.zip file and copy this file into your device. Then, go to the settings, select the Local Mode, and press import database and select the zip file and wait for the procedure to finish. Then, press the red Save button at the bottom of the settings screen and close the application and re-open it. Your database should be automatically loaded."
                 />
         </LinearLayout>
 
@@ -67,7 +67,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="PocketZotero's SMB Mode allows the database shared over Windows Local File Share (SMB-2 or SMB-3) to be used indirectly. All you have to do is to share the folder or the drive containing Zotero Data-folder and configure PocketZotero to access that folder. To do so, go to PocketZotero's settings, select SMB Mode, enter the Windows' username and the password along with its IP address (to find the IP address you can use the auto-scan button). The most important part is to enter the Unix-style path to `zotero.sqlite` that is shared over SMB. This path should look like this: `DriveName/Folder1/.../zoteroData/zotero.sqlite`. Finally, press Save button and restart the application. On the startup, PocketZotero will download the database file (only the DB without any attachment files) and cache it locally before opening it. Be aware that to access any attachment files, your device must still be connected to the local SMB network. The requested attachments will be downloaded from your SMB server and cached locally before allowing the user to access them with their third-party app of choice. Any modifications to the cached attachments will be reflected to the SMB server on the next launch of PocketZotero. "
+                android:text="PocketZotero's SMB Mode allows the database shared over Windows Local File Share (SMB-2 or SMB-3) to be used indirectly. All you have to do is to share the folder or the drive containing Zotero Data-folder and configure PocketZotero to access that folder. To do so, go to PocketZotero's settings, select SMB Mode, enter the Windows' username and the password along with its IP address (to find the IP address you can use the auto-scan button). The most important part is to enter the Unix-style path to `zotero.sqlite` that is shared over SMB. This path should look like this: `DriveName/Folder1/.../zoteroData/zotero.sqlite`. Finally, press Save button and restart the application. On the startup, PocketZotero will download the database file (only the DB without any attachment files) and cache it locally before opening it. Be aware that to access any attachment files, your device must still be connected to the local SMB network. The requested attachments will be downloaded from your SMB server and cached locally before allowing the user to access them with their third-party app of choice. Any modifications to the cached attachments will be reflected to the SMB server on the next launch of PocketZotero. Depending on the device's Android version, the pending document might be processed when PocketZotero is brought back to foreground (from background)."
                 />
             <TextView
                 android:layout_width="wrap_content"
@@ -86,7 +86,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Never use both PocketZotero and Zotero Desktop accessing the same Zotero Data-folder at the same time. This might cause database corruption and/or data-loss.\nBe aware that PocketZotero is a free and open-source application offered by its authors without any guarantees of correct functionality. In case of any misuse and/or any kind of data-loss, the authors will not bear any responsibilities. Please refer to the open-source repository of PocketZotero to access the detailed license."
+                    android:text="Never use both PocketZotero and Zotero Desktop accessing the same Zotero Data-folder at the same time. This might cause database corruption and/or data-loss.\nBe aware that PocketZotero is free and open-source. It is offered by its authors without any guarantees of correct functionality. In case of any misuse and/or any kind of data-loss, the authors are not to be considered responsible. Please refer to the open-source repository of PocketZotero at GitHub (salehjg/PocketZotero) to access the detailed license."
                     />
             </LinearLayout>
         </LinearLayout>
