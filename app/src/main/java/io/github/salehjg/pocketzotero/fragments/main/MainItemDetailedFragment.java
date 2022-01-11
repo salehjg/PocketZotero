@@ -1,5 +1,6 @@
 package io.github.salehjg.pocketzotero.fragments.main;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.activity.result.ActivityResult;
@@ -10,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.os.Parcelable;
@@ -27,8 +30,11 @@ import io.github.salehjg.pocketzotero.AppDirs;
 import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.R;
 import io.github.salehjg.pocketzotero.RecordedStatus;
+import io.github.salehjg.pocketzotero.mainactivity.MainActivityRev1;
 import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterAttachments;
 import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterElements;
+import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.SharedViewModel;
+import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.ViewModelFactory;
 import io.github.salehjg.pocketzotero.smbutils.SmbReceiveFileFromHost;
 import io.github.salehjg.pocketzotero.smbutils.SmbServerInfo;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemAttachment;
@@ -56,6 +62,7 @@ public class MainItemDetailedFragment extends Fragment {
 
     // Misc
     private AppMem mAppMem;
+    private SharedViewModel mSharedViewModel;
 
 
     public MainItemDetailedFragment() {
@@ -72,6 +79,12 @@ public class MainItemDetailedFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -83,6 +96,7 @@ public class MainItemDetailedFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mSharedViewModel = new ViewModelProvider(requireActivity(), new ViewModelFactory(requireActivity().getApplication(), 1)).get(SharedViewModel.class);
         mAppMem = (AppMem)(requireActivity().getApplication());
 
         mImageView = view.findViewById(R.id.fragmainitemdetailed_titleimage);
@@ -140,15 +154,13 @@ public class MainItemDetailedFragment extends Fragment {
             mRecyclerAttachmentsLayoutManager.onRestoreInstanceState(state);
         }
 
-        /*
-        ((AppMem) requireActivity().getApplication()).setOnSelectedItemDetailedChangedListener(
-                new AppMem.ItemDetailedChangedListener() {
-                    @Override
-                    public void onItemDetailedChanged(ItemDetailed itemDetailed) {
-                        updateGuiItemDetailed(itemDetailed);
-                    }
-                }
-        );*/
+        mSharedViewModel.getSelectedItemDetailed().observe(getViewLifecycleOwner(), new Observer<ItemDetailed>() {
+            @Override
+            public void onChanged(ItemDetailed itemDetailed) {
+                mDataItemDetailed = itemDetailed;
+                updateGuiItemDetailed(mDataItemDetailed);
+            }
+        });
 
         updateGuiItemDetailed(mDataItemDetailed);
     }
@@ -316,10 +328,7 @@ public class MainItemDetailedFragment extends Fragment {
         outState.putParcelable(STATE_RECYCLER_ELEMENTS_STATE, mRecyclerViewElementsLayoutManager.onSaveInstanceState());
         outState.putParcelable(STATE_RECYCLER_ATTACHMENTS_STATE, mRecyclerAttachmentsLayoutManager.onSaveInstanceState());
         outState.putSerializable(STATE_DATA_ITEM_DETAILED, mDataItemDetailed);
+
     }
 
-    public void updateData(ItemDetailed itemDetailed){
-        mDataItemDetailed = itemDetailed;
-        if(isAdded()) updateGuiItemDetailed(mDataItemDetailed);
-    }
 }

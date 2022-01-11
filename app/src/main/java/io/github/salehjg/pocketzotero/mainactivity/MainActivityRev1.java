@@ -5,6 +5,8 @@ import static android.os.Build.VERSION.SDK_INT;
 import android.Manifest;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -17,14 +19,19 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.github.nikartm.button.FitButton;
 import com.google.android.material.navigation.NavigationView;
+import com.lmntrx.android.library.livin.missme.ProgressDialog;
 import com.permissionx.guolindev.PermissionX;
 import com.permissionx.guolindev.callback.ExplainReasonCallback;
 import com.permissionx.guolindev.callback.RequestCallback;
 import com.permissionx.guolindev.request.ExplainScope;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
@@ -32,13 +39,20 @@ import java.util.Vector;
 import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.Preparation;
 import io.github.salehjg.pocketzotero.R;
+import io.github.salehjg.pocketzotero.RecordedStatus;
 import io.github.salehjg.pocketzotero.fragments.about.AboutFragment;
 import io.github.salehjg.pocketzotero.fragments.main.MainFragment;
+import io.github.salehjg.pocketzotero.fragments.main.MainItemDetailedFragment;
+import io.github.salehjg.pocketzotero.fragments.main.MainItemsFragment;
 import io.github.salehjg.pocketzotero.fragments.settings.SettingsFragment;
 import io.github.salehjg.pocketzotero.fragments.status.StatusFragment;
+import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.SharedViewModel;
+import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.ViewModelFactory;
 import io.github.salehjg.pocketzotero.zoteroengine.types.Collection;
 import io.github.salehjg.pocketzotero.zoteroengine.types.CollectionItem;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 public class MainActivityRev1 extends AppCompatActivity {
 
@@ -63,10 +77,6 @@ public class MainActivityRev1 extends AppCompatActivity {
     private static final String STATE_DATA_IDS = "STATE.KEY.ids";
 
     // States
-    private MainFragment mFragmentMain;
-    private SettingsFragment mFragmentSettings;
-    private AboutFragment mFragmentAbout;
-    private StatusFragment mFragmentStatus;
     private Collection mDataSelectedCollection;
     private CollectionItem mDataSelectedItem;
     private ItemDetailed mDataSelectedItemDetailed;
@@ -79,19 +89,52 @@ public class MainActivityRev1 extends AppCompatActivity {
     private boolean mDoubleBackToExitPressedOnce = false;
     private Boolean mTwoPane;
     private AppMem mAppMem;
+    private SharedViewModel mSharedViewModel;
+    private boolean isThisTheFirstTimeAfterReset;
+
+    @Override
+    public void onBackPressed() {
+        if(mAppMem.isProgressDialogCreated()) {
+            ProgressDialog progressDialog = mAppMem.getProgressDialog();
+            progressDialog.onBackPressed(new Function0<Unit>() {
+                @Override
+                public Unit invoke() {
+                    /// TODO: this is nasty and makes the code dependant on MainActivity.
+                    /// TODO: unfortunately, the library does not support buttons on the dialog.
+                    if(mAppMem.getProgressDialogListener()!=null)
+                        mAppMem.getProgressDialogListener().onCanceled();
+                    MainActivityRev1.super.onBackPressed();
+                    return null;
+                }
+            });
+        }else {
+            if (mDoubleBackToExitPressedOnce) {
+                //this.finishAffinity();
+                System.exit(0);
+                return;
+            }
+
+            this.mDoubleBackToExitPressedOnce = true;
+            Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    mDoubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mAppMem = (AppMem) (getApplicationContext());
-        FragmentManager fm = this.getSupportFragmentManager();
+        mSharedViewModel = new ViewModelProvider(this, new ViewModelFactory(getApplication(), 1)).get(SharedViewModel.class);
 
         if(savedInstanceState==null){ // This is the first run.
-            mFragmentMain = MainFragment.newInstance(null,null,null,null,null);
-            mFragmentSettings = SettingsFragment.newInstance();
-            mFragmentAbout = AboutFragment.newInstance();
-            mFragmentStatus = StatusFragment.newInstance();
             mDataSelectedCollection = null;
             mDataSelectedItem = null;
             mDataSelectedItemDetailed = null;
@@ -99,15 +142,8 @@ public class MainActivityRev1 extends AppCompatActivity {
             mDataTitles = null;
             mDataTypes = null;
             mDataIds = null;
+            isThisTheFirstTimeAfterReset = false;
         }else{
-            mFragmentMain = (MainFragment) fm.getFragment(savedInstanceState, STATE_FRAGMENT_MAIN);
-            if(mFragmentMain==null) mFragmentMain = MainFragment.newInstance(null,null,null,null,null);
-            mFragmentSettings = (SettingsFragment) fm.getFragment(savedInstanceState, STATE_FRAGMENT_SETTINGS);
-            if(mFragmentSettings==null) mFragmentSettings = SettingsFragment.newInstance();
-            mFragmentAbout = (AboutFragment) fm.getFragment(savedInstanceState, STATE_FRAGMENT_ABOUT);
-            if(mFragmentAbout==null) mFragmentAbout = AboutFragment.newInstance();
-            mFragmentStatus = (StatusFragment) fm.getFragment(savedInstanceState, STATE_FRAGMENT_STATUS);
-            if(mFragmentStatus==null) mFragmentStatus = StatusFragment.newInstance();
             mDataSelectedCollection = (Collection) savedInstanceState.getSerializable(STATE_DATA_SELECTED_COLLECTION);
             mDataSelectedItem = (CollectionItem) savedInstanceState.getSerializable(STATE_DATA_SELECTED_ITEM);
             mDataSelectedItemDetailed = (ItemDetailed) savedInstanceState.getSerializable(STATE_DATA_SELECTED_ITEM_DETAILED);
@@ -115,6 +151,7 @@ public class MainActivityRev1 extends AppCompatActivity {
             mDataTitles = (Vector<String>) savedInstanceState.getSerializable(STATE_DATA_TITLES);
             mDataTypes = (Vector<Integer>) savedInstanceState.getSerializable(STATE_DATA_TYPES);
             mDataIds = (Vector<Integer>) savedInstanceState.getSerializable(STATE_DATA_IDS);
+            isThisTheFirstTimeAfterReset = true;
         }
 
         //------------------------------------------------------------------------------------------
@@ -134,25 +171,25 @@ public class MainActivityRev1 extends AppCompatActivity {
         mImageButtonMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showFragment(mFragmentMain);
+                showFragment(MainFragment.newInstance(), STATE_FRAGMENT_MAIN);
             }
         });
         mImageButtonSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showFragment(mFragmentSettings);
+                showFragment(SettingsFragment.newInstance(), STATE_FRAGMENT_SETTINGS);
             }
         });
         mImageButtonAbout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showFragment(mFragmentAbout);
+                showFragment(AboutFragment.newInstance(), STATE_FRAGMENT_ABOUT);
             }
         });
         mImageButtonStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showFragment(mFragmentStatus);
+                showFragment(StatusFragment.newInstance(), STATE_FRAGMENT_STATUS);
             }
         });
 
@@ -189,24 +226,20 @@ public class MainActivityRev1 extends AppCompatActivity {
                         }
                     }
                 });
-    }
 
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        FragmentManager fm = getSupportFragmentManager();
-        if(mFragmentMain.isAdded()) fm.putFragment(outState, STATE_FRAGMENT_MAIN, mFragmentMain);
-        if(mFragmentSettings.isAdded()) fm.putFragment(outState, STATE_FRAGMENT_SETTINGS, mFragmentSettings);
-        if(mFragmentAbout.isAdded()) fm.putFragment(outState, STATE_FRAGMENT_ABOUT, mFragmentAbout);
-        if(mFragmentStatus.isAdded()) fm.putFragment(outState, STATE_FRAGMENT_STATUS, mFragmentStatus);
-
-        outState.putSerializable(STATE_DATA_SELECTED_COLLECTION, mDataSelectedCollection);
-        outState.putSerializable(STATE_DATA_SELECTED_ITEM, mDataSelectedItem);
-        outState.putSerializable(STATE_DATA_SELECTED_ITEM_DETAILED, mDataSelectedItemDetailed);
-        outState.putSerializable(STATE_DATA_ITEMS, mDataItems);
-        outState.putSerializable(STATE_DATA_TITLES, mDataTitles);
-        outState.putSerializable(STATE_DATA_TYPES, mDataTypes);
-        outState.putSerializable(STATE_DATA_IDS, mDataIds);
+        mSharedViewModel.getSelectedItem().observe(this, new Observer<CollectionItem>() {
+            @Override
+            public void onChanged(CollectionItem selectedItem) {
+                mDataSelectedItem = selectedItem;
+                mDataSelectedItemDetailed = mAppMem.getPreparation().getDetailsForItemId(mDataSelectedCollection, mDataSelectedItem);
+                if(!isThisTheFirstTimeAfterReset){
+                    mSharedViewModel.getViewPagerSelectedTab().setValue(1);
+                }else{
+                    isThisTheFirstTimeAfterReset = false;
+                }
+                mSharedViewModel.getSelectedItemDetailed().setValue(mDataSelectedItemDetailed);
+            }
+        });
     }
 
     private void setUpNavDrawer(){
@@ -227,12 +260,12 @@ public class MainActivityRev1 extends AppCompatActivity {
         }
     }
 
-    private void showFragment(Fragment fragment){
+    private void showFragment(Fragment fragment, String tag){
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
-        ft.replace(R.id.activitymain_contentarea, fragment);
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ft.commit();
+        ft.replace(R.id.activitymain_contentarea, fragment, tag);
+        ft.setTransition(FragmentTransaction.TRANSIT_NONE);
+        ft.commitAllowingStateLoss();
     }
 
     private void runStartupSequence(){
@@ -244,14 +277,64 @@ public class MainActivityRev1 extends AppCompatActivity {
                 mDataTitles = titles;
                 mDataTypes = types;
                 mDataIds = ids;
-                mFragmentMain.updateData(mDataItems, mDataTitles, mDataTypes, mDataIds);
+
+                mSharedViewModel.getViewPagerSelectedTab().setValue(0);
+                mSharedViewModel.getRecyclerItemsItems().setValue(mDataItems);
+                mSharedViewModel.getRecyclerItemsTitles().setValue(mDataTitles);
+                mSharedViewModel.getRecyclerItemsTypes().setValue(mDataTypes);
+                mSharedViewModel.getRecyclerItemsIds().setValue(mDataIds);
+            }
+
+            @Override
+            public void onStartupSequenceCompleted(int statusCode) {
+                if(mAppMem.getTheFirstLaunch()){
+                    mAppMem.setTheFirstLaunch(false);
+                    showFragment(AboutFragment.newInstance(), STATE_FRAGMENT_ABOUT);
+                }else{
+                    if(
+                            (statusCode == RecordedStatus.STATUS_BASE_STORAGE+9) ||
+                            (statusCode == RecordedStatus.STATUS_BASE_STORAGE+10) ||
+                            (statusCode == RecordedStatus.STATUS_BASE_STORAGE+11)
+                    ) {
+                        showFragment(MainFragment.newInstance(), STATE_FRAGMENT_MAIN);
+                    }else{
+                        showFragment(StatusFragment.newInstance(), STATE_FRAGMENT_STATUS);
+                    }
+                }
             }
         });
     }
 
-    public void processSelectedCollectionItem(CollectionItem selectedItem){
-        mDataSelectedItem = selectedItem;
-        mDataSelectedItemDetailed = mAppMem.getPreparation().getDetailsForItemId(mDataSelectedCollection, mDataSelectedItem);
-        mFragmentMain.updateData(mDataSelectedItemDetailed);
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //deleteFragment(mFragmentMain);
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        /*
+        FragmentManager fm = getSupportFragmentManager();
+
+        boolean isAddedMain = mFragmentMain.isAdded();
+        boolean isAddedSettings = mFragmentSettings.isAdded();
+        boolean isAddedAbout = mFragmentAbout.isAdded();
+        boolean isAddedStatus = mFragmentStatus.isAdded();
+
+        if(isAddedMain) fm.putFragment(outState, STATE_FRAGMENT_MAIN, mFragmentMain);
+        if(isAddedSettings) fm.putFragment(outState, STATE_FRAGMENT_SETTINGS, mFragmentSettings);
+        if(isAddedAbout) fm.putFragment(outState, STATE_FRAGMENT_ABOUT, mFragmentAbout);
+        if(isAddedStatus) fm.putFragment(outState, STATE_FRAGMENT_STATUS, mFragmentStatus);
+        */
+
+        outState.putSerializable(STATE_DATA_SELECTED_COLLECTION, mDataSelectedCollection);
+        outState.putSerializable(STATE_DATA_SELECTED_ITEM, mDataSelectedItem);
+        outState.putSerializable(STATE_DATA_SELECTED_ITEM_DETAILED, mDataSelectedItemDetailed);
+        outState.putSerializable(STATE_DATA_ITEMS, mDataItems);
+        outState.putSerializable(STATE_DATA_TITLES, mDataTitles);
+        outState.putSerializable(STATE_DATA_TYPES, mDataTypes);
+        outState.putSerializable(STATE_DATA_IDS, mDataIds);
     }
 }

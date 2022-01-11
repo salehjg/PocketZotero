@@ -1,9 +1,12 @@
 package io.github.salehjg.pocketzotero.fragments.main;
 
+import android.content.Context;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,6 +20,8 @@ import java.util.Vector;
 import io.github.salehjg.pocketzotero.R;
 import io.github.salehjg.pocketzotero.mainactivity.MainActivityRev1;
 import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterItems;
+import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.SharedViewModel;
+import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.ViewModelFactory;
 import io.github.salehjg.pocketzotero.zoteroengine.types.CollectionItem;
 
 public class MainItemsFragment extends Fragment {
@@ -40,6 +45,9 @@ public class MainItemsFragment extends Fragment {
 
     // Fragment Arguments
 
+    // Misc
+    private SharedViewModel mSharedViewModel;
+
     public MainItemsFragment() {
         // Required empty public constructor
     }
@@ -55,11 +63,26 @@ public class MainItemsFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+    }
+
+    @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mSharedViewModel = new ViewModelProvider(requireActivity(), new ViewModelFactory(requireActivity().getApplication(), 1)).get(SharedViewModel.class);
+
         mRecyclerViewItems = view.findViewById(R.id.fragmainitems_recycler);
         mRecyclerLayoutManager = new LinearLayoutManager(view.getContext());
+        if(savedInstanceState!=null){
+            mDataItems = (Vector<CollectionItem>)savedInstanceState.getSerializable(STATE_DATA_ITEMS);
+            mDataItemsTitles = (Vector<String>)savedInstanceState.getSerializable(STATE_DATA_TITLES);
+            mDataItemsTypes = (Vector<Integer>)savedInstanceState.getSerializable(STATE_DATA_TYPES);
+            mDataItemsIds = (Vector<Integer>)savedInstanceState.getSerializable(STATE_DATA_IDS);
+            Parcelable state = savedInstanceState.getParcelable(STATE_RECYCLER_STATE);
+            mRecyclerLayoutManager.onRestoreInstanceState(state);
+        }
         mRecyclerViewItems.setLayoutManager(mRecyclerLayoutManager);
         mRecyclerAdapterItems =  new RecyclerAdapterItems(
                 requireContext(),
@@ -71,23 +94,47 @@ public class MainItemsFragment extends Fragment {
         mRecyclerAdapterItems.setClickListener(new RecyclerAdapterItems.ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                MainFragment mainFragment = (MainFragment) requireParentFragment();
-                MainActivityRev1 mainActivity = (MainActivityRev1) mainFragment.requireActivity();
+                //MainActivityRev1 mainActivity = (MainActivityRev1) requireActivity();
                 CollectionItem selectedItem = mRecyclerAdapterItems.getDataCollectionItem(position);
-                mainActivity.processSelectedCollectionItem(selectedItem);
+                //mainActivity.processSelectedCollectionItem(selectedItem);
+                mSharedViewModel.getSelectedItem().setValue(selectedItem);
             }
         });
-
         mRecyclerViewItems.setAdapter(mRecyclerAdapterItems);
-        if(savedInstanceState!=null){
-            mDataItems = (Vector<CollectionItem>)savedInstanceState.getSerializable(STATE_DATA_ITEMS);
-            mDataItemsTitles = (Vector<String>)savedInstanceState.getSerializable(STATE_DATA_TITLES);
-            mDataItemsTypes = (Vector<Integer>)savedInstanceState.getSerializable(STATE_DATA_TYPES);
-            mDataItemsIds = (Vector<Integer>)savedInstanceState.getSerializable(STATE_DATA_IDS);
-            Parcelable state = savedInstanceState.getParcelable(STATE_RECYCLER_STATE);
-            mRecyclerLayoutManager.onRestoreInstanceState(state);
-        }
         showData();
+
+        mSharedViewModel.getRecyclerItemsItems().observe(getViewLifecycleOwner(), new Observer<Vector<CollectionItem>>() {
+            @Override
+            public void onChanged(Vector<CollectionItem> collectionItems) {
+                mDataItems = collectionItems;
+                mRecyclerAdapterItems.setItems(mDataItems);
+                mRecyclerAdapterItems.notifyDataSetChanged();
+            }
+        });
+        mSharedViewModel.getRecyclerItemsTitles().observe(getViewLifecycleOwner(), new Observer<Vector<String>>() {
+            @Override
+            public void onChanged(Vector<String> titles) {
+                mDataItemsTitles = titles;
+                mRecyclerAdapterItems.setItemsTitles(mDataItemsTitles);
+                mRecyclerAdapterItems.notifyDataSetChanged();
+            }
+        });
+        mSharedViewModel.getRecyclerItemsTypes().observe(getViewLifecycleOwner(), new Observer<Vector<Integer>>() {
+            @Override
+            public void onChanged(Vector<Integer> types) {
+                mDataItemsTypes = types;
+                mRecyclerAdapterItems.setItemsTypes(mDataItemsTypes);
+                mRecyclerAdapterItems.notifyDataSetChanged();
+            }
+        });
+        mSharedViewModel.getRecyclerItemsIds().observe(getViewLifecycleOwner(), new Observer<Vector<Integer>>() {
+            @Override
+            public void onChanged(Vector<Integer> ids) {
+                mDataItemsIds = ids;
+                mRecyclerAdapterItems.setItemsIds(mDataItemsIds);
+                mRecyclerAdapterItems.notifyDataSetChanged();
+            }
+        });
     }
 
     @Override
@@ -107,15 +154,8 @@ public class MainItemsFragment extends Fragment {
         outState.putSerializable(STATE_DATA_IDS, mDataItemsIds);
     }
 
-    public void updateData(Vector<CollectionItem> items, Vector<String> titles, Vector<Integer> types, Vector<Integer> ids){
-        mDataItems = items;
-        mDataItemsTitles = titles;
-        mDataItemsTypes = types;
-        mDataItemsIds = ids;
-        showData();
-    }
-
     private void showData(){
+        if(mRecyclerAdapterItems==null) return; // bypass if the fragment is not loaded yet.
         mRecyclerAdapterItems.setItems(mDataItems);
         mRecyclerAdapterItems.setItemsTitles(mDataItemsTitles);
         mRecyclerAdapterItems.setItemsTypes(mDataItemsTypes);

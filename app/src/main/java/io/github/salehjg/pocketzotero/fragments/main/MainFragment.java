@@ -7,6 +7,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
@@ -14,11 +17,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.util.Objects;
 import java.util.Vector;
 
 import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.R;
+import io.github.salehjg.pocketzotero.mainactivity.MainActivityRev1;
+import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.SharedViewModel;
+import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.ViewModelFactory;
 import io.github.salehjg.pocketzotero.zoteroengine.types.CollectionItem;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
 
@@ -29,79 +37,33 @@ public class MainFragment extends Fragment {
     private ViewPager2 mViewPager;
 
     // State Keys
-    private static final String STATE_MAIN_ITEMS = "STATE.KEY.mainItems";
-    private static final String STATE_ITEM_DETAILED = "STATE.KEY.mainItemDetailed";
     private static final String STATE_SEL_TAB_INDEX = "STATE.KEY.selectedTabIndex";
 
     // States
-    private MainItemsFragment mFragmentMainItems;
-    private MainItemDetailedFragment mFragmentMainItemDetailed;
     private int mSelectedTabIndex;
 
     // Fragment Arguments
-    public static final String ARG_ITEM_DETAILED = "ARG.KEY.itemDetailed";
-    private ItemDetailed mDataItemDetailed;
-    public static final String ARG_ITEMS = "ARG.KEY.items";
-    private Vector<CollectionItem> mDataItems;
-    public static final String ARG_ITEMS_TITLES = "ARG.KEY.itemsTitles";
-    private Vector<String> mDataItemsTitles;
-    public static final String ARG_ITEMS_TYPES = "ARG.KEY.itemsTypes";
-    private Vector<Integer> mDataItemsTypes;
-    public static final String ARG_ITEMS_IDS = "ARG.KEY.itemsIds";
-    private Vector<Integer> mDataItemsIds;
+
+    // Misc
+    private ViewStateAdapter mViewStateAdapter;
+    private SharedViewModel mSharedViewModel;
 
     public MainFragment() {
         // Required empty public constructor
     }
 
-    public static MainFragment newInstance(
-            Vector<CollectionItem> items,
-            Vector<String> titles,
-            Vector<Integer> types,
-            Vector<Integer> ids,
-            ItemDetailed itemDetailed) {
+    public static MainFragment newInstance() {
         MainFragment fragment = new MainFragment();
-
-        Bundle args = new Bundle();
-        args.putSerializable(ARG_ITEM_DETAILED, itemDetailed);
-        args.putSerializable(ARG_ITEMS, items);
-        args.putSerializable(ARG_ITEMS_TITLES, titles);
-        args.putSerializable(ARG_ITEMS_TYPES, types);
-        args.putSerializable(ARG_ITEMS_IDS, ids);
-        fragment.setArguments(args);
-
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mDataItemDetailed = (ItemDetailed) getArguments().getSerializable(ARG_ITEM_DETAILED);
-            mDataItems = (Vector<CollectionItem>) getArguments().getSerializable(ARG_ITEMS);
-            mDataItemsTitles = (Vector<String>) getArguments().getSerializable(ARG_ITEMS_TITLES);
-            mDataItemsTypes = (Vector<Integer>) getArguments().getSerializable(ARG_ITEMS_TYPES);
-            mDataItemsIds = (Vector<Integer>) getArguments().getSerializable(ARG_ITEMS_IDS);
-        }
     }
 
-    public void updateData(ItemDetailed itemDetailed){
-        mDataItemDetailed = itemDetailed;
-        mViewPager.setCurrentItem(1);
-        if(mFragmentMainItemDetailed!=null) mFragmentMainItemDetailed.updateData(mDataItemDetailed);
-    }
-
-    public void updateData(Vector<CollectionItem> items, Vector<String> titles, Vector<Integer> types, Vector<Integer> ids){
-        mDataItems = items;
-        mDataItemsTitles = titles;
-        mDataItemsTypes = types;
-        mDataItemsIds = ids;
-        if(mFragmentMainItems!=null) mFragmentMainItems.updateData(mDataItems, mDataItemsTitles, mDataItemsTypes, mDataItemsIds);
-    }
-
-    public void updateData(ItemDetailed itemDetailed, Vector<CollectionItem> items, Vector<String> titles, Vector<Integer> types, Vector<Integer> ids){
-        updateData(itemDetailed);
-        updateData(items, titles, types, ids);
+    public void setTheSelectedTab(int index){
+        mViewPager.setCurrentItem(index);
     }
 
     @Override
@@ -113,18 +75,14 @@ public class MainFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        FragmentManager fm = getChildFragmentManager();
+        super.onViewCreated(view, savedInstanceState);
+
+        mSharedViewModel = new ViewModelProvider(requireActivity(), new ViewModelFactory(requireActivity().getApplication(), 1)).get(SharedViewModel.class);
+
 
         if(savedInstanceState==null){
-            // no prior saved state
-            mFragmentMainItems = MainItemsFragment.newInstance();
-            mFragmentMainItemDetailed = MainItemDetailedFragment.newInstance();
             mSelectedTabIndex = 0;
         }else{
-            mFragmentMainItems = (MainItemsFragment) fm.getFragment(savedInstanceState, STATE_MAIN_ITEMS);
-            if(mFragmentMainItems==null) mFragmentMainItems = MainItemsFragment.newInstance();
-            mFragmentMainItemDetailed = (MainItemDetailedFragment) fm.getFragment(savedInstanceState, STATE_ITEM_DETAILED);
-            if(mFragmentMainItemDetailed==null) mFragmentMainItemDetailed = MainItemDetailedFragment.newInstance();
             mSelectedTabIndex = savedInstanceState.getInt(STATE_SEL_TAB_INDEX);
         }
 
@@ -133,19 +91,29 @@ public class MainFragment extends Fragment {
         // https://stackoverflow.com/a/58391219/8296604
         // java.lang.IllegalStateException: FragmentManager is already executing transactions
         // Solution : use `getChildFragmentManager` instead of `getParentFragmentManager`
+
+        mViewStateAdapter = new ViewStateAdapter(this);
         mViewPager = view.findViewById(R.id.fragmain_viewpager);
-        mViewPager.setOffscreenPageLimit(2); // without this, the related fragments won't be added until its really necessary (we don't want that to happen)
         mTabLayout = view.findViewById(R.id.fragmain_tablayout);
-        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-        mTabLayout.addTab(mTabLayout.newTab().setText("Items"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("Details"));
-        ViewStateAdapter viewStateAdapter = new ViewStateAdapter(fm, getLifecycle(), mFragmentMainItems, mFragmentMainItemDetailed);
-        mViewPager.setAdapter(viewStateAdapter);
-        mViewPager.setCurrentItem(mSelectedTabIndex);
+        mViewPager.setOffscreenPageLimit(ViewPager2.OFFSCREEN_PAGE_LIMIT_DEFAULT); // without this, the related fragments won't be added until its really necessary (we don't want that to happen)
+        //mViewPager.setSaveEnabled(false);
+        //mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        mViewPager.setAdapter(mViewStateAdapter);
+
+        new TabLayoutMediator(mTabLayout, mViewPager,
+                new TabLayoutMediator.TabConfigurationStrategy() {
+                    @Override
+                    public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
+                        //Sets tabs names as mentioned in ViewPagerAdapter fragmentNames array, this can be implemented in many different ways.
+                        tab.setText(((ViewStateAdapter)(Objects.requireNonNull(mViewPager.getAdapter()))).mFragmentNames[position]);
+                    }
+                }
+        ).attach();
+
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                mViewPager.setCurrentItem(tab.getPosition());
+                mSelectedTabIndex = tab.getPosition();
             }
 
             @Override
@@ -158,20 +126,27 @@ public class MainFragment extends Fragment {
 
             }
         });
-        mViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+
+        mSharedViewModel.getViewPagerSelectedTab().observe(getViewLifecycleOwner(), new Observer<Integer>() {
             @Override
-            public void onPageSelected(int position) {
-                mTabLayout.selectTab(mTabLayout.getTabAt(position));
+            public void onChanged(Integer position) {
+                if(position!=-1) {
+                    mSelectedTabIndex = position;
+                    mViewPager.setCurrentItem(mSelectedTabIndex);
+                    mSharedViewModel.getViewPagerSelectedTab().setValue(-1);
+                }
             }
         });
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        FragmentManager fm = getChildFragmentManager();
-        if(mFragmentMainItems.isAdded()) fm.putFragment(outState, STATE_MAIN_ITEMS, mFragmentMainItems);
-        if(mFragmentMainItemDetailed.isAdded()) fm.putFragment(outState, STATE_ITEM_DETAILED, mFragmentMainItemDetailed);
         outState.putInt(STATE_SEL_TAB_INDEX, mSelectedTabIndex);
     }
 }

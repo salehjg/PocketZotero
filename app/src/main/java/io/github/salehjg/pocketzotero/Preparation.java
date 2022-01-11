@@ -36,9 +36,11 @@ public class Preparation {
     private Activity mActivity;
     private Listeners mListeners;
     private ZoteroEngine mZoteroEngine;
+    private int mStartupSequenceStatus;
 
     public interface Listeners{
         void onCollectionSelected(Collection selectedCollectionObject, Vector<CollectionItem> items, Vector<String> titles, Vector<Integer> ids, Vector<Integer> types);
+        void onStartupSequenceCompleted(int statusCode);
     }
 
     public Preparation(){
@@ -64,27 +66,28 @@ public class Preparation {
     }
 
     public void startupSequencePermissionGranted(LinearLayout linearLayoutCollections){
-        int state;
-
         mAppMem.createProgressDialog(mActivity, false, false, "Running the startup sequence ...", null);
         // -----------------------------------------------------------------------------------------
-        mAppMem.recordStatusSingle(state = checkTheAppDirectories());
-        if(state!=0) {
+        mAppMem.recordStatusSingle(mStartupSequenceStatus = checkTheAppDirectories());
+        if(mStartupSequenceStatus!=0) {
             mAppMem.closeProgressDialog();
+            mListeners.onStartupSequenceCompleted(mStartupSequenceStatus);
             return;
         }
 
         // -----------------------------------------------------------------------------------------
-        mAppMem.recordStatusSingle(state = checkTheDatabases());
-        if(state!=0) {
+        mAppMem.recordStatusSingle(mStartupSequenceStatus = checkTheDatabases());
+        if(mStartupSequenceStatus!=0) {
             mAppMem.closeProgressDialog();
+            mListeners.onStartupSequenceCompleted(mStartupSequenceStatus);
             return;
         }
 
         // -----------------------------------------------------------------------------------------
-        mAppMem.recordStatusSingle(state = checkPreferencesSmb());
-        if(state!=0) {
+        mAppMem.recordStatusSingle(mStartupSequenceStatus = checkPreferencesSmb());
+        if(mStartupSequenceStatus!=0) {
             mAppMem.closeProgressDialog();
+            mListeners.onStartupSequenceCompleted(mStartupSequenceStatus);
             return;
         }
 
@@ -94,7 +97,8 @@ public class Preparation {
             String dbPathLocal = AppDirs.getPredefinedPrivateStorageBase(mContext)+ File.separator +
                     getResourceString(R.string.PrivateDirNameLocal);
             startZoteroEngine(dbPathLocal + File.separator + getResourceString(R.string.DbFileNameLocal), linearLayoutCollections);
-            mAppMem.recordStatusSingle(STATUS_BASE_STORAGE+11);
+            mAppMem.recordStatusSingle(mStartupSequenceStatus = STATUS_BASE_STORAGE+11);
+            mListeners.onStartupSequenceCompleted(mStartupSequenceStatus);
             mAppMem.closeProgressDialog();
         }else{
             String serverIp = mAppMem.getStorageSmbServerIp();
@@ -118,7 +122,8 @@ public class Preparation {
                                 if(dbOldSmbFile.exists()){
                                     if(!dbOldSmbFile.delete()){
                                         // ERROR FAILED TO DELETE THE OLD `DbFileNameSmb`
-                                        mAppMem.recordStatusSingle(STATUS_BASE_STORAGE + 7);
+                                        mAppMem.recordStatusSingle(mStartupSequenceStatus = STATUS_BASE_STORAGE + 7);
+                                        mListeners.onStartupSequenceCompleted(mStartupSequenceStatus);
                                         mAppMem.closeProgressDialog();
                                         return;
                                     }
@@ -132,20 +137,23 @@ public class Preparation {
                                 if(retVal){
                                     // LOAD THE DATABASE AT `DbFileNameSmb`
                                     startZoteroEngine(dbPathSmb + File.separator + getResourceString(R.string.DbFileNameSmb), linearLayoutCollections);
-                                    mAppMem.recordStatusSingle(STATUS_BASE_STORAGE+10);
+                                    mAppMem.recordStatusSingle(mStartupSequenceStatus = STATUS_BASE_STORAGE+10);
+                                    mListeners.onStartupSequenceCompleted(mStartupSequenceStatus);
                                     mAppMem.closeProgressDialog();
 
                                     // Since we are managed to connect to the host, lets process all the pending attachments
                                     processPendingAttachments();
                                 }else{
                                     // ERROR FAILED TO RENAME `DbFileNameSmbTemp` TO `DbFileNameSmb`
-                                    mAppMem.recordStatusSingle(STATUS_BASE_STORAGE + 6);
+                                    mAppMem.recordStatusSingle(mStartupSequenceStatus = STATUS_BASE_STORAGE + 6);
+                                    mListeners.onStartupSequenceCompleted(mStartupSequenceStatus);
                                     mAppMem.closeProgressDialog();
                                     return;
                                 }
                             }else{
                                 //ERROR CANNOT FIND THE NEWLY DOWNLOADED `DbFileNameSmbTemp`
-                                mAppMem.recordStatusSingle(STATUS_BASE_STORAGE + 8);
+                                mAppMem.recordStatusSingle(mStartupSequenceStatus = STATUS_BASE_STORAGE + 8);
+                                mListeners.onStartupSequenceCompleted(mStartupSequenceStatus);
                                 mAppMem.closeProgressDialog();
                                 return;
                             }
@@ -168,7 +176,8 @@ public class Preparation {
                             );
                             if(oldSmbDbFile.exists()){
                                 startZoteroEngine(dbPathSmb + File.separator + getResourceString(R.string.DbFileNameSmb), linearLayoutCollections);
-                                mAppMem.recordStatusSingle(STATUS_BASE_STORAGE+9);
+                                mAppMem.recordStatusSingle(mStartupSequenceStatus = STATUS_BASE_STORAGE+9);
+                                mListeners.onStartupSequenceCompleted(mStartupSequenceStatus);
                                 mAppMem.closeProgressDialog();
                             }
                         }
@@ -177,6 +186,10 @@ public class Preparation {
             smbReceiveFileFromHost.runInBackground();
         }
 
+    }
+
+    public int getStartupSequenceStatus(){
+        return mStartupSequenceStatus;
     }
 
     private void startZoteroEngine(String dbPath, LinearLayout linearLayoutCollections){
