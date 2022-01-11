@@ -306,28 +306,13 @@ public class MainActivityRev1 extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        //deleteFragment(mFragmentMain);
-
+    protected void onResume() {
+        super.onResume();
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        /*
-        FragmentManager fm = getSupportFragmentManager();
-
-        boolean isAddedMain = mFragmentMain.isAdded();
-        boolean isAddedSettings = mFragmentSettings.isAdded();
-        boolean isAddedAbout = mFragmentAbout.isAdded();
-        boolean isAddedStatus = mFragmentStatus.isAdded();
-
-        if(isAddedMain) fm.putFragment(outState, STATE_FRAGMENT_MAIN, mFragmentMain);
-        if(isAddedSettings) fm.putFragment(outState, STATE_FRAGMENT_SETTINGS, mFragmentSettings);
-        if(isAddedAbout) fm.putFragment(outState, STATE_FRAGMENT_ABOUT, mFragmentAbout);
-        if(isAddedStatus) fm.putFragment(outState, STATE_FRAGMENT_STATUS, mFragmentStatus);
-        */
 
         outState.putSerializable(STATE_DATA_SELECTED_COLLECTION, mDataSelectedCollection);
         outState.putSerializable(STATE_DATA_SELECTED_ITEM, mDataSelectedItem);

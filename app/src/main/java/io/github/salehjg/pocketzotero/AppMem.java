@@ -4,20 +4,21 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.widget.ProgressBar;
+import android.os.Bundle;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.lmntrx.android.library.livin.missme.ProgressDialog;
 
 import java.util.Vector;
 
-import io.github.salehjg.pocketzotero.zoteroengine.ZoteroEngine;
-import io.github.salehjg.pocketzotero.zoteroengine.types.Collection;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
 
 // This class is used to hold global stuff in memory.
-public class AppMem extends Application {
+public class AppMem extends Application implements Application.ActivityLifecycleCallbacks {
 
     private Vector<RecordedStatus> mRecordedStatuses;
 
@@ -30,12 +31,20 @@ public class AppMem extends Application {
     private boolean mProgressDialogCreated;
     private ProgressDialogListener mProgressDialogListener;
 
+    private int mActivityReferences;
+    private boolean mIsActivityChangingConfigurations;
+    private boolean mIsThisAppsStartup;
 
     @Override
     public void onCreate() {
+        super.onCreate();
+
         mPreparation = new Preparation();
         mRecordedStatuses = new Vector<>();
-        super.onCreate();
+        mActivityReferences = 0;
+        mIsActivityChangingConfigurations = false;
+        mIsThisAppsStartup = false;
+        registerActivityLifecycleCallbacks(this);
     }
 
     public interface ProgressDialogListener{
@@ -258,5 +267,49 @@ public class AppMem extends Application {
         SharedPreferences reader = getPreference();
         return reader.getString(getString(R.string.prefKey_storageSmbServerPassword_string), "");
     }
+
+    // ========================= App Life Cycle Trackers Below =====================================
+
+    @Override
+    public void onActivityStarted(Activity activity) {
+        if (++mActivityReferences == 1 && !mIsActivityChangingConfigurations) {
+            if(!mIsThisAppsStartup){
+                // App enters foreground and its not the app's launch.
+                Toast.makeText(getApplicationContext(), "Processing the pending attachments", Toast.LENGTH_SHORT).show();
+                mPreparation.processPendingAttachments(1000);
+            }else{
+                mIsThisAppsStartup = false; // bypass if this callback is fired cuz of the app's startup.
+            }
+        }
+    }
+
+    @Override
+    public void onActivityStopped(@NonNull Activity activity) {
+        mIsActivityChangingConfigurations = activity.isChangingConfigurations();
+        if (--mActivityReferences == 0 && !mIsActivityChangingConfigurations) {
+            // App enters background
+            //Toast.makeText(getApplicationContext(), "Is in background.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle bundle) {
+        if(!mIsActivityChangingConfigurations) {
+            //Toast.makeText(getApplicationContext(), "Activity created.", Toast.LENGTH_LONG).show();
+            mIsThisAppsStartup = true;
+        }
+    }
+
+    @Override
+    public void onActivityResumed(@NonNull Activity activity) { }
+
+    @Override
+    public void onActivityPaused(@NonNull Activity activity) { }
+
+    @Override
+    public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle bundle) { }
+
+    @Override
+    public void onActivityDestroyed(@NonNull Activity activity) { }
 
 }

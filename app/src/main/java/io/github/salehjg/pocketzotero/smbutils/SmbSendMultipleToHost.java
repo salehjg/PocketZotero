@@ -66,15 +66,20 @@ public class SmbSendMultipleToHost {
     private Vector<Runnable> mRunnables;
     private Listener mListener;
 
+    private int mStartupDelayMs;
+
     public SmbSendMultipleToHost(
             SmbServerInfo serverInfo,
             Vector<String> filePathsToSend,
             Vector<String> filePathsOnHost,
             Vector<Boolean> overWrites,
             int concurrentTransferCount,
+            int startupDelayMs,
             Listener listener){
         assert filePathsToSend.size() == filePathsOnHost.size();
         assert filePathsOnHost.size() == overWrites.size();
+
+        mStartupDelayMs = startupDelayMs;
         mFilePathsToSend = filePathsToSend;
         mFilePathsOnHost = filePathsOnHost;
         mOverWrites = overWrites;
@@ -124,6 +129,10 @@ public class SmbSendMultipleToHost {
 
     private void doFileTransferAt(int index){
         try {
+            if(index<mConcurrentTransferCount){
+                Thread.sleep(mStartupDelayMs);
+            }
+
             progressUpdateAt(index, 0);
             Log.w("SmbSendFileToHost2", "Code0");
             SMBClient client = new SMBClient();
@@ -219,6 +228,26 @@ public class SmbSendMultipleToHost {
                 filePathsOnHost,
                 getOverWriteVector(overWriteAll, filePathsToSend.size()),
                 concurrentTransferCount,
+                0,
+                listener
+        );
+    }
+
+    public SmbSendMultipleToHost(
+            SmbServerInfo serverInfo,
+            Vector<String> filePathsToSend,
+            Vector<String> filePathsOnHost,
+            boolean overWriteAll,
+            int concurrentTransferCount,
+            int startDelayMs,
+            Listener listener){
+        this(
+                serverInfo,
+                filePathsToSend,
+                filePathsOnHost,
+                getOverWriteVector(overWriteAll, filePathsToSend.size()),
+                concurrentTransferCount,
+                startDelayMs,
                 listener
         );
     }

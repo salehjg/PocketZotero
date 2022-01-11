@@ -142,7 +142,9 @@ public class Preparation {
                                     mAppMem.closeProgressDialog();
 
                                     // Since we are managed to connect to the host, lets process all the pending attachments
-                                    processPendingAttachments();
+                                    // also, we dont need startup delay here, its the app's startup.
+                                    // the possibility for a third party app writing the file to pocket zotero is zero.
+                                    processPendingAttachments(0);
                                 }else{
                                     // ERROR FAILED TO RENAME `DbFileNameSmbTemp` TO `DbFileNameSmb`
                                     mAppMem.recordStatusSingle(mStartupSequenceStatus = STATUS_BASE_STORAGE + 6);
@@ -214,7 +216,7 @@ public class Preparation {
         mZoteroEngine.getGuiCollections(linearLayoutCollections);
     }
 
-    public void processPendingAttachments(){
+    public void processPendingAttachments(int delayMilliseconds){
         File[] pendingsDir = AppDirs.getPredefinedPrivateStoragePending(mContext).listFiles();
         Gson gson = new Gson();
         if(pendingsDir!=null) {
