@@ -15,14 +15,19 @@ I usually release unsigned working APKs of the applications. You can find them a
 - [x] Decoding the fields and their values
 - [x] Decoding the authors and their indices
 - [x] Decoding the attachments and their keys and paths
-- [ ] Accessing the database over Windows SMB
+- [x] Accessing the database over Windows SMB
 - [x] Opening the attachments stored locally
-- [ ] Opening the attachments stored on the local network (SMB)
+- [x] Opening the attachments stored on the local network (SMB)
 - [x] Decoding the notes for each CollectionItem
 - [x] Decoding the tags for each 
 - [ ] Reading databases with multiple libraries
 - [ ] Global item search
 - [ ] Global tag search
+- [ ] Adding new items
+- [ ] Adding new collection
+- [ ] Adding new library
+- [ ] Editing item details (edit/add details such as tags, notes, authors, and ...)
+- [ ] Decoding attachment-only items
 
 
 ## Credits
