@@ -1,7 +1,5 @@
 package io.github.salehjg.pocketzotero;
 
-import static android.os.Build.VERSION.SDK_INT;
-
 import static io.github.salehjg.pocketzotero.RecordedStatus.STATUS_BASE_PREFERENCES;
 import static io.github.salehjg.pocketzotero.RecordedStatus.STATUS_BASE_STORAGE;
 
@@ -9,7 +7,6 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -20,22 +17,23 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Vector;
 
-import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterItems;
 import io.github.salehjg.pocketzotero.smbutils.SmbReceiveFileFromHost;
 import io.github.salehjg.pocketzotero.smbutils.SmbSendMultipleToHost;
 import io.github.salehjg.pocketzotero.smbutils.SmbServerInfo;
-import io.github.salehjg.pocketzotero.zoteroengine.ZoteroEngine;
+import io.github.salehjg.pocketzotero.zoteroengine.ZoteroCoreUI;
 import io.github.salehjg.pocketzotero.zoteroengine.types.Collection;
 import io.github.salehjg.pocketzotero.zoteroengine.types.CollectionItem;
+import io.github.salehjg.pocketzotero.zoteroengine.types.Creator;
+import io.github.salehjg.pocketzotero.zoteroengine.types.FieldValuePair;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemAttachment;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
 
-public class Preparation {
+public class Internals {
     private AppMem mAppMem;
     private Context mContext;
     private Activity mActivity;
     private Listeners mListeners;
-    private ZoteroEngine mZoteroEngine;
+    private ZoteroCoreUI mZoteroCoreUI;
     private int mStartupSequenceStatus;
 
     public interface Listeners{
@@ -43,7 +41,7 @@ public class Preparation {
         void onStartupSequenceCompleted(int statusCode);
     }
 
-    public Preparation(){
+    public Internals(){
     }
 
     public void startupSequence(
@@ -62,7 +60,7 @@ public class Preparation {
     }
 
     public void getGuiCollectionsLast(LinearLayout linearLayoutCollections){
-        mZoteroEngine.getGuiCollectionsLast(linearLayoutCollections);
+        mZoteroCoreUI.getGuiCollectionsLast(linearLayoutCollections);
     }
 
     public void startupSequencePermissionGranted(LinearLayout linearLayoutCollections){
@@ -199,12 +197,12 @@ public class Preparation {
     }
 
     private void startZoteroEngine(File dbFile, LinearLayout linearLayoutCollections){
-        mZoteroEngine =
-                new ZoteroEngine(
+        mZoteroCoreUI =
+                new ZoteroCoreUI(
                         mActivity,
                         mContext,
                         dbFile.getPath(),
-                        new ZoteroEngine.Listeners() {
+                        new ZoteroCoreUI.Listeners() {
                             @Override
                             public void onCollectionSelected(Collection selectedCollectionObject, Vector<CollectionItem> items, Vector<String> titles, Vector<Integer> ids, Vector<Integer> types) {
                                 if(mListeners!=null){
@@ -213,7 +211,7 @@ public class Preparation {
                             }
                         })
         ;
-        mZoteroEngine.getGuiCollections(linearLayoutCollections);
+        mZoteroCoreUI.getGuiCollections(linearLayoutCollections);
     }
 
     public void processPendingAttachments(int delayMilliseconds){
@@ -340,7 +338,26 @@ public class Preparation {
     }
 
     public ItemDetailed getDetailsForItemId(Collection parentCollection, CollectionItem collectionItem){
-        return mZoteroEngine.getDetailsForItemId(parentCollection, collectionItem);
+        return mZoteroCoreUI.getDetailsForItemId(parentCollection, collectionItem);
     }
 
+    public Vector<Creator> getPossibleCreatorTypesFor(int itemTypeId){
+        return mZoteroCoreUI.getPossibleCreatorTypesFor(itemTypeId);
+    }
+
+    public Vector<Creator> getPossibleCreatorTypesFor(String itemTypeName){
+        return mZoteroCoreUI.getPossibleCreatorTypesFor(itemTypeName);
+    }
+
+    public Vector<FieldValuePair> getPossibleFieldsFor(int itemTypeId){
+        return mZoteroCoreUI.getPossibleFieldsFor(itemTypeId);
+    }
+
+    public Vector<FieldValuePair> getPossibleFieldsFor(String itemTypeName){
+        return mZoteroCoreUI.getPossibleFieldsFor(itemTypeName);
+    }
+
+    public Vector<String> getItemTypeNames(){
+        return mZoteroCoreUI.getItemTypeNames();
+    }
 }

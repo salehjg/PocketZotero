@@ -30,20 +30,15 @@ import com.permissionx.guolindev.callback.ExplainReasonCallback;
 import com.permissionx.guolindev.callback.RequestCallback;
 import com.permissionx.guolindev.request.ExplainScope;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import java.util.Vector;
 
 import io.github.salehjg.pocketzotero.AppMem;
-import io.github.salehjg.pocketzotero.Preparation;
+import io.github.salehjg.pocketzotero.Internals;
 import io.github.salehjg.pocketzotero.R;
 import io.github.salehjg.pocketzotero.RecordedStatus;
 import io.github.salehjg.pocketzotero.fragments.about.AboutFragment;
 import io.github.salehjg.pocketzotero.fragments.main.MainFragment;
-import io.github.salehjg.pocketzotero.fragments.main.MainItemDetailedFragment;
-import io.github.salehjg.pocketzotero.fragments.main.MainItemsFragment;
 import io.github.salehjg.pocketzotero.fragments.settings.SettingsFragment;
 import io.github.salehjg.pocketzotero.fragments.status.StatusFragment;
 import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.SharedViewModel;
@@ -269,7 +264,7 @@ public class MainActivityRev1 extends AppCompatActivity {
     }
 
     private void runStartupSequence(){
-        mAppMem.getPreparation().startupSequence(getApplication(), this, mLinearLayoutCollections, new Preparation.Listeners() {
+        mAppMem.getPreparation().startupSequence(getApplication(), this, mLinearLayoutCollections, new Internals.Listeners() {
             @Override
             public void onCollectionSelected(Collection selectedCollectionObject, Vector<CollectionItem> items, Vector<String> titles, Vector<Integer> ids, Vector<Integer> types) {
                 mDataSelectedCollection = selectedCollectionObject;

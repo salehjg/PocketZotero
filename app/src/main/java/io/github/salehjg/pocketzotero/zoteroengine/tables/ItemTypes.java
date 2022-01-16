@@ -3,6 +3,8 @@ package io.github.salehjg.pocketzotero.zoteroengine.tables;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.Vector;
+
 public class ItemTypes extends BaseData {
     protected final String TABLE_NAME = "itemTypes";
 
@@ -35,6 +37,18 @@ public class ItemTypes extends BaseData {
         }
         cursor.close();
         return tName;
+    }
+
+    public Vector<String> getTypeNames (SQLiteDatabase db) {
+        Cursor cursor = db.rawQuery("SELECT typeName FROM \"" + get_table_name() + "\" ;", null);
+
+        Vector<String> itemTypeNames = new Vector<>();
+
+        while (cursor.moveToNext()){
+            itemTypeNames.add(cursor.getString(0));
+        }
+        cursor.close();
+        return itemTypeNames;
     }
 
     public int getItemTypeIdFor (String typeName, SQLiteDatabase db) {

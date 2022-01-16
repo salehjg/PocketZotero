@@ -11,8 +11,9 @@
 
     <application
         android:name=".AppMem"
-        android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
+        tools:replace="allowBackup, label"
+        android:allowBackup="false"
         android:label="@string/ApplicationName"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"

@@ -12,7 +12,8 @@ import io.github.salehjg.pocketzotero.mainactivity.MainActivityRev1;
 public class ViewStateAdapter extends FragmentStateAdapter {
     private final Fragment[] mFragments = new Fragment[] {
             new MainItemsFragment(),
-            new MainItemDetailedFragment(),
+            //new MainItemDetailedFragment(),
+            new MainItemDetailed2Fragment(),
     };
 
     public final String[] mFragmentNames = new String[] {

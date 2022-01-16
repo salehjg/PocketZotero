@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/row_detailed_single_ll_tvs_all"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@id/row_detailed_single_ll_btns_all"
+        android:orientation="horizontal"
+        >
+
+        <TextView
+            android:id="@+id/row_detailed_single_tv1"
+            android:layout_width="0dp"
+            android:layout_weight="0.4"
+            android:layout_height="wrap_content"
+            android:autoLink="web|email"
+            android:layout_margin="5dp"
+            android:layout_gravity="center"/>
+        <TextView
+            android:id="@+id/row_detailed_single_tv2"
+            android:layout_width="0dp"
+            android:layout_weight="0.4"
+            android:layout_height="wrap_content"
+            android:autoLink="web|email"
+            android:layout_margin="5dp"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/row_detailed_single_ll_btns_all"
+        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/row_detailed_single_ll_tvs_all"
+        android:layout_alignBottom="@id/row_detailed_single_ll_tvs_all"
+        android:orientation="horizontal"
+        android:gravity="center">
+        <com.github.nikartm.button.FitButton
+            android:id="@+id/row_detailed_single_btn_edit"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="2dp"
+            android:gravity="center"
+            app:fb_icon="@drawable/ic_edit"
+            app:fb_iconColor="@color/black"
+            app:fb_iconHeight="33dp"
+            app:fb_iconPosition="center"
+            app:fb_iconWidth="33dp"
+            app:fb_rippleColor="@color/purple_200" />
+        <com.github.nikartm.button.FitButton
+            android:id="@+id/row_detailed_single_btn_remove"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="2dp"
+            android:gravity="center"
+            app:fb_icon="@drawable/ic_remove"
+            app:fb_iconColor="@color/black"
+            app:fb_iconHeight="33dp"
+            app:fb_iconPosition="center"
+            app:fb_iconWidth="33dp"
+            app:fb_rippleColor="@color/purple_200" />
+    </LinearLayout>
+
+</RelativeLayout>

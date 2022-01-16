@@ -25,7 +25,7 @@ public class AppMem extends Application implements Application.ActivityLifecycle
     private ViewPager2 mViewPager;
     private ItemDetailed mSelectedItemDetailed;
     private ItemDetailedChangedListener mSelectedItemDetailedChangedListener = null;
-    private Preparation mPreparation;
+    private Internals mInternals;
 
     private ProgressDialog mProgressDialog;
     private boolean mProgressDialogCreated;
@@ -39,7 +39,7 @@ public class AppMem extends Application implements Application.ActivityLifecycle
     public void onCreate() {
         super.onCreate();
 
-        mPreparation = new Preparation();
+        mInternals = new Internals();
         mRecordedStatuses = new Vector<>();
         mActivityReferences = 0;
         mIsActivityChangingConfigurations = false;
@@ -127,8 +127,8 @@ public class AppMem extends Application implements Application.ActivityLifecycle
         return s;
     }
 
-    public Preparation getPreparation() {
-        return mPreparation;
+    public Internals getPreparation() {
+        return mInternals;
     }
 
     public ViewPager2 getViewPager() {
@@ -276,7 +276,7 @@ public class AppMem extends Application implements Application.ActivityLifecycle
             if(!mIsThisAppsStartup){
                 // App enters foreground and its not the app's launch.
                 Toast.makeText(getApplicationContext(), "Processing the pending attachments", Toast.LENGTH_SHORT).show();
-                mPreparation.processPendingAttachments(1000);
+                mInternals.processPendingAttachments(1000);
             }else{
                 mIsThisAppsStartup = false; // bypass if this callback is fired cuz of the app's startup.
             }

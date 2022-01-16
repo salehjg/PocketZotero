@@ -47,4 +47,8 @@ dependencies {
     implementation 'com.guolindev.permissionx:permissionx:1.6.1'
     implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'com.lmntrx.android.library.livin.missme:missme:0.1.5'
+    implementation 'com.github.skydoves:expandablelayout:1.0.7'
+    implementation 'com.haozhang.libary:android-slanted-textview:1.2'
+    implementation 'io.github.nikartm:fit-button:2.0.0'
+    implementation 'jp.wasabeef:richeditor-android:2.0.0'
 }

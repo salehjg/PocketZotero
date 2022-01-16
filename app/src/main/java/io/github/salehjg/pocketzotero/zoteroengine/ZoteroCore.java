@@ -18,6 +18,8 @@ import io.github.salehjg.pocketzotero.zoteroengine.tables.ItemData;
 import io.github.salehjg.pocketzotero.zoteroengine.tables.ItemDataValues;
 import io.github.salehjg.pocketzotero.zoteroengine.tables.ItemNotes;
 import io.github.salehjg.pocketzotero.zoteroengine.tables.ItemTags;
+import io.github.salehjg.pocketzotero.zoteroengine.tables.ItemTypeCreatorTypes;
+import io.github.salehjg.pocketzotero.zoteroengine.tables.ItemTypeFields;
 import io.github.salehjg.pocketzotero.zoteroengine.tables.ItemTypes;
 import io.github.salehjg.pocketzotero.zoteroengine.tables.Items;
 import io.github.salehjg.pocketzotero.zoteroengine.tables.Tags;
@@ -34,13 +36,12 @@ import io.github.salehjg.pocketzotero.zoteroengine.types.ItemTag;
  * Created by oni on 11/07/2017.
  */
 
-public class ZotDroidDB extends SQLiteOpenHelper {
+public class ZoteroCore extends SQLiteOpenHelper {
 
     // All Static variables
     private static final int DATABASE_VERSION = 1;
-    private static String DATABASE_NAME = "zotdroid.sqlite";
+    private static String DATABASE_NAME = "zotero.sqlite";
 
-    public static final String TAG = "zotdroid.ZotDroidDB";
     private SQLiteDatabase mDb;
 
     private Collections mCollectionsTable = new Collections();
@@ -57,8 +58,11 @@ public class ZotDroidDB extends SQLiteOpenHelper {
     private ItemTags mItemTags = new ItemTags();
     private Tags mTags = new Tags();
     private ItemNotes mItemNotes = new ItemNotes();
+    private ItemTypeCreatorTypes mItemTypeCreatorTypes = new ItemTypeCreatorTypes();
+    private ItemTypeFields mItemTypeFields = new ItemTypeFields();
 
-    public ZotDroidDB(Context context) {
+
+    public ZoteroCore(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.mDb = getWritableDatabase(); // Should kickstart all the creation we need :S
         checkTablesAndCreateIfNeeded();
@@ -69,7 +73,7 @@ public class ZotDroidDB extends SQLiteOpenHelper {
      * @param context
      * @param alternativeFname
      */
-    public ZotDroidDB(Context context, String alternativeFname) {
+    public ZoteroCore(Context context, String alternativeFname) {
         // Double check we have no trailing slash
         super(context, alternativeFname, null, DATABASE_VERSION);
         this.mDb = getWritableDatabase();
@@ -94,6 +98,14 @@ public class ZotDroidDB extends SQLiteOpenHelper {
      */
 
     private void checkTablesAndCreateIfNeeded() {
+
+        if (!checkTableExists(mItemTypeFields.get_table_name())) {
+            mItemTypeFields.createTable(mDb);
+        }
+
+        if (!checkTableExists(mItemTypeCreatorTypes.get_table_name())) {
+            mItemTypeCreatorTypes.createTable(mDb);
+        }
 
         if (!checkTableExists(mItemNotes.get_table_name())) {
             mItemNotes.createTable(mDb);
@@ -173,6 +185,8 @@ public class ZotDroidDB extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS \"" + mItemTags.get_table_name() + "\"");
         db.execSQL("DROP TABLE IF EXISTS \"" + mTags.get_table_name() + "\"");
         db.execSQL("DROP TABLE IF EXISTS \"" + mItemNotes.get_table_name() + "\"");
+        db.execSQL("DROP TABLE IF EXISTS \"" + mItemTypeCreatorTypes.get_table_name() + "\"");
+        db.execSQL("DROP TABLE IF EXISTS \"" + mItemTypeFields.get_table_name() + "\"");
 
         onCreate(db);
     }
@@ -202,6 +216,8 @@ public class ZotDroidDB extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + mItemTags.get_table_name());
         db.execSQL("DROP TABLE IF EXISTS " + mTags.get_table_name());
         db.execSQL("DROP TABLE IF EXISTS " + mItemNotes.get_table_name());
+        db.execSQL("DROP TABLE IF EXISTS " + mItemTypeCreatorTypes.get_table_name());
+        db.execSQL("DROP TABLE IF EXISTS " + mItemTypeFields.get_table_name());
 
         // Create tables again
         onCreate(db);
@@ -551,6 +567,35 @@ public class ZotDroidDB extends SQLiteOpenHelper {
         creators = mCreatorTypes.getCreatorsTypes(creators, mDb);
 
         return creators;
+    }
+
+    public Vector<String> getItemTypeNames(){
+        Vector<String> itemTypeNames = mItemTypes.getTypeNames(mDb);
+        return itemTypeNames;
+    }
+
+    public Vector<Creator> getPossibleCreatorTypesFor(int itemTypeId){
+        Vector<Creator> creatorTypeIds = mItemTypeCreatorTypes.getCreatorTypeIdsFor(itemTypeId, mDb);
+        creatorTypeIds = mCreatorTypes.getCreatorsTypes(creatorTypeIds, mDb);
+        return creatorTypeIds;
+    }
+
+    public Vector<Creator> getPossibleCreatorTypesFor(String itemTypeName){
+        int itemTypeId = mItemTypes.getItemTypeIdFor(itemTypeName, mDb);
+        if(itemTypeId==-1) return null;
+        return getPossibleCreatorTypesFor(itemTypeId);
+    }
+
+    public Vector<FieldValuePair> getPossibleFieldsFor(int itemTypeId){
+        Vector<FieldValuePair> fieldIds = mItemTypeFields.getFieldIdsFor(itemTypeId, mDb);
+        fieldIds = mFieldsTable.resolveFieldNamesFor(fieldIds, mDb);
+        return fieldIds;
+    }
+
+    public Vector<FieldValuePair> getPossibleFieldsFor(String itemTypeName){
+        int itemTypeId = mItemTypes.getItemTypeIdFor(itemTypeName, mDb);
+        if(itemTypeId==-1) return null;
+        return getPossibleFieldsFor(itemTypeId);
     }
 
 }

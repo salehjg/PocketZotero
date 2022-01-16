@@ -10,10 +10,12 @@ import io.github.salehjg.pocketzotero.mainactivity.tree.model.TreeNode;
 import io.github.salehjg.pocketzotero.mainactivity.tree.view.AndroidTreeView;
 import io.github.salehjg.pocketzotero.zoteroengine.types.Collection;
 import io.github.salehjg.pocketzotero.zoteroengine.types.CollectionItem;
+import io.github.salehjg.pocketzotero.zoteroengine.types.Creator;
+import io.github.salehjg.pocketzotero.zoteroengine.types.FieldValuePair;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
 
-public class ZoteroEngine {
-    private ZotDroidDB mZotDroidDB;
+public class ZoteroCoreUI {
+    private ZoteroCore mZoteroCore;
     private Context mContext;
     private Activity mActivity;
     private Vector<Collection> mCollectionTree;
@@ -30,7 +32,7 @@ public class ZoteroEngine {
         );
     }
 
-    public ZoteroEngine(
+    public ZoteroCoreUI(
             Activity activity,
             Context context,
             String sqliteDbPath,
@@ -38,11 +40,11 @@ public class ZoteroEngine {
         this.mActivity = activity;
         this.mContext = context;
         this.mListeners = listeners;
-        mZotDroidDB = new ZotDroidDB(context, sqliteDbPath);
+        mZoteroCore = new ZoteroCore(context, sqliteDbPath);
     }
 
     public void getGuiCollections(LinearLayout collectionsTreeView){
-        mCollectionTree = this.mZotDroidDB.getCollectionTree();
+        mCollectionTree = this.mZoteroCore.getCollectionTree();
         mTreeRoot = TreeNode.root();
 
         // go through all of the top parents
@@ -111,15 +113,15 @@ public class ZoteroEngine {
     }
 
     public Vector<CollectionItem> getItemsForRecyclerItems(Collection collection){
-        return this.mZotDroidDB.getCollectionItemsFor(collection.get_collection_id());
+        return this.mZoteroCore.getCollectionItemsFor(collection.get_collection_id());
     }
 
     public Vector<String> getTitlesForRecyclerItems(Vector<CollectionItem> items){
-        return mZotDroidDB.getTitlesWithCollectionItems(items);
+        return mZoteroCore.getTitlesWithCollectionItems(items);
     }
 
     public Vector<Integer> getTypesForRecyclerItems(Vector<CollectionItem> items){
-        return this.mZotDroidDB.getTypeIdsWithCollectionItems(items);
+        return this.mZoteroCore.getTypeIdsWithCollectionItems(items);
     }
 
     public Vector<Integer> getItemIdsForRecyclerItems(Vector<CollectionItem> items){
@@ -131,7 +133,27 @@ public class ZoteroEngine {
     }
 
     public ItemDetailed getDetailsForItemId(Collection parentCollection, CollectionItem collectionItem){
-        return mZotDroidDB.getDetailsForItemId(parentCollection, collectionItem);
+        return mZoteroCore.getDetailsForItemId(parentCollection, collectionItem);
+    }
+
+    public Vector<Creator> getPossibleCreatorTypesFor(int itemTypeId){
+        return mZoteroCore.getPossibleCreatorTypesFor(itemTypeId);
+    }
+
+    public Vector<Creator> getPossibleCreatorTypesFor(String itemTypeName){
+        return mZoteroCore.getPossibleCreatorTypesFor(itemTypeName);
+    }
+
+    public Vector<FieldValuePair> getPossibleFieldsFor(int itemTypeId){
+        return mZoteroCore.getPossibleFieldsFor(itemTypeId);
+    }
+
+    public Vector<FieldValuePair> getPossibleFieldsFor(String itemTypeName){
+        return mZoteroCore.getPossibleFieldsFor(itemTypeName);
+    }
+
+    public Vector<String> getItemTypeNames(){
+        return mZoteroCore.getItemTypeNames();
     }
 
 }
