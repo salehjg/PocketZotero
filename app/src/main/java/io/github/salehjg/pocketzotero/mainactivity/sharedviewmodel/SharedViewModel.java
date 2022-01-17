@@ -27,6 +27,8 @@ public class SharedViewModel extends AndroidViewModel {
     private MutableLiveData<Integer> mViewPagerSelectedTab;
 
     private MediatorLiveData<OneTimeEvent> mMainActivityOpenDrawer = new MediatorLiveData<>();
+    private MediatorLiveData<OneTimeEvent> mTabItemsHideDrawerButton = new MediatorLiveData<>();
+    private MediatorLiveData<OneTimeEvent> mTabItemDetailedHideDrawerButton = new MediatorLiveData<>();
 
 
     public SharedViewModel(@NonNull Application application, final long id) {
@@ -85,6 +87,14 @@ public class SharedViewModel extends AndroidViewModel {
 
     public MediatorLiveData<OneTimeEvent> getMainActivityOpenDrawer() {
         return mMainActivityOpenDrawer;
+    }
+
+    public MediatorLiveData<OneTimeEvent> getTabItemsHideDrawerButton() {
+        return mTabItemsHideDrawerButton;
+    }
+
+    public MediatorLiveData<OneTimeEvent> getTabItemDetailedHideDrawerButton() {
+        return mTabItemDetailedHideDrawerButton;
     }
 
     @Override

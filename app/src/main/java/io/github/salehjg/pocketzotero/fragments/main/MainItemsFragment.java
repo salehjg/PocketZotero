@@ -156,6 +156,14 @@ public class MainItemsFragment extends Fragment {
                 mRecyclerAdapterItems.notifyDataSetChanged();
             }
         });
+        mSharedViewModel.getTabItemsHideDrawerButton().observe(getViewLifecycleOwner(), new Observer<OneTimeEvent>() {
+            @Override
+            public void onChanged(OneTimeEvent oneTimeEvent) {
+                if(oneTimeEvent.receive()){
+                    mBtnToolbarDrawer.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
     }
 
     @Override

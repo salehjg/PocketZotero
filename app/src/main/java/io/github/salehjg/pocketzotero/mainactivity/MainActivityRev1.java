@@ -249,6 +249,12 @@ public class MainActivityRev1 extends AppCompatActivity {
                 }
             }
         });
+        if(mTwoPane){
+            // we have no drawer in the big screen landscape mode (its always open as a extra panel)
+            // so we need to hide the drawer buttons at the bottom toolbars of the fragments.
+            mSharedViewModel.getTabItemsHideDrawerButton().setValue(new OneTimeEvent());
+            mSharedViewModel.getTabItemDetailedHideDrawerButton().setValue(new OneTimeEvent());
+        }
     }
 
     private void setUpNavDrawer(){

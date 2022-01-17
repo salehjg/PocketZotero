@@ -318,6 +318,14 @@ public class MainItemDetailed2Fragment extends Fragment {
 
             }
         });
+        mSharedViewModel.getTabItemDetailedHideDrawerButton().observe(getViewLifecycleOwner(), new Observer<OneTimeEvent>() {
+            @Override
+            public void onChanged(OneTimeEvent oneTimeEvent) {
+                if(oneTimeEvent.receive()){
+                    mBtnToolbarDrawer.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
     }
 
     private Vector<String> getItemTypesAll(){
