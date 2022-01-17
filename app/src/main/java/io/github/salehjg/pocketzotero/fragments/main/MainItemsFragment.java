@@ -14,12 +14,16 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import com.github.nikartm.button.FitButton;
 
 import java.util.Vector;
 
 import io.github.salehjg.pocketzotero.R;
 import io.github.salehjg.pocketzotero.mainactivity.MainActivityRev1;
 import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterItems;
+import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.OneTimeEvent;
 import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.SharedViewModel;
 import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.ViewModelFactory;
 import io.github.salehjg.pocketzotero.zoteroengine.types.CollectionItem;
@@ -29,6 +33,7 @@ public class MainItemsFragment extends Fragment {
     private RecyclerView mRecyclerViewItems;
     private RecyclerAdapterItems mRecyclerAdapterItems;
     private LinearLayoutManager mRecyclerLayoutManager;
+    private FitButton mBtnToolbarDrawer, mBtnToolbarNewItem;
 
     // State Keys
     private static final String STATE_RECYCLER_STATE = "STATE.KEY.recyclerLayoutMngrState";
@@ -72,6 +77,22 @@ public class MainItemsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mSharedViewModel = new ViewModelProvider(requireActivity(), new ViewModelFactory(requireActivity().getApplication(), 1)).get(SharedViewModel.class);
+
+        mBtnToolbarDrawer = view.findViewById(R.id.fragmainitems_btn_drawer);
+        mBtnToolbarNewItem = view.findViewById(R.id.fragmainitems_btn_itemnew);
+
+        mBtnToolbarDrawer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSharedViewModel.getMainActivityOpenDrawer().setValue(new OneTimeEvent());
+            }
+        });
+        mBtnToolbarNewItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
         mRecyclerViewItems = view.findViewById(R.id.fragmainitems_recycler);
         mRecyclerLayoutManager = new LinearLayoutManager(view.getContext());

@@ -44,6 +44,7 @@ import io.github.salehjg.pocketzotero.RecordedStatus;
 import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterAttachments;
 import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterElements;
 import io.github.salehjg.pocketzotero.mainactivity.TempActivity;
+import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.OneTimeEvent;
 import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.SharedViewModel;
 import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.ViewModelFactory;
 import io.github.salehjg.pocketzotero.smbutils.SmbReceiveFileFromHost;
@@ -84,6 +85,7 @@ public class MainItemDetailed2Fragment extends Fragment {
     private EditText mEditTextAuthor, mEditTextTag, mEditTextField;
     private RichEditor mRichTextNote;
     private ExpandableLayout mExpandableAuthors, mExpandableTags, mExpandableNotes, mExpandableFields;
+    private FitButton mBtnToolbarDrawer, mBtnToolbarDeleteItem, mBtnToolbarEditItem;
 
     // State Keys
     private static final String STATE_zzzzzzz_STATE = "STATE.KEY.zzzzzzzz";
@@ -144,6 +146,10 @@ public class MainItemDetailed2Fragment extends Fragment {
     }
 
     private void initGuiMembers(@NonNull View view){
+        mBtnToolbarDrawer = view.findViewById(R.id.fragmainitemdetailed2_btn_drawer);
+        mBtnToolbarEditItem = view.findViewById(R.id.fragmainitemdetailed2_btn_itemedit);
+        mBtnToolbarDeleteItem = view.findViewById(R.id.fragmainitemdetailed2_btn_itemdelete);
+
         mExpandableAuthors = view.findViewById(R.id.fragmainitemdetailed2_exp_authors);
         mExpandableTags = view.findViewById(R.id.fragmainitemdetailed2_exp_tags);
         mExpandableNotes = view.findViewById(R.id.fragmainitemdetailed2_exp_notes);
@@ -242,6 +248,25 @@ public class MainItemDetailed2Fragment extends Fragment {
     }
 
     private void initGuiMemberListeners(@NonNull View view, MODES mode){
+        mBtnToolbarDrawer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mSharedViewModel.getMainActivityOpenDrawer().setValue(new OneTimeEvent());
+            }
+        });
+        mBtnToolbarEditItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+        mBtnToolbarDeleteItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
         mExpandableAuthors.parentLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -41,6 +41,7 @@ import io.github.salehjg.pocketzotero.fragments.about.AboutFragment;
 import io.github.salehjg.pocketzotero.fragments.main.MainFragment;
 import io.github.salehjg.pocketzotero.fragments.settings.SettingsFragment;
 import io.github.salehjg.pocketzotero.fragments.status.StatusFragment;
+import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.OneTimeEvent;
 import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.SharedViewModel;
 import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.ViewModelFactory;
 import io.github.salehjg.pocketzotero.zoteroengine.types.Collection;
@@ -237,6 +238,15 @@ public class MainActivityRev1 extends AppCompatActivity {
                     isThisTheFirstTimeAfterReset = false;
                 }
                 mSharedViewModel.getSelectedItemDetailed().setValue(mDataSelectedItemDetailed);
+            }
+        });
+
+        mSharedViewModel.getMainActivityOpenDrawer().observe(this, new Observer<OneTimeEvent>() {
+            @Override
+            public void onChanged(OneTimeEvent oneTimeEvent) {
+                if(oneTimeEvent.receive()){
+                    if(mDrawerLayout!=null)mDrawerLayout.open();
+                }
             }
         });
     }

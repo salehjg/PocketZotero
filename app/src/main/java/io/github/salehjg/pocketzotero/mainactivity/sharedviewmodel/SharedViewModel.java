@@ -5,6 +5,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import java.util.Vector;
@@ -24,6 +25,9 @@ public class SharedViewModel extends AndroidViewModel {
     private MutableLiveData<ItemDetailed> mSelectedItemDetailed;
 
     private MutableLiveData<Integer> mViewPagerSelectedTab;
+
+    private MediatorLiveData<OneTimeEvent> mMainActivityOpenDrawer = new MediatorLiveData<>();
+
 
     public SharedViewModel(@NonNull Application application, final long id) {
         super(application);
@@ -77,6 +81,10 @@ public class SharedViewModel extends AndroidViewModel {
             mViewPagerSelectedTab = new MutableLiveData<>(-1);
         }
         return mViewPagerSelectedTab;
+    }
+
+    public MediatorLiveData<OneTimeEvent> getMainActivityOpenDrawer() {
+        return mMainActivityOpenDrawer;
     }
 
     @Override
