@@ -9,7 +9,7 @@
         <entry key="app/src/main/res/drawable/ic_appicon.xml" value="0.36875" />
         <entry key="app/src/main/res/drawable/ic_arrow_drop_down.xml" value="0.36875" />
         <entry key="app/src/main/res/layout-land/activity_main.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.1953125" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.22167487684729065" />
         <entry key="app/src/main/res/layout/activity_main_rev1.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/drawer_header.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/expandable_authors.xml" value="0.264453125" />
@@ -23,7 +23,7 @@
         <entry key="app/src/main/res/layout/fragment_about.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/fragment_main.xml" value="0.1953125" />
         <entry key="app/src/main/res/layout/fragment_main_item_detailed.xml" value="0.35260416666666666" />
-        <entry key="app/src/main/res/layout/fragment_main_item_detailed2.xml" value="0.264453125" />
+        <entry key="app/src/main/res/layout/fragment_main_item_detailed2.xml" value="0.22167487684729065" />
         <entry key="app/src/main/res/layout/fragment_main_items.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_status.xml" value="0.35260416666666666" />

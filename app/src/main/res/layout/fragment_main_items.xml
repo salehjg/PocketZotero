@@ -1,13 +1,50 @@
-<RelativeLayout
-    android:layout_width="match_parent"
+<RelativeLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:tag="frag_items"
     android:orientation="vertical">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fragmainitems_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/fragmainitems_recycler"
-        />
+        android:layout_above="@id/fragmainitems_buttomtoolbar" />
+
+    <RelativeLayout
+        android:id="@+id/fragmainitems_buttomtoolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/dark_grey"
+        android:gravity="end"
+        android:padding="4dp">
+
+        <com.github.nikartm.button.FitButton
+            android:id="@+id/fragmainitems_btn_drawer"
+            android:layout_alignParentStart="true"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="20dp"
+            app:fb_icon="@drawable/ic_menu"
+            app:fb_iconColor="@color/white"
+            app:fb_iconHeight="44dp"
+            app:fb_iconPosition="center"
+            app:fb_iconWidth="44dp"
+            app:fb_rippleColor="@color/theme_dark_red_primary_color" />
+
+
+        <com.github.nikartm.button.FitButton
+            android:id="@+id/fragmainitems_btn_itemnew"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_alignParentEnd="true"
+            app:fb_icon="@drawable/ic_add"
+            app:fb_iconColor="@color/md_green_400"
+            app:fb_iconHeight="44dp"
+            app:fb_iconPosition="center"
+            app:fb_iconWidth="44dp"
+            app:fb_rippleColor="@color/theme_dark_red_primary_color" />
+
+    </RelativeLayout>
 </RelativeLayout>

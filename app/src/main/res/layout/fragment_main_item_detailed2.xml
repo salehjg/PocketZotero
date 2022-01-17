@@ -1,160 +1,216 @@
-<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:fillViewport="false"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <RelativeLayout android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <ScrollView
+        android:layout_above="@id/fragmainitemdetailed2_buttomtoolbar"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="false"
+        >
 
-        <com.haozhang.lib.SlantedTextView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:gravity="center"
-            app:slantedBackgroundColor="@color/black"
-            app:slantedLength="40dp"
-            app:slantedMode="right"
-            app:slantedText="N. S. Yet"
-            app:slantedTextColor="@color/white"
-            app:slantedTextSize="16sp" />
+        <RelativeLayout android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/fragmainitemdetailed2_tv_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="50dp"
-            android:inputType="none"
-            android:minHeight="48dp"
-            android:text="Long Title Long Title Long Title Long Title Long Title Long Title " />
+            <com.haozhang.lib.SlantedTextView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:gravity="center"
+                app:slantedBackgroundColor="@color/black"
+                app:slantedLength="40dp"
+                app:slantedMode="right"
+                app:slantedText="N. S. Yet"
+                app:slantedTextColor="@color/white"
+                app:slantedTextSize="16sp" />
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/fragmainitemdetailed2_tv_title">
-
-            <LinearLayout
-                android:id="@+id/fragmainitemdetailed2_ll_authors"
-                android:orientation="horizontal"
+            <TextView
+                android:id="@+id/fragmainitemdetailed2_tv_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                >
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="false"
-                    app:closeIconTint="@color/teal_700"
-                    android:text="Clickable Author1" />
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="false"
-                    app:closeIconTint="@color/teal_700"
-                    android:text="Clickable Author2" />
-            </LinearLayout>
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="50dp"
+                android:inputType="none"
+                android:minHeight="48dp"
+                android:text="Long Title Long Title Long Title Long Title Long Title Long Title " />
 
             <LinearLayout
-                android:id="@+id/fragmainitemdetailed2_ll_tags"
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                >
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="false"
-                    app:closeIconTint="@color/teal_700"
-                    android:text="Clickable Tag1" />
-                <com.google.android.material.chip.Chip
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checkable="false"
-                    app:closeIconTint="@color/teal_700"
-                    android:text="Clickable Tag2" />
-            </LinearLayout>
+                android:layout_below="@id/fragmainitemdetailed2_tv_title">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_weight="0.4"
+                <LinearLayout
+                    android:id="@+id/fragmainitemdetailed2_ll_authors"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Document Type:"
+                    >
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="false"
+                        app:closeIconTint="@color/teal_700"
+                        android:text="Clickable Author1" />
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="false"
+                        app:closeIconTint="@color/teal_700"
+                        android:text="Clickable Author2" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/fragmainitemdetailed2_ll_tags"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="false"
+                        app:closeIconTint="@color/teal_700"
+                        android:text="Clickable Tag1" />
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checkable="false"
+                        app:closeIconTint="@color/teal_700"
+                        android:text="Clickable Tag2" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="0.4"
+                        android:layout_height="wrap_content"
+                        android:text="Document Type:"
+                        />
+                    <Spinner
+                        android:id="@+id/fragmainitemdetailed2_spinner_itemtype"
+                        android:layout_width="0dp"
+                        android:layout_weight="0.4"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
+                <com.skydoves.expandablelayout.ExpandableLayout
+                    android:id="@+id/fragmainitemdetailed2_exp_authors"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    app:expandable_parentLayout="@layout/expandable_authors_header"
+                    app:expandable_secondLayout="@layout/expandable_authors"
+                    app:expandable_isExpanded="false"
+                    app:expandable_spinner_size="20dp"
+                    app:expandable_spinner_color="@color/black"
+                    app:expandable_spinner_gravity="end"
+                    app:expandable_animation="bounce"
+                    app:expandable_duration="300"
                     />
-                <Spinner
-                    android:id="@+id/fragmainitemdetailed2_spinner_itemtype"
-                    android:layout_width="0dp"
-                    android:layout_weight="0.4"
-                    android:layout_height="wrap_content"/>
+
+                <com.skydoves.expandablelayout.ExpandableLayout
+                    android:id="@+id/fragmainitemdetailed2_exp_tags"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    app:expandable_parentLayout="@layout/expandable_tags_header"
+                    app:expandable_secondLayout="@layout/expandable_tags"
+                    app:expandable_isExpanded="false"
+                    app:expandable_spinner_size="20dp"
+                    app:expandable_spinner_color="@color/black"
+                    app:expandable_spinner_gravity="end"
+                    app:expandable_animation="bounce"
+                    app:expandable_duration="300"
+                    />
+
+                <com.skydoves.expandablelayout.ExpandableLayout
+                    android:id="@+id/fragmainitemdetailed2_exp_notes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    app:expandable_parentLayout="@layout/expandable_notes_header"
+                    app:expandable_secondLayout="@layout/expandable_notes"
+                    app:expandable_isExpanded="false"
+                    app:expandable_spinner_size="20dp"
+                    app:expandable_spinner_color="@color/black"
+                    app:expandable_spinner_gravity="end"
+                    app:expandable_animation="bounce"
+                    app:expandable_duration="300"
+                    />
+
+                <com.skydoves.expandablelayout.ExpandableLayout
+                    android:id="@+id/fragmainitemdetailed2_exp_fields"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    app:expandable_parentLayout="@layout/expandable_fields_header"
+                    app:expandable_secondLayout="@layout/expandable_fields"
+                    app:expandable_isExpanded="false"
+                    app:expandable_spinner_size="20dp"
+                    app:expandable_spinner_color="@color/black"
+                    app:expandable_spinner_gravity="end"
+                    app:expandable_animation="bounce"
+                    app:expandable_duration="300"
+                    />
+
             </LinearLayout>
 
-            <com.skydoves.expandablelayout.ExpandableLayout
-                android:id="@+id/fragmainitemdetailed2_exp_authors"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                app:expandable_parentLayout="@layout/expandable_authors_header"
-                app:expandable_secondLayout="@layout/expandable_authors"
-                app:expandable_isExpanded="false"
-                app:expandable_spinner_size="20dp"
-                app:expandable_spinner_color="@color/black"
-                app:expandable_spinner_gravity="end"
-                app:expandable_animation="bounce"
-                app:expandable_duration="300"
-                />
+        </RelativeLayout>
 
-            <com.skydoves.expandablelayout.ExpandableLayout
-                android:id="@+id/fragmainitemdetailed2_exp_tags"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                app:expandable_parentLayout="@layout/expandable_tags_header"
-                app:expandable_secondLayout="@layout/expandable_tags"
-                app:expandable_isExpanded="false"
-                app:expandable_spinner_size="20dp"
-                app:expandable_spinner_color="@color/black"
-                app:expandable_spinner_gravity="end"
-                app:expandable_animation="bounce"
-                app:expandable_duration="300"
-                />
+    </ScrollView>
 
-            <com.skydoves.expandablelayout.ExpandableLayout
-                android:id="@+id/fragmainitemdetailed2_exp_notes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                app:expandable_parentLayout="@layout/expandable_notes_header"
-                app:expandable_secondLayout="@layout/expandable_notes"
-                app:expandable_isExpanded="false"
-                app:expandable_spinner_size="20dp"
-                app:expandable_spinner_color="@color/black"
-                app:expandable_spinner_gravity="end"
-                app:expandable_animation="bounce"
-                app:expandable_duration="300"
-                />
+    <RelativeLayout
+        android:id="@+id/fragmainitemdetailed2_buttomtoolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:padding="4dp"
+        android:background="@color/dark_grey"
+        >
+        <com.github.nikartm.button.FitButton
+            android:id="@+id/fragmainitemdetailed2_btn_drawer"
+            android:layout_alignParentStart="true"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="20dp"
+            app:fb_icon="@drawable/ic_menu"
+            app:fb_iconColor="@color/white"
+            app:fb_iconHeight="44dp"
+            app:fb_iconPosition="center"
+            app:fb_iconWidth="44dp"
+            app:fb_rippleColor="@color/theme_dark_red_primary_color" />
 
-            <com.skydoves.expandablelayout.ExpandableLayout
-                android:id="@+id/fragmainitemdetailed2_exp_fields"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                app:expandable_parentLayout="@layout/expandable_fields_header"
-                app:expandable_secondLayout="@layout/expandable_fields"
-                app:expandable_isExpanded="false"
-                app:expandable_spinner_size="20dp"
-                app:expandable_spinner_color="@color/black"
-                app:expandable_spinner_gravity="end"
-                app:expandable_animation="bounce"
-                app:expandable_duration="300"
-                />
+        <com.github.nikartm.button.FitButton
+            android:id="@+id/fragmainitemdetailed2_btn_itemdelete"
+            android:layout_alignParentEnd="true"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            app:fb_icon="@drawable/ic_delete_vector"
+            app:fb_iconColor="@color/md_red_800"
+            app:fb_iconHeight="44dp"
+            app:fb_iconPosition="center"
+            app:fb_iconWidth="44dp"
+            app:fb_rippleColor="@color/theme_dark_red_primary_color" />
 
-        </LinearLayout>
+        <com.github.nikartm.button.FitButton
+            android:id="@+id/fragmainitemdetailed2_btn_itemedit"
+            android:layout_toLeftOf="@id/fragmainitemdetailed2_btn_itemdelete"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="20dp"
+            app:fb_icon="@drawable/ic_edit"
+            app:fb_iconColor="@color/md_orange_500"
+            app:fb_iconHeight="44dp"
+            app:fb_iconPosition="center"
+            app:fb_iconWidth="44dp"
+            app:fb_rippleColor="@color/theme_dark_red_primary_color" />
 
     </RelativeLayout>
-
-</ScrollView>
+</RelativeLayout>

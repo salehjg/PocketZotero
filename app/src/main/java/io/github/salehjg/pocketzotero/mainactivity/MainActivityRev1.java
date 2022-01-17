@@ -150,6 +150,10 @@ public class MainActivityRev1 extends AppCompatActivity {
         }
 
         //------------------------------------------------------------------------------------------
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
+
         setContentView(R.layout.activity_main);
         if(findViewById(R.id.activitymain_drawer) != null){
             mTwoPane = false;
