@@ -57,6 +57,10 @@ public class Creator implements Serializable {
         this.mLastName = lastName;
     }
 
+    public String extractFullName(){
+        return mFirstName+" "+mLastName;
+    }
+
     public String getType() {
         return mType;
     }

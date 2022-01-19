@@ -14,15 +14,13 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.github.nikartm.button.FitButton;
 
 import java.util.Vector;
 
 import io.github.salehjg.pocketzotero.R;
-import io.github.salehjg.pocketzotero.mainactivity.MainActivityRev1;
-import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterItems;
+import io.github.salehjg.pocketzotero.adapters.RecyclerAdapterItems;
 import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.OneTimeEvent;
 import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.SharedViewModel;
 import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.ViewModelFactory;

@@ -1,4 +1,4 @@
-package io.github.salehjg.pocketzotero.mainactivity;
+package io.github.salehjg.pocketzotero.adapters;
 
 import android.content.Context;
 import android.graphics.Color;

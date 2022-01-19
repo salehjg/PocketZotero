@@ -1,28 +1,20 @@
 package io.github.salehjg.pocketzotero.fragments.main;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -30,29 +22,26 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.nikartm.button.FitButton;
-import com.google.gson.Gson;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+import com.haozhang.lib.SlantedTextView;
 import com.skydoves.expandablelayout.ExpandableLayout;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.util.Vector;
 
-import io.github.salehjg.pocketzotero.AppDirs;
 import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.R;
-import io.github.salehjg.pocketzotero.RecordedStatus;
-import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterAttachments;
-import io.github.salehjg.pocketzotero.mainactivity.RecyclerAdapterElements;
-import io.github.salehjg.pocketzotero.mainactivity.TempActivity;
+import io.github.salehjg.pocketzotero.adapters.RecyclerAdapterElements;
+import io.github.salehjg.pocketzotero.adapters.RecyclerAdapterGenericDouble;
+import io.github.salehjg.pocketzotero.adapters.RecyclerAdapterGenericSingle;
 import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.OneTimeEvent;
 import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.SharedViewModel;
 import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.ViewModelFactory;
-import io.github.salehjg.pocketzotero.smbutils.SmbReceiveFileFromHost;
-import io.github.salehjg.pocketzotero.smbutils.SmbServerInfo;
 import io.github.salehjg.pocketzotero.zoteroengine.types.Creator;
 import io.github.salehjg.pocketzotero.zoteroengine.types.FieldValuePair;
-import io.github.salehjg.pocketzotero.zoteroengine.types.ItemAttachment;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
+import io.github.salehjg.pocketzotero.zoteroengine.types.ItemNote;
+import io.github.salehjg.pocketzotero.zoteroengine.types.ItemTag;
 import jp.wasabeef.richeditor.RichEditor;
 
 public class MainItemDetailed2Fragment extends Fragment {
@@ -86,6 +75,10 @@ public class MainItemDetailed2Fragment extends Fragment {
     private RichEditor mRichTextNote;
     private ExpandableLayout mExpandableAuthors, mExpandableTags, mExpandableNotes, mExpandableFields;
     private FitButton mBtnToolbarDrawer, mBtnToolbarDeleteItem, mBtnToolbarEditItem;
+    private RecyclerView mRecyclerCreators, mRecyclerTags, mRecyclerNotes, mRecyclerFields;
+    private TextView mTextViewTitle;
+    private ChipGroup mChipGroupCreators, mChipGroupTags;
+    private SlantedTextView mSlantedTextViewItemType;
 
     // State Keys
     private static final String STATE_zzzzzzz_STATE = "STATE.KEY.zzzzzzzz";
@@ -94,11 +87,29 @@ public class MainItemDetailed2Fragment extends Fragment {
     private ItemDetailed mDataItemDetailed;
     private ArrayAdapter<String> mSpinnerAdapterItemTypes, mSpinnerAdapterAuthorType, mSpinnerAdapterFieldName;
 
+    private RecyclerAdapterCreators mRecyclerAdapterCreators;
+    private LinearLayoutManager mRecyclerLayoutManagerCreators;
+
+    private RecyclerAdapterTags mRecyclerAdapterTags;
+    private LinearLayoutManager mRecyclerLayoutManagerTags;
+
+    private RecyclerAdapterNotes mRecyclerAdapterNotes;
+    private LinearLayoutManager mRecyclerLayoutManagerNotes;
+
+    private RecyclerAdapterFields mRecyclerAdapterFields;
+    private LinearLayoutManager mRecyclerLayoutManagerFields;
+
     // Misc
     private AppMem mAppMem;
     private SharedViewModel mSharedViewModel;
     private MODES mMode;
     private SUBMODES mSubMode;
+
+    private final int ID_BASE_CHIP_CREATORS = 12345;
+    private final int ID_BASE_CHIP_TAGS = 123450;
+
+    private Vector<Chip> mChipsCreators, mChipsTags;
+    private View.OnClickListener mChipsOnClickListenerCreators, mChipsOnClickListenerTags;
 
 
     public MainItemDetailed2Fragment() {
@@ -145,7 +156,81 @@ public class MainItemDetailed2Fragment extends Fragment {
         setupGuiSpinners(view, mode, "");
     }
 
+    private void populateGuiWithInputData(ItemDetailed itemDetailed){
+        mTextViewTitle.setText(itemDetailed.getItemTitle());
+        mSlantedTextViewItemType.setText(itemDetailed.getItemType());
+
+        mRecyclerAdapterCreators.setData(itemDetailed.getItemCreators());
+        mRecyclerAdapterTags.setData(itemDetailed.getItemTags());
+        mRecyclerAdapterNotes.setData(itemDetailed.getItemNotes());
+        mRecyclerAdapterFields.setData(itemDetailed.getItemFields());
+
+        mChipsOnClickListenerCreators = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int index = view.getId() - ID_BASE_CHIP_CREATORS;
+                Toast.makeText(view.getContext(), "Chip Creator: " + mChipsCreators.get(index).getText(), Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        mChipsOnClickListenerTags = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int index = view.getId() - ID_BASE_CHIP_TAGS;
+                Toast.makeText(view.getContext(), "Chip Tags: " + mChipsTags.get(index).getText(), Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        GenerateChipsForCreators(mChipGroupCreators.getContext(), itemDetailed.getItemCreators());
+        GenerateChipsForTags(mChipGroupTags.getContext(), itemDetailed.getItemTags());
+    }
+
+    private void GenerateChipsForCreators(Context chipGroupContext, Vector<Creator> creators){
+        mChipGroupCreators.removeAllViews();
+        mChipsCreators = new Vector<>();
+        int i=0;
+        for(Creator creator:creators){
+            Chip chip = new Chip(chipGroupContext);
+            String creatorStr = creator.getCreatorId() + ": " + creator.extractFullName();
+            chip.setText(creatorStr);
+            chip.setId(ID_BASE_CHIP_CREATORS + i++);
+            chip.setChipBackgroundColorResource(R.color.chipsCreators);
+            chip.setChipEndPadding(5);
+            mChipsCreators.add(chip);
+        }
+
+        for(Chip chip:mChipsCreators){
+            mChipGroupCreators.addView(chip);
+            chip.setOnClickListener(mChipsOnClickListenerCreators);
+        }
+    }
+
+    private void GenerateChipsForTags(Context chipGroupContext, Vector<ItemTag> tags){
+        mChipGroupTags.removeAllViews();
+        mChipsTags = new Vector<>();
+        int i=0;
+        for(ItemTag tag:tags){
+            Chip chip = new Chip(chipGroupContext);
+            String tagStr = tag.getTagId() + ": " + tag.getTagName();
+            chip.setText(tagStr);
+            chip.setId(ID_BASE_CHIP_TAGS + i++);
+            chip.setChipBackgroundColorResource(R.color.chipsTags);
+            mChipsTags.add(chip);
+        }
+
+        for(Chip chip:mChipsTags){
+            mChipGroupTags.addView(chip);
+            chip.setOnClickListener(mChipsOnClickListenerTags);
+        }
+    }
+
     private void initGuiMembers(@NonNull View view){
+        mTextViewTitle = view.findViewById(R.id.fragmainitemdetailed2_tv_title);
+        mSlantedTextViewItemType = view.findViewById(R.id.fragmainitemdetailed2_slanted_itemtype);
+
+        mChipGroupCreators = view.findViewById(R.id.fragmainitemdetailed2_chipgroup_authors);
+        mChipGroupTags = view.findViewById(R.id.fragmainitemdetailed2_chipgroup_tags);
+
         mBtnToolbarDrawer = view.findViewById(R.id.fragmainitemdetailed2_btn_drawer);
         mBtnToolbarEditItem = view.findViewById(R.id.fragmainitemdetailed2_btn_itemedit);
         mBtnToolbarDeleteItem = view.findViewById(R.id.fragmainitemdetailed2_btn_itemdelete);
@@ -183,6 +268,35 @@ public class MainItemDetailed2Fragment extends Fragment {
         mEditTextTag = view.findViewById(R.id.expndd_tags_et_name);
         mRichTextNote = view.findViewById(R.id.expndd_notes_editor);
         mEditTextField = view.findViewById(R.id.expndd_fields_et_value);
+
+        mRecyclerCreators = view.findViewById(R.id.expndd_authors_recycler);
+        mRecyclerTags = view.findViewById(R.id.expndd_tags_recycler);
+        mRecyclerNotes = view.findViewById(R.id.expndd_notes_rcycler);
+        mRecyclerFields = view.findViewById(R.id.expndd_fields_recycler);
+
+        mRecyclerLayoutManagerCreators = new LinearLayoutManager(view.getContext());
+        mRecyclerCreators.setLayoutManager(mRecyclerLayoutManagerCreators);
+        mRecyclerAdapterCreators = new RecyclerAdapterCreators(view.getContext(), null);
+        mRecyclerAdapterCreators.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
+        mRecyclerCreators.setAdapter(mRecyclerAdapterCreators);
+
+        mRecyclerLayoutManagerTags = new LinearLayoutManager(view.getContext());
+        mRecyclerTags.setLayoutManager(mRecyclerLayoutManagerTags);
+        mRecyclerAdapterTags = new RecyclerAdapterTags(view.getContext(), null);
+        mRecyclerAdapterTags.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
+        mRecyclerTags.setAdapter(mRecyclerAdapterTags);
+
+        mRecyclerLayoutManagerNotes = new LinearLayoutManager(view.getContext());
+        mRecyclerNotes.setLayoutManager(mRecyclerLayoutManagerNotes);
+        mRecyclerAdapterNotes = new RecyclerAdapterNotes(view.getContext(), null);
+        mRecyclerAdapterNotes.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
+        mRecyclerNotes.setAdapter(mRecyclerAdapterNotes);
+
+        mRecyclerLayoutManagerFields = new LinearLayoutManager(view.getContext());
+        mRecyclerFields.setLayoutManager(mRecyclerLayoutManagerFields);
+        mRecyclerAdapterFields = new RecyclerAdapterFields(view.getContext(), null);
+        mRecyclerAdapterFields.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
+        mRecyclerFields.setAdapter(mRecyclerAdapterFields);
     }
 
     private void setupGuiForMode(MODES mode){
@@ -326,6 +440,76 @@ public class MainItemDetailed2Fragment extends Fragment {
                 }
             }
         });
+        mSharedViewModel.getSelectedItemDetailed().observe(getViewLifecycleOwner(), new Observer<ItemDetailed>() {
+            @Override
+            public void onChanged(ItemDetailed itemDetailed) {
+                populateGuiWithInputData(itemDetailed);
+            }
+        });
+        mRecyclerAdapterCreators.setOnClickListener(new RecyclerAdapterGenericDouble.ItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onItemRemoveClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onItemEditClick(View view, int position) {
+
+            }
+        });
+        mRecyclerAdapterTags.setOnClickListener(new RecyclerAdapterGenericSingle.ItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onItemRemoveClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onItemEditClick(View view, int position) {
+
+            }
+        });
+        mRecyclerAdapterNotes.setOnClickListener(new RecyclerAdapterGenericSingle.ItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onItemRemoveClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onItemEditClick(View view, int position) {
+
+            }
+        });
+        mRecyclerAdapterFields.setOnClickListener(new RecyclerAdapterGenericDouble.ItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onItemRemoveClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onItemEditClick(View view, int position) {
+
+            }
+        });
     }
 
     private Vector<String> getItemTypesAll(){
@@ -398,6 +582,58 @@ public class MainItemDetailed2Fragment extends Fragment {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         //outState.putParcelable(STATE_zzzzzzz_STATE, mRecyclerViewElementsLayoutManager.onSaveInstanceState());
+    }
+
+    //==============================================================================================
+
+    private class RecyclerAdapterCreators extends RecyclerAdapterGenericDouble<Creator>{
+        public RecyclerAdapterCreators(Context context, Vector<Creator> data) {
+            super(context, data);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            Creator creator = getItem(position);
+            holder.getGuiTv1().setText(creator.getType());
+            holder.getGuiTv2().setText(creator.extractFullName());
+        }
+    }
+
+    private class RecyclerAdapterTags extends RecyclerAdapterGenericSingle<ItemTag> {
+        public RecyclerAdapterTags(Context context, Vector<ItemTag> data) {
+            super(context, data);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            ItemTag tag = getItem(position);
+            holder.getGuiTv().setText(tag.getTagName());
+        }
+    }
+
+    private class RecyclerAdapterNotes extends RecyclerAdapterGenericSingle<ItemNote> {
+        public RecyclerAdapterNotes(Context context, Vector<ItemNote> data) {
+            super(context, data);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            ItemNote note = getItem(position);
+            holder.getGuiTv().setText(note.getTitle());
+        }
+    }
+
+    private class RecyclerAdapterFields extends RecyclerAdapterGenericDouble<FieldValuePair> {
+        public RecyclerAdapterFields(Context context, Vector<FieldValuePair> data) {
+            super(context, data);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+            FieldValuePair pair = getItem(position);
+            holder.getGuiTv1().setText(pair.get_fieldName());
+            holder.getGuiTv2().setText(pair.get_value());
+        }
     }
 
 }

@@ -1,4 +1,4 @@
-package io.github.salehjg.pocketzotero.utils;
+package io.github.salehjg.pocketzotero.zoteroengine.types;
 
 public enum UnifiedTypes {
     AUTHOR,

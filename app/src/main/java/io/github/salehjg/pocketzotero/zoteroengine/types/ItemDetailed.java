@@ -3,8 +3,6 @@ package io.github.salehjg.pocketzotero.zoteroengine.types;
 import java.io.Serializable;
 import java.util.Vector;
 
-import io.github.salehjg.pocketzotero.utils.UnifiedTypes;
-
 public class ItemDetailed implements Serializable {
     protected Collection mParentCollection;
     protected CollectionItem mCollectionItem;
