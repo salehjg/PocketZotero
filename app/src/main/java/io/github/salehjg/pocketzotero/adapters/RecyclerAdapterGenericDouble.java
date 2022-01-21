@@ -30,7 +30,11 @@ public abstract class RecyclerAdapterGenericDouble<T> extends RecyclerView.Adapt
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        if(mData!=null) {
+            return mData.size();
+        }else {
+            return -1;
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -95,7 +99,11 @@ public abstract class RecyclerAdapterGenericDouble<T> extends RecyclerView.Adapt
     }
 
     public T getItem(int id) {
-        return mData.get(id);
+        if(mData!=null) {
+            return mData.get(id);
+        }else{
+            return null;
+        }
     }
 
     public void setData(Vector<T> data) {

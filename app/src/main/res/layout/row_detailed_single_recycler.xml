@@ -18,7 +18,8 @@
             android:layout_height="wrap_content"
             android:autoLink="web|email"
             android:layout_margin="5dp"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:gravity="center"/>
     </LinearLayout>
 
     <LinearLayout

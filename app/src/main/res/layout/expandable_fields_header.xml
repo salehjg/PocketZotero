@@ -3,15 +3,16 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="5dp">
+    android:padding="5dp"
+    android:background="@color/dark_grey">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Fields"
         android:layout_alignParentStart="true"
-        android:textStyle="bold"
-        android:textSize="10pt"
         android:gravity="center"
-        />
+        android:text="Fields"
+        android:textSize="10pt"
+        android:textStyle="bold"
+        android:textColor="@color/white"/>
 </RelativeLayout>

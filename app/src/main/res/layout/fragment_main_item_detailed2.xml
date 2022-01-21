@@ -1,15 +1,60 @@
-<RelativeLayout android:layout_width="match_parent"
+<RelativeLayout
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ScrollView
-        android:layout_above="@id/fragmainitemdetailed2_buttomtoolbar"
+    <RelativeLayout
+        android:id="@+id/fragmainitemdetailed2_mode_cover"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:background="@color/md_orange">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="EDIT MODE"
+            android:textSize="15pt"
+            android:textStyle="bold" />
+        <com.github.nikartm.button.FitButton
+            android:id="@+id/fragmainitemdetailed2_btn_modifications_save"
+            android:layout_alignParentEnd="true"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="20dp"
+            app:fb_icon="@drawable/ic_save"
+            app:fb_iconColor="@color/md_green"
+            app:fb_iconHeight="44dp"
+            app:fb_iconPosition="center"
+            app:fb_iconWidth="44dp"
+            app:fb_rippleColor="@color/theme_dark_red_primary_color" />
+
+        <com.github.nikartm.button.FitButton
+            android:id="@+id/fragmainitemdetailed2_btn_modifications_discard"
+            android:layout_alignParentStart="true"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_marginEnd="20dp"
+            app:fb_icon="@drawable/ic_discard"
+            app:fb_iconColor="@color/md_red"
+            app:fb_iconHeight="44dp"
+            app:fb_iconPosition="center"
+            app:fb_iconWidth="44dp"
+            app:fb_rippleColor="@color/theme_dark_red_primary_color" />
+
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_below="@id/fragmainitemdetailed2_mode_cover"
+        android:layout_above="@id/fragmainitemdetailed2_buttomtoolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fillViewport="false"
-        android:paddingStart="10dp">
+        android:paddingStart="10dp"
+        >
 
         <RelativeLayout android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -85,7 +130,7 @@
                     app:expandable_secondLayout="@layout/expandable_authors"
                     app:expandable_isExpanded="false"
                     app:expandable_spinner_size="20dp"
-                    app:expandable_spinner_color="@color/black"
+                    app:expandable_spinner_color="@color/md_lime"
                     app:expandable_spinner_gravity="end"
                     app:expandable_animation="normal"
                     app:expandable_duration="300"
@@ -100,7 +145,7 @@
                     app:expandable_secondLayout="@layout/expandable_tags"
                     app:expandable_isExpanded="false"
                     app:expandable_spinner_size="20dp"
-                    app:expandable_spinner_color="@color/black"
+                    app:expandable_spinner_color="@color/md_lime"
                     app:expandable_spinner_gravity="end"
                     app:expandable_animation="normal"
                     app:expandable_duration="300"
@@ -115,7 +160,7 @@
                     app:expandable_secondLayout="@layout/expandable_notes"
                     app:expandable_isExpanded="false"
                     app:expandable_spinner_size="20dp"
-                    app:expandable_spinner_color="@color/black"
+                    app:expandable_spinner_color="@color/md_lime"
                     app:expandable_spinner_gravity="end"
                     app:expandable_animation="normal"
                     app:expandable_duration="300"
@@ -130,7 +175,7 @@
                     app:expandable_secondLayout="@layout/expandable_fields"
                     app:expandable_isExpanded="false"
                     app:expandable_spinner_size="20dp"
-                    app:expandable_spinner_color="@color/black"
+                    app:expandable_spinner_color="@color/md_lime"
                     app:expandable_spinner_gravity="end"
                     app:expandable_animation="normal"
                     app:expandable_duration="300"

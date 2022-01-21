@@ -16,6 +16,7 @@
         <entry key="app/src/main/res/layout/expandable_authors_header.xml" value="0.264453125" />
         <entry key="app/src/main/res/layout/expandable_dummy.xml" value="0.146484375" />
         <entry key="app/src/main/res/layout/expandable_fields.xml" value="0.264453125" />
+        <entry key="app/src/main/res/layout/expandable_fields_header.xml" value="0.146484375" />
         <entry key="app/src/main/res/layout/expandable_notes.xml" value="0.264453125" />
         <entry key="app/src/main/res/layout/expandable_notes_header.xml" value="0.146484375" />
         <entry key="app/src/main/res/layout/expandable_tags.xml" value="0.264453125" />

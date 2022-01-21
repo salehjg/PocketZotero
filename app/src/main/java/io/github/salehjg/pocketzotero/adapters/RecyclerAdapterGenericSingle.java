@@ -27,13 +27,17 @@ public abstract class RecyclerAdapterGenericSingle<T> extends RecyclerView.Adapt
     // inflates the row layout from xml when needed
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.row_detailed_double_recycler, parent, false);
+        View view = mInflater.inflate(R.layout.row_detailed_single_recycler, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        if(mData!=null) {
+            return mData.size();
+        }else {
+            return -1;
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -42,9 +46,9 @@ public abstract class RecyclerAdapterGenericSingle<T> extends RecyclerView.Adapt
 
         ViewHolder(View itemView) {
             super(itemView);
-            mTv = itemView.findViewById(R.id.row_detailed_double_tv1);
-            mBtnEdit = itemView.findViewById(R.id.row_detailed_double_btn_edit);
-            mBtnRemove = itemView.findViewById(R.id.row_detailed_double_btn_remove);
+            mTv = itemView.findViewById(R.id.row_detailed_single_tv1);
+            mBtnEdit = itemView.findViewById(R.id.row_detailed_single_btn_edit);
+            mBtnRemove = itemView.findViewById(R.id.row_detailed_single_btn_remove);
 
             mBtnEdit.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -93,7 +97,11 @@ public abstract class RecyclerAdapterGenericSingle<T> extends RecyclerView.Adapt
     }
 
     public T getItem(int id) {
-        return mData.get(id);
+        if(mData!=null) {
+            return mData.get(id);
+        }else{
+            return null;
+        }
     }
 
     public void setData(Vector<T> data) {

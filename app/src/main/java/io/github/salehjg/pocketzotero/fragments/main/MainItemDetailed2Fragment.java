@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,7 +32,6 @@ import java.util.Vector;
 
 import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.R;
-import io.github.salehjg.pocketzotero.adapters.RecyclerAdapterElements;
 import io.github.salehjg.pocketzotero.adapters.RecyclerAdapterGenericDouble;
 import io.github.salehjg.pocketzotero.adapters.RecyclerAdapterGenericSingle;
 import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.OneTimeEvent;
@@ -79,6 +79,8 @@ public class MainItemDetailed2Fragment extends Fragment {
     private TextView mTextViewTitle;
     private ChipGroup mChipGroupCreators, mChipGroupTags;
     private SlantedTextView mSlantedTextViewItemType;
+    private RelativeLayout mCoverRelativeLayout;
+    private FitButton mCoverSave, mCoverDiscard;
 
     // State Keys
     private static final String STATE_zzzzzzz_STATE = "STATE.KEY.zzzzzzzz";
@@ -181,11 +183,11 @@ public class MainItemDetailed2Fragment extends Fragment {
             }
         };
 
-        GenerateChipsForCreators(mChipGroupCreators.getContext(), itemDetailed.getItemCreators());
-        GenerateChipsForTags(mChipGroupTags.getContext(), itemDetailed.getItemTags());
+        generateChipsForCreators(mChipGroupCreators.getContext(), itemDetailed.getItemCreators());
+        generateChipsForTags(mChipGroupTags.getContext(), itemDetailed.getItemTags());
     }
 
-    private void GenerateChipsForCreators(Context chipGroupContext, Vector<Creator> creators){
+    private void generateChipsForCreators(Context chipGroupContext, Vector<Creator> creators){
         mChipGroupCreators.removeAllViews();
         mChipsCreators = new Vector<>();
         int i=0;
@@ -205,7 +207,7 @@ public class MainItemDetailed2Fragment extends Fragment {
         }
     }
 
-    private void GenerateChipsForTags(Context chipGroupContext, Vector<ItemTag> tags){
+    private void generateChipsForTags(Context chipGroupContext, Vector<ItemTag> tags){
         mChipGroupTags.removeAllViews();
         mChipsTags = new Vector<>();
         int i=0;
@@ -297,6 +299,10 @@ public class MainItemDetailed2Fragment extends Fragment {
         mRecyclerAdapterFields = new RecyclerAdapterFields(view.getContext(), null);
         mRecyclerAdapterFields.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
         mRecyclerFields.setAdapter(mRecyclerAdapterFields);
+
+        mCoverRelativeLayout = view.findViewById(R.id.fragmainitemdetailed2_mode_cover);
+        mCoverSave = view.findViewById(R.id.fragmainitemdetailed2_btn_modifications_save);
+        mCoverDiscard = view.findViewById(R.id.fragmainitemdetailed2_btn_modifications_discard);
     }
 
     private void setupGuiForMode(MODES mode){
@@ -321,6 +327,8 @@ public class MainItemDetailed2Fragment extends Fragment {
                 mRichTextNote.setVisibility(View.GONE);
                 mEditTextField.setVisibility(View.GONE);
 
+                mCoverRelativeLayout.setVisibility(View.INVISIBLE);
+
                 break;
             }
             case MODE_NEW:{
@@ -337,6 +345,8 @@ public class MainItemDetailed2Fragment extends Fragment {
                 mEditTextTag.setVisibility(View.VISIBLE);
                 mRichTextNote.setVisibility(View.VISIBLE);
                 mEditTextField.setVisibility(View.VISIBLE);
+
+                mCoverRelativeLayout.setVisibility(View.VISIBLE);
                 break;
             }
             case MODE_EDIT:{
@@ -353,12 +363,20 @@ public class MainItemDetailed2Fragment extends Fragment {
                 mEditTextTag.setVisibility(View.VISIBLE);
                 mRichTextNote.setVisibility(View.VISIBLE);
                 mEditTextField.setVisibility(View.VISIBLE);
+
+                mCoverRelativeLayout.setVisibility(View.VISIBLE);
                 break;
             }
             default:{
                 break;
             }
         }
+
+        // To force refresh recyclers to show/hide the buttons for editing or removing an item.
+        mRecyclerAdapterCreators.notifyDataSetChanged();
+        mRecyclerAdapterTags.notifyDataSetChanged();
+        mRecyclerAdapterFields.notifyDataSetChanged();
+        mRecyclerAdapterNotes.notifyDataSetChanged();
     }
 
     private void initGuiMemberListeners(@NonNull View view, MODES mode){
@@ -371,7 +389,8 @@ public class MainItemDetailed2Fragment extends Fragment {
         mBtnToolbarEditItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                mMode = MODES.MODE_EDIT;
+                setupGuiForMode(mMode);
             }
         });
         mBtnToolbarDeleteItem.setOnClickListener(new View.OnClickListener() {
@@ -432,6 +451,20 @@ public class MainItemDetailed2Fragment extends Fragment {
 
             }
         });
+
+        mCoverSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(view.getContext(), "Save", Toast.LENGTH_LONG).show();
+            }
+        });
+        mCoverDiscard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(view.getContext(), "Cancel", Toast.LENGTH_LONG).show();
+            }
+        });
+
         mSharedViewModel.getTabItemDetailedHideDrawerButton().observe(getViewLifecycleOwner(), new Observer<OneTimeEvent>() {
             @Override
             public void onChanged(OneTimeEvent oneTimeEvent) {
@@ -443,7 +476,10 @@ public class MainItemDetailed2Fragment extends Fragment {
         mSharedViewModel.getSelectedItemDetailed().observe(getViewLifecycleOwner(), new Observer<ItemDetailed>() {
             @Override
             public void onChanged(ItemDetailed itemDetailed) {
-                populateGuiWithInputData(itemDetailed);
+                if(itemDetailed!=null) {
+                    mDataItemDetailed = itemDetailed;
+                    populateGuiWithInputData(mDataItemDetailed);
+                }
             }
         });
         mRecyclerAdapterCreators.setOnClickListener(new RecyclerAdapterGenericDouble.ItemClickListener() {
