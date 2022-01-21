@@ -22,16 +22,24 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_weight="0.4" />
+                android:layout_weight="0.3" />
 
             <EditText
-                android:id="@+id/expndd_authors_et_name"
+                android:id="@+id/expndd_authors_et_name_first"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="5dp"
-                android:layout_weight="0.4"
-                android:hint="Full Name" />
+                android:layout_weight="0.35"
+                android:hint="First Name" />
+            <EditText
+                android:id="@+id/expndd_authors_et_name_last"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="5dp"
+                android:layout_weight="0.35"
+                android:hint="Last Name" />
         </LinearLayout>
 
         <LinearLayout

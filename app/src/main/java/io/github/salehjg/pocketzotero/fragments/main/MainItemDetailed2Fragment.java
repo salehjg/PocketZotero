@@ -71,7 +71,7 @@ public class MainItemDetailed2Fragment extends Fragment {
     private LinearLayout mBtnGroupNoteEdit;
     private FitButton mBtnFieldAdd, mBtnFieldSave, mBtnFieldDiscard;
     private LinearLayout mBtnGroupFieldEdit;
-    private EditText mEditTextAuthor, mEditTextTag, mEditTextField;
+    private EditText mEditTextAuthorFirstName, mEditTextAuthorLastName, mEditTextTag, mEditTextField;
     private RichEditor mRichTextNote;
     private ExpandableLayout mExpandableAuthors, mExpandableTags, mExpandableNotes, mExpandableFields;
     private FitButton mBtnToolbarDrawer, mBtnToolbarDeleteItem, mBtnToolbarEditItem;
@@ -117,7 +117,7 @@ public class MainItemDetailed2Fragment extends Fragment {
     public MainItemDetailed2Fragment() {
         // Required empty public constructor
     }
-    
+
     public static MainItemDetailed2Fragment newInstance() {
         MainItemDetailed2Fragment fragment = new MainItemDetailed2Fragment();
         return fragment;
@@ -155,7 +155,7 @@ public class MainItemDetailed2Fragment extends Fragment {
         initGuiMembers(view);
         initGuiMemberListeners(view, mode);
         setupGuiForMode(mode);
-        setupGuiSpinners(view, mode, "");
+        setupGuiSpinners(mode, "", false);
     }
 
     private void populateGuiWithInputData(ItemDetailed itemDetailed){
@@ -266,7 +266,8 @@ public class MainItemDetailed2Fragment extends Fragment {
         mBtnFieldDiscard = view.findViewById(R.id.expndd_fields_btn_discard);
         mBtnGroupFieldEdit = view.findViewById(R.id.expndd_fields_ll_btns_edit);
 
-        mEditTextAuthor = view.findViewById(R.id.expndd_authors_et_name);
+        mEditTextAuthorFirstName = view.findViewById(R.id.expndd_authors_et_name_first);
+        mEditTextAuthorLastName = view.findViewById(R.id.expndd_authors_et_name_last);
         mEditTextTag = view.findViewById(R.id.expndd_tags_et_name);
         mRichTextNote = view.findViewById(R.id.expndd_notes_editor);
         mEditTextField = view.findViewById(R.id.expndd_fields_et_value);
@@ -322,7 +323,8 @@ public class MainItemDetailed2Fragment extends Fragment {
                 mSpinnerAuthorType.setVisibility(View.GONE);
                 mSpinnerFieldName.setVisibility(View.GONE);
 
-                mEditTextAuthor.setVisibility(View.GONE);
+                mEditTextAuthorFirstName.setVisibility(View.GONE);
+                mEditTextAuthorLastName.setVisibility(View.GONE);
                 mEditTextTag.setVisibility(View.GONE);
                 mRichTextNote.setVisibility(View.GONE);
                 mEditTextField.setVisibility(View.GONE);
@@ -341,7 +343,8 @@ public class MainItemDetailed2Fragment extends Fragment {
                 mSpinnerAuthorType.setVisibility(View.VISIBLE);
                 mSpinnerFieldName.setVisibility(View.VISIBLE);
 
-                mEditTextAuthor.setVisibility(View.VISIBLE);
+                mEditTextAuthorFirstName.setVisibility(View.VISIBLE);
+                mEditTextAuthorLastName.setVisibility(View.VISIBLE);
                 mEditTextTag.setVisibility(View.VISIBLE);
                 mRichTextNote.setVisibility(View.VISIBLE);
                 mEditTextField.setVisibility(View.VISIBLE);
@@ -359,7 +362,8 @@ public class MainItemDetailed2Fragment extends Fragment {
                 mSpinnerAuthorType.setVisibility(View.VISIBLE);
                 mSpinnerFieldName.setVisibility(View.VISIBLE);
 
-                mEditTextAuthor.setVisibility(View.VISIBLE);
+                mEditTextAuthorFirstName.setVisibility(View.VISIBLE);
+                mEditTextAuthorLastName.setVisibility(View.VISIBLE);
                 mEditTextTag.setVisibility(View.VISIBLE);
                 mRichTextNote.setVisibility(View.VISIBLE);
                 mEditTextField.setVisibility(View.VISIBLE);
@@ -391,6 +395,7 @@ public class MainItemDetailed2Fragment extends Fragment {
             public void onClick(View view) {
                 mMode = MODES.MODE_EDIT;
                 setupGuiForMode(mMode);
+                setupGuiSpinners(mMode, mDataItemDetailed.getItemType(), false);
             }
         });
         mBtnToolbarDeleteItem.setOnClickListener(new View.OnClickListener() {
@@ -443,7 +448,8 @@ public class MainItemDetailed2Fragment extends Fragment {
         mSpinnerItemType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                setupGuiSpinners(view, mMode, "");
+
+                setupGuiSpinners(mMode, (String) mSpinnerItemType.getSelectedItem(), true);
             }
 
             @Override
@@ -461,7 +467,7 @@ public class MainItemDetailed2Fragment extends Fragment {
         mCoverDiscard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(view.getContext(), "Cancel", Toast.LENGTH_LONG).show();
+                setupGuiForMode(MODES.MODE_VIEW);
             }
         });
 
@@ -479,6 +485,7 @@ public class MainItemDetailed2Fragment extends Fragment {
                 if(itemDetailed!=null) {
                     mDataItemDetailed = itemDetailed;
                     populateGuiWithInputData(mDataItemDetailed);
+                    setupGuiForMode(mMode=MODES.MODE_VIEW);
                 }
             }
         });
@@ -570,9 +577,9 @@ public class MainItemDetailed2Fragment extends Fragment {
         return fieldNames;
     }
 
-    private void setGuiSpinnerItemTypes(@NonNull View view, Vector<String> types){
+    private void setGuiSpinnerItemTypes(@NonNull Context context, Vector<String> types){
         mSpinnerAdapterItemTypes = new ArrayAdapter<String>(
-                view.getContext(),
+                context,
                 android.R.layout.simple_spinner_item,
                 types
         );
@@ -581,9 +588,9 @@ public class MainItemDetailed2Fragment extends Fragment {
         );
     }
 
-    private void setGuiSpinnerAuthorTypes(@NonNull View view, Vector<String> types){
+    private void setGuiSpinnerAuthorTypes(@NonNull Context context, Vector<String> types){
         mSpinnerAdapterAuthorType = new ArrayAdapter<String>(
-                view.getContext(),
+                context,
                 android.R.layout.simple_spinner_item,
                 types
         );
@@ -592,9 +599,9 @@ public class MainItemDetailed2Fragment extends Fragment {
         );
     }
 
-    private void setGuiSpinnerFieldNames(@NonNull View view, Vector<String> names){
+    private void setGuiSpinnerFieldNames(@NonNull Context context, Vector<String> names){
         mSpinnerAdapterFieldName = new ArrayAdapter<String>(
-                view.getContext(),
+                context,
                 android.R.layout.simple_spinner_item,
                 names
         );
@@ -603,14 +610,15 @@ public class MainItemDetailed2Fragment extends Fragment {
         );
     }
 
-    private void setupGuiSpinners(@NonNull View view, MODES mode, String selectedItemTypeName){
+    private void setupGuiSpinners(MODES mode, String itemTypeName, boolean excludeItemTypeSpinner){
         if(mode == MODES.MODE_VIEW){
             return;
         }
         if(mode == MODES.MODE_NEW || mode == MODES.MODE_EDIT){
-            setGuiSpinnerItemTypes(view, getItemTypesAll());
-            if(!selectedItemTypeName.isEmpty())setGuiSpinnerAuthorTypes(view, getPossibleCreatorTypeNames(selectedItemTypeName));
-            if(!selectedItemTypeName.isEmpty())setGuiSpinnerFieldNames(view, getPossibleFieldNames(selectedItemTypeName));
+
+            if(!excludeItemTypeSpinner)setGuiSpinnerItemTypes(requireContext(), getItemTypesAll());
+            if(!itemTypeName.isEmpty())setGuiSpinnerAuthorTypes(requireContext(), getPossibleCreatorTypeNames(itemTypeName));
+            if(!itemTypeName.isEmpty())setGuiSpinnerFieldNames(requireContext(), getPossibleFieldNames(itemTypeName));
         }
     }
     
