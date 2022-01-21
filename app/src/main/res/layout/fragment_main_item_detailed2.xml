@@ -54,6 +54,7 @@
         android:layout_height="wrap_content"
         android:fillViewport="false"
         android:paddingStart="10dp"
+        android:paddingEnd="10dp"
         >
 
         <RelativeLayout android:layout_width="match_parent"
