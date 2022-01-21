@@ -30,6 +30,7 @@
         <entry key="app/src/main/res/layout/fragment_welcome.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/row_attachments_recycler.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/row_detailed_double_recycler.xml" value="0.264453125" />
+        <entry key="app/src/main/res/layout/row_detailed_single_recycler.xml" value="0.264453125" />
         <entry key="app/src/main/res/layout/row_elements_recycler.xml" value="0.35260416666666666" />
         <entry key="app/src/main/res/layout/row_items_recycler.xml" value="0.5" />
         <entry key="app/src/main/res/layout/row_status_recycler.xml" value="0.35260416666666666" />

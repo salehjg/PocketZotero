@@ -300,26 +300,26 @@ public class MainItemDetailed2Fragment extends Fragment {
     }
 
     private void setupGuiForMode(MODES mode){
-        mBtnGroupAuthorEdit.setVisibility(View.INVISIBLE);
-        mBtnGroupTagEdit.setVisibility(View.INVISIBLE);
-        mBtnGroupNoteEdit.setVisibility(View.INVISIBLE);
-        mBtnGroupFieldEdit.setVisibility(View.INVISIBLE);
+        mBtnGroupAuthorEdit.setVisibility(View.GONE);
+        mBtnGroupTagEdit.setVisibility(View.GONE);
+        mBtnGroupNoteEdit.setVisibility(View.GONE);
+        mBtnGroupFieldEdit.setVisibility(View.GONE);
 
         switch (mode){
             case MODE_VIEW:{
-                mBtnAuthorAdd.setVisibility(View.INVISIBLE);
-                mBtnTagAdd.setVisibility(View.INVISIBLE);
-                mBtnNoteAdd.setVisibility(View.INVISIBLE);
-                mBtnFieldAdd.setVisibility(View.INVISIBLE);
+                mBtnAuthorAdd.setVisibility(View.GONE);
+                mBtnTagAdd.setVisibility(View.GONE);
+                mBtnNoteAdd.setVisibility(View.GONE);
+                mBtnFieldAdd.setVisibility(View.GONE);
 
-                mSpinnerItemType.setVisibility(View.INVISIBLE);
-                mSpinnerAuthorType.setVisibility(View.INVISIBLE);
-                mSpinnerFieldName.setVisibility(View.INVISIBLE);
+                mSpinnerItemType.setVisibility(View.GONE);
+                mSpinnerAuthorType.setVisibility(View.GONE);
+                mSpinnerFieldName.setVisibility(View.GONE);
 
-                mEditTextAuthor.setVisibility(View.INVISIBLE);
-                mEditTextTag.setVisibility(View.INVISIBLE);
-                mRichTextNote.setVisibility(View.INVISIBLE);
-                mEditTextField.setVisibility(View.INVISIBLE);
+                mEditTextAuthor.setVisibility(View.GONE);
+                mEditTextTag.setVisibility(View.GONE);
+                mRichTextNote.setVisibility(View.GONE);
+                mEditTextField.setVisibility(View.GONE);
 
                 break;
             }
@@ -596,6 +596,7 @@ public class MainItemDetailed2Fragment extends Fragment {
             Creator creator = getItem(position);
             holder.getGuiTv1().setText(creator.getType());
             holder.getGuiTv2().setText(creator.extractFullName());
+            holder.setVisibilityBtnAll(mMode==MODES.MODE_EDIT);
         }
     }
 
@@ -608,6 +609,7 @@ public class MainItemDetailed2Fragment extends Fragment {
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             ItemTag tag = getItem(position);
             holder.getGuiTv().setText(tag.getTagName());
+            holder.setVisibilityBtnAll(mMode==MODES.MODE_EDIT);
         }
     }
 
@@ -620,6 +622,7 @@ public class MainItemDetailed2Fragment extends Fragment {
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             ItemNote note = getItem(position);
             holder.getGuiTv().setText(note.getTitle());
+            holder.setVisibilityBtnAll(mMode==MODES.MODE_EDIT);
         }
     }
 
@@ -633,6 +636,7 @@ public class MainItemDetailed2Fragment extends Fragment {
             FieldValuePair pair = getItem(position);
             holder.getGuiTv1().setText(pair.get_fieldName());
             holder.getGuiTv2().setText(pair.get_value());
+            holder.setVisibilityBtnAll(mMode==MODES.MODE_EDIT);
         }
     }
 

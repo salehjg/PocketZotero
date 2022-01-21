@@ -79,6 +79,19 @@ public abstract class RecyclerAdapterGenericDouble<T> extends RecyclerView.Adapt
         public FitButton getGuiBtnRemove() {
             return mBtnRemove;
         }
+
+        public void setVisibilityBtnAll(boolean isVisible){
+            setVisibilityBtnEdit(isVisible);
+            setVisibilityBtnRemove(isVisible);
+        }
+
+        public void setVisibilityBtnEdit(boolean isVisible){
+            mBtnEdit.setVisibility(isVisible?View.VISIBLE:View.INVISIBLE);
+        }
+
+        public void setVisibilityBtnRemove(boolean isVisible){
+            mBtnRemove.setVisibility(isVisible?View.VISIBLE:View.INVISIBLE);
+        }
     }
 
     public T getItem(int id) {

@@ -17,8 +17,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="5dp"
-            android:layout_weight="0.4"
-            android:autoLink="web|email" />
+            android:layout_weight="0.3"
+            android:autoLink="web|email"
+            android:textStyle="bold"
+            android:gravity="end"
+            />
 
         <TextView
             android:id="@+id/row_detailed_double_tv2"
@@ -26,8 +29,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="5dp"
-            android:layout_weight="0.4"
-            android:autoLink="web|email" />
+            android:layout_weight="0.7"
+            android:autoLink="web|email"
+            android:gravity="start"/>
     </LinearLayout>
 
     <LinearLayout

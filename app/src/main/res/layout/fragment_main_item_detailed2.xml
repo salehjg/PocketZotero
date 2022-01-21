@@ -37,6 +37,8 @@
                 android:layout_marginEnd="50dp"
                 android:inputType="none"
                 android:minHeight="48dp"
+                android:textSize="15pt"
+                android:textStyle="bold"
                 android:text="Long Title Long Title Long Title Long Title Long Title Long Title " />
 
             <LinearLayout
@@ -85,7 +87,7 @@
                     app:expandable_spinner_size="20dp"
                     app:expandable_spinner_color="@color/black"
                     app:expandable_spinner_gravity="end"
-                    app:expandable_animation="bounce"
+                    app:expandable_animation="normal"
                     app:expandable_duration="300"
                     />
 
@@ -100,7 +102,7 @@
                     app:expandable_spinner_size="20dp"
                     app:expandable_spinner_color="@color/black"
                     app:expandable_spinner_gravity="end"
-                    app:expandable_animation="bounce"
+                    app:expandable_animation="normal"
                     app:expandable_duration="300"
                     />
 
@@ -115,7 +117,7 @@
                     app:expandable_spinner_size="20dp"
                     app:expandable_spinner_color="@color/black"
                     app:expandable_spinner_gravity="end"
-                    app:expandable_animation="bounce"
+                    app:expandable_animation="normal"
                     app:expandable_duration="300"
                     />
 
@@ -130,7 +132,7 @@
                     app:expandable_spinner_size="20dp"
                     app:expandable_spinner_color="@color/black"
                     app:expandable_spinner_gravity="end"
-                    app:expandable_animation="bounce"
+                    app:expandable_animation="normal"
                     app:expandable_duration="300"
                     />
 
