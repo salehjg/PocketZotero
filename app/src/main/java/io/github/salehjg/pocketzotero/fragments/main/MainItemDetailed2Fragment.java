@@ -32,6 +32,8 @@ import java.util.Vector;
 
 import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.R;
+import io.github.salehjg.pocketzotero.adapters.RecyclerAdapterAttachments;
+import io.github.salehjg.pocketzotero.adapters.RecyclerAdapterAttachments2;
 import io.github.salehjg.pocketzotero.adapters.RecyclerAdapterGenericDouble;
 import io.github.salehjg.pocketzotero.adapters.RecyclerAdapterGenericSingle;
 import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.OneTimeEvent;
@@ -75,12 +77,13 @@ public class MainItemDetailed2Fragment extends Fragment {
     private RichEditor mRichTextNote;
     private ExpandableLayout mExpandableAuthors, mExpandableTags, mExpandableNotes, mExpandableFields;
     private FitButton mBtnToolbarDrawer, mBtnToolbarDeleteItem, mBtnToolbarEditItem;
-    private RecyclerView mRecyclerCreators, mRecyclerTags, mRecyclerNotes, mRecyclerFields;
+    private RecyclerView mRecyclerAttachments, mRecyclerCreators, mRecyclerTags, mRecyclerNotes, mRecyclerFields;
     private TextView mTextViewTitle;
     private ChipGroup mChipGroupCreators, mChipGroupTags;
     private SlantedTextView mSlantedTextViewItemType;
     private RelativeLayout mCoverRelativeLayout;
     private FitButton mCoverSave, mCoverDiscard;
+    private FitButton mBtnAttachmentsAdd;
 
     // State Keys
     private static final String STATE_zzzzzzz_STATE = "STATE.KEY.zzzzzzzz";
@@ -100,6 +103,9 @@ public class MainItemDetailed2Fragment extends Fragment {
 
     private RecyclerAdapterFields mRecyclerAdapterFields;
     private LinearLayoutManager mRecyclerLayoutManagerFields;
+
+    private RecyclerAdapterAttachments2 mRecyclerAdapterAttachments;
+    private LinearLayoutManager mRecyclerLayoutManagerAttachments;
 
     // Misc
     private AppMem mAppMem;
@@ -166,6 +172,7 @@ public class MainItemDetailed2Fragment extends Fragment {
         mRecyclerAdapterTags.setData(itemDetailed.getItemTags());
         mRecyclerAdapterNotes.setData(itemDetailed.getItemNotes());
         mRecyclerAdapterFields.setData(itemDetailed.getItemFields());
+        mRecyclerAdapterAttachments.setAttachments(itemDetailed.getItemAttachments());
 
         mChipsOnClickListenerCreators = new View.OnClickListener() {
             @Override
@@ -265,6 +272,7 @@ public class MainItemDetailed2Fragment extends Fragment {
         mBtnFieldSave = view.findViewById(R.id.expndd_fields_btn_save);
         mBtnFieldDiscard = view.findViewById(R.id.expndd_fields_btn_discard);
         mBtnGroupFieldEdit = view.findViewById(R.id.expndd_fields_ll_btns_edit);
+        mBtnAttachmentsAdd = view.findViewById(R.id.fragmainitemdetailed2_attachments_btn_add);
 
         mEditTextAuthorFirstName = view.findViewById(R.id.expndd_authors_et_name_first);
         mEditTextAuthorLastName = view.findViewById(R.id.expndd_authors_et_name_last);
@@ -276,6 +284,7 @@ public class MainItemDetailed2Fragment extends Fragment {
         mRecyclerTags = view.findViewById(R.id.expndd_tags_recycler);
         mRecyclerNotes = view.findViewById(R.id.expndd_notes_rcycler);
         mRecyclerFields = view.findViewById(R.id.expndd_fields_recycler);
+        mRecyclerAttachments = view.findViewById(R.id.fragmainitemdetailed2_attachments_recycler);
 
         mRecyclerLayoutManagerCreators = new LinearLayoutManager(view.getContext());
         mRecyclerCreators.setLayoutManager(mRecyclerLayoutManagerCreators);
@@ -300,6 +309,12 @@ public class MainItemDetailed2Fragment extends Fragment {
         mRecyclerAdapterFields = new RecyclerAdapterFields(view.getContext(), null);
         mRecyclerAdapterFields.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
         mRecyclerFields.setAdapter(mRecyclerAdapterFields);
+
+        mRecyclerLayoutManagerAttachments = new LinearLayoutManager(view.getContext(), LinearLayoutManager.HORIZONTAL, false);
+        mRecyclerAttachments.setLayoutManager(mRecyclerLayoutManagerAttachments);
+        mRecyclerAdapterAttachments = new RecyclerAdapterAttachments2(view.getContext(), null);
+        mRecyclerAdapterAttachments.setStateRestorationPolicy(RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY);
+        mRecyclerAttachments.setAdapter(mRecyclerAdapterAttachments);
 
         mCoverRelativeLayout = view.findViewById(R.id.fragmainitemdetailed2_mode_cover);
         mCoverSave = view.findViewById(R.id.fragmainitemdetailed2_btn_modifications_save);
@@ -381,9 +396,17 @@ public class MainItemDetailed2Fragment extends Fragment {
         mRecyclerAdapterTags.notifyDataSetChanged();
         mRecyclerAdapterFields.notifyDataSetChanged();
         mRecyclerAdapterNotes.notifyDataSetChanged();
+
+        mRecyclerAdapterAttachments.setVisibilityButtonItemRemove(mode!=MODES.MODE_VIEW);
     }
 
     private void initGuiMemberListeners(@NonNull View view, MODES mode){
+        mBtnAttachmentsAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
         mBtnToolbarDrawer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -553,6 +576,27 @@ public class MainItemDetailed2Fragment extends Fragment {
 
             }
         });
+        mRecyclerAdapterAttachments.setOnClickListener(new RecyclerAdapterAttachments2.ItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onItemRemoveClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onItemRemoveLongClick(View view, int position) {
+
+            }
+        });
     }
 
     private Vector<String> getItemTypesAll(){
@@ -577,7 +621,7 @@ public class MainItemDetailed2Fragment extends Fragment {
         return fieldNames;
     }
 
-    private void setGuiSpinnerItemTypes(@NonNull Context context, Vector<String> types){
+    private void setGuiSpinnerItemTypes(@NonNull Context context, Vector<String> types, String preselectedItemTypeName){
         mSpinnerAdapterItemTypes = new ArrayAdapter<String>(
                 context,
                 android.R.layout.simple_spinner_item,
@@ -586,6 +630,11 @@ public class MainItemDetailed2Fragment extends Fragment {
         mSpinnerItemType.setAdapter(
                 mSpinnerAdapterItemTypes
         );
+        if(!preselectedItemTypeName.isEmpty()){
+            if(types.contains(preselectedItemTypeName)){
+                mSpinnerItemType.setSelection(types.indexOf(preselectedItemTypeName));
+            }
+        }
     }
 
     private void setGuiSpinnerAuthorTypes(@NonNull Context context, Vector<String> types){
@@ -616,7 +665,7 @@ public class MainItemDetailed2Fragment extends Fragment {
         }
         if(mode == MODES.MODE_NEW || mode == MODES.MODE_EDIT){
 
-            if(!excludeItemTypeSpinner)setGuiSpinnerItemTypes(requireContext(), getItemTypesAll());
+            if(!excludeItemTypeSpinner)setGuiSpinnerItemTypes(requireContext(), getItemTypesAll(), itemTypeName);
             if(!itemTypeName.isEmpty())setGuiSpinnerAuthorTypes(requireContext(), getPossibleCreatorTypeNames(itemTypeName));
             if(!itemTypeName.isEmpty())setGuiSpinnerFieldNames(requireContext(), getPossibleFieldNames(itemTypeName));
         }

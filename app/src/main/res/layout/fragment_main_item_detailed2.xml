@@ -48,16 +48,16 @@
     </RelativeLayout>
 
     <ScrollView
-        android:layout_below="@id/fragmainitemdetailed2_mode_cover"
-        android:layout_above="@id/fragmainitemdetailed2_buttomtoolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@id/fragmainitemdetailed2_buttomtoolbar"
+        android:layout_below="@id/fragmainitemdetailed2_mode_cover"
         android:fillViewport="false"
         android:paddingStart="10dp"
-        android:paddingEnd="10dp"
-        >
+        android:paddingEnd="10dp">
 
-        <RelativeLayout android:layout_width="match_parent"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <com.haozhang.lib.SlantedTextView
@@ -83,21 +83,20 @@
                 android:layout_marginEnd="50dp"
                 android:inputType="none"
                 android:minHeight="48dp"
+                android:text="Long Title Long Title Long Title Long Title Long Title Long Title "
                 android:textSize="15pt"
-                android:textStyle="bold"
-                android:text="Long Title Long Title Long Title Long Title Long Title Long Title " />
+                android:textStyle="bold" />
 
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/fragmainitemdetailed2_tv_title">
+                android:layout_below="@id/fragmainitemdetailed2_tv_title"
+                android:orientation="vertical">
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/fragmainitemdetailed2_chipgroup_authors"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                </com.google.android.material.chip.ChipGroup>
+                    android:layout_height="wrap_content"></com.google.android.material.chip.ChipGroup>
 
                 <com.google.android.material.chip.ChipGroup
                     android:id="@+id/fragmainitemdetailed2_chipgroup_tags"
@@ -108,18 +107,58 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="10dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:text="Attachments:"
+                            android:textStyle="bold"/>
+
+                        <com.github.nikartm.button.FitButton
+                            android:id="@+id/fragmainitemdetailed2_attachments_btn_add"
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:layout_alignParentEnd="true"
+                            app:fb_icon="@drawable/ic_add"
+                            app:fb_iconColor="@color/black"
+                            app:fb_iconHeight="44dp"
+                            app:fb_iconPosition="center"
+                            app:fb_iconWidth="44dp"
+                            app:fb_rippleColor="@color/theme_dark_red_primary_color" />
+                    </RelativeLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/fragmainitemdetailed2_attachments_recycler"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp">
+
                     <TextView
                         android:layout_width="0dp"
-                        android:layout_weight="0.4"
                         android:layout_height="wrap_content"
+                        android:layout_weight="0.4"
                         android:text="Document Type:"
-                        />
+                        android:textStyle="bold"/>
+
                     <Spinner
                         android:id="@+id/fragmainitemdetailed2_spinner_itemtype"
                         android:layout_width="0dp"
-                        android:layout_weight="0.4"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4" />
                 </LinearLayout>
 
                 <com.skydoves.expandablelayout.ExpandableLayout
@@ -127,60 +166,56 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    app:expandable_parentLayout="@layout/expandable_authors_header"
-                    app:expandable_secondLayout="@layout/expandable_authors"
-                    app:expandable_isExpanded="false"
-                    app:expandable_spinner_size="20dp"
-                    app:expandable_spinner_color="@color/md_lime"
-                    app:expandable_spinner_gravity="end"
                     app:expandable_animation="normal"
                     app:expandable_duration="300"
-                    />
+                    app:expandable_isExpanded="false"
+                    app:expandable_parentLayout="@layout/expandable_authors_header"
+                    app:expandable_secondLayout="@layout/expandable_authors"
+                    app:expandable_spinner_color="@color/md_lime"
+                    app:expandable_spinner_gravity="end"
+                    app:expandable_spinner_size="20dp" />
 
                 <com.skydoves.expandablelayout.ExpandableLayout
                     android:id="@+id/fragmainitemdetailed2_exp_tags"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    app:expandable_parentLayout="@layout/expandable_tags_header"
-                    app:expandable_secondLayout="@layout/expandable_tags"
-                    app:expandable_isExpanded="false"
-                    app:expandable_spinner_size="20dp"
-                    app:expandable_spinner_color="@color/md_lime"
-                    app:expandable_spinner_gravity="end"
                     app:expandable_animation="normal"
                     app:expandable_duration="300"
-                    />
+                    app:expandable_isExpanded="false"
+                    app:expandable_parentLayout="@layout/expandable_tags_header"
+                    app:expandable_secondLayout="@layout/expandable_tags"
+                    app:expandable_spinner_color="@color/md_lime"
+                    app:expandable_spinner_gravity="end"
+                    app:expandable_spinner_size="20dp" />
 
                 <com.skydoves.expandablelayout.ExpandableLayout
                     android:id="@+id/fragmainitemdetailed2_exp_notes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    app:expandable_parentLayout="@layout/expandable_notes_header"
-                    app:expandable_secondLayout="@layout/expandable_notes"
-                    app:expandable_isExpanded="false"
-                    app:expandable_spinner_size="20dp"
-                    app:expandable_spinner_color="@color/md_lime"
-                    app:expandable_spinner_gravity="end"
                     app:expandable_animation="normal"
                     app:expandable_duration="300"
-                    />
+                    app:expandable_isExpanded="false"
+                    app:expandable_parentLayout="@layout/expandable_notes_header"
+                    app:expandable_secondLayout="@layout/expandable_notes"
+                    app:expandable_spinner_color="@color/md_lime"
+                    app:expandable_spinner_gravity="end"
+                    app:expandable_spinner_size="20dp" />
 
                 <com.skydoves.expandablelayout.ExpandableLayout
                     android:id="@+id/fragmainitemdetailed2_exp_fields"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    app:expandable_parentLayout="@layout/expandable_fields_header"
-                    app:expandable_secondLayout="@layout/expandable_fields"
-                    app:expandable_isExpanded="false"
-                    app:expandable_spinner_size="20dp"
-                    app:expandable_spinner_color="@color/md_lime"
-                    app:expandable_spinner_gravity="end"
                     app:expandable_animation="normal"
                     app:expandable_duration="300"
-                    />
+                    app:expandable_isExpanded="false"
+                    app:expandable_parentLayout="@layout/expandable_fields_header"
+                    app:expandable_secondLayout="@layout/expandable_fields"
+                    app:expandable_spinner_color="@color/md_lime"
+                    app:expandable_spinner_gravity="end"
+                    app:expandable_spinner_size="20dp" />
 
             </LinearLayout>
 
