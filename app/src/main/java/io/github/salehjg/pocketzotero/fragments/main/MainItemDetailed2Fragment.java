@@ -1,6 +1,7 @@
 package io.github.salehjg.pocketzotero.fragments.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +15,13 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -25,13 +31,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.nikartm.button.FitButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.gson.Gson;
 import com.haozhang.lib.SlantedTextView;
 import com.skydoves.expandablelayout.ExpandableLayout;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.Vector;
 
+import io.github.salehjg.pocketzotero.AppDirs;
 import io.github.salehjg.pocketzotero.AppMem;
 import io.github.salehjg.pocketzotero.R;
+import io.github.salehjg.pocketzotero.RecordedStatus;
 import io.github.salehjg.pocketzotero.adapters.RecyclerAdapterAttachments;
 import io.github.salehjg.pocketzotero.adapters.RecyclerAdapterAttachments2;
 import io.github.salehjg.pocketzotero.adapters.RecyclerAdapterGenericDouble;
@@ -39,8 +50,11 @@ import io.github.salehjg.pocketzotero.adapters.RecyclerAdapterGenericSingle;
 import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.OneTimeEvent;
 import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.SharedViewModel;
 import io.github.salehjg.pocketzotero.mainactivity.sharedviewmodel.ViewModelFactory;
+import io.github.salehjg.pocketzotero.smbutils.SmbReceiveFileFromHost;
+import io.github.salehjg.pocketzotero.smbutils.SmbServerInfo;
 import io.github.salehjg.pocketzotero.zoteroengine.types.Creator;
 import io.github.salehjg.pocketzotero.zoteroengine.types.FieldValuePair;
+import io.github.salehjg.pocketzotero.zoteroengine.types.ItemAttachment;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemNote;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemTag;
@@ -346,6 +360,7 @@ public class MainItemDetailed2Fragment extends Fragment {
 
                 mCoverRelativeLayout.setVisibility(View.INVISIBLE);
 
+                mBtnAttachmentsAdd.setVisibility(View.INVISIBLE);
                 break;
             }
             case MODE_NEW:{
@@ -365,6 +380,8 @@ public class MainItemDetailed2Fragment extends Fragment {
                 mEditTextField.setVisibility(View.VISIBLE);
 
                 mCoverRelativeLayout.setVisibility(View.VISIBLE);
+
+                mBtnAttachmentsAdd.setVisibility(View.VISIBLE);
                 break;
             }
             case MODE_EDIT:{
@@ -384,6 +401,8 @@ public class MainItemDetailed2Fragment extends Fragment {
                 mEditTextField.setVisibility(View.VISIBLE);
 
                 mCoverRelativeLayout.setVisibility(View.VISIBLE);
+
+                mBtnAttachmentsAdd.setVisibility(View.VISIBLE);
                 break;
             }
             default:{
@@ -490,7 +509,8 @@ public class MainItemDetailed2Fragment extends Fragment {
         mCoverDiscard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                setupGuiForMode(MODES.MODE_VIEW);
+                mMode = MODES.MODE_VIEW;
+                setupGuiForMode(mMode);
             }
         });
 
@@ -508,7 +528,8 @@ public class MainItemDetailed2Fragment extends Fragment {
                 if(itemDetailed!=null) {
                     mDataItemDetailed = itemDetailed;
                     populateGuiWithInputData(mDataItemDetailed);
-                    setupGuiForMode(mMode=MODES.MODE_VIEW);
+                    mMode=MODES.MODE_VIEW;
+                    setupGuiForMode(mMode);
                 }
             }
         });
@@ -579,7 +600,8 @@ public class MainItemDetailed2Fragment extends Fragment {
         mRecyclerAdapterAttachments.setOnClickListener(new RecyclerAdapterAttachments2.ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-
+                ItemAttachment attachment =  mRecyclerAdapterAttachments.getDataAttachment(position);
+                openAttachmentFile(attachment);
             }
 
             @Override
@@ -731,6 +753,123 @@ public class MainItemDetailed2Fragment extends Fragment {
             holder.getGuiTv2().setText(pair.get_value());
             holder.setVisibilityBtnAll(mMode==MODES.MODE_EDIT);
         }
+    }
+
+    private void openAttachmentFile(ItemAttachment attachment){
+        boolean isLocal = mAppMem.getStorageModeIsLocalScoped();
+        if(isLocal){
+            openLocalAttachmentFile(attachment);
+        }else{
+            openSmbAttachmentFile(attachment);
+        }
+    }
+
+    ActivityResultLauncher<Intent> mIntentResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult result) {
+            //if(result.getResultCode() == Activity.RESULT_OK){}
+        }
+    });
+
+    private void openSmbAttachmentFile(ItemAttachment attachment){
+        File dirPendingAbs = AppDirs.getPredefinedPrivateStoragePending(requireContext());
+
+        String extractedFileName = attachment.extractFileName();
+
+        if(!
+                AppDirs.makeDirAtPrivateBase(
+                        requireContext(),
+                        AppDirs.getPredefinedPrivateStorageDirNamePending(requireContext()),
+                        attachment.extractStorageDirName() + "." + attachment.getFileKey()
+                )
+        ){
+            mAppMem.recordStatusSingle(RecordedStatus.STATUS_BASE_STORAGE+13);
+            return;
+        }
+
+        String dirDest = dirPendingAbs.getPath() + File.separator + attachment.extractStorageDirName() + "." + attachment.getFileKey();
+        String fileDestPath = dirDest + File.separator + extractedFileName;
+
+        String fileSrcSmb =
+                AppDirs.getSharedSmbBase(requireContext())+File.separator+
+                        attachment.extractStorageDirName()+File.separator+
+                        attachment.getFileKey()+File.separator+
+                        extractedFileName;
+
+        SmbServerInfo serverInfo = new SmbServerInfo(
+                "foo",
+                mAppMem.getStorageSmbServerUsername(),
+                mAppMem.getStorageSmbServerPassword(),
+                mAppMem.getStorageSmbServerIp());
+
+        mAppMem.createProgressDialog(requireActivity(), false,false,"Downloading the requested attachment from the SMB host ...", null);
+        SmbReceiveFileFromHost receiveFileFromHost = new SmbReceiveFileFromHost(
+                serverInfo,
+                fileSrcSmb,
+                fileDestPath,
+                new SmbReceiveFileFromHost.Listener() {
+                    @Override
+                    public void onFinished() {
+                        try {
+                            Gson gson = new Gson();
+                            String strJsonAttachment = gson.toJson(attachment);
+                            File fileJson = new File(dirDest, "attachment.json");
+                            FileWriter writer = new FileWriter(fileJson);
+                            writer.append(strJsonAttachment);
+                            writer.flush();
+                            writer.close();
+
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.setData(FileProvider.getUriForFile(requireContext(), requireContext().getPackageName()+".provider", new File(fileDestPath)));
+                            intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                            mIntentResultLauncher.launch(intent);
+                        }catch (Exception e){
+                            String msg = "Failed to write attachment.json or to open the downloaded SMB attachment with: " + e.toString();
+                            mAppMem.recordStatusSingle(msg);
+                            Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show();
+                        }
+                        mAppMem.closeProgressDialog();
+                    }
+
+                    @Override
+                    public void onProgressTick(int percent) {
+                        mAppMem.setProgressDialogValue(percent);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        String msg = "Failed to download the SMB attachment with: " + e.toString();
+                        mAppMem.recordStatusSingle(msg);
+                        Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show();
+                        mAppMem.closeProgressDialog();
+                    }
+                }
+        );
+        receiveFileFromHost.runInBackground();
+    }
+
+    private void openLocalAttachmentFile(ItemAttachment attachment) {
+        String storageFolderName = attachment.extractStorageDirName();
+        String fileName = attachment.extractFileName();
+        String key = attachment.getFileKey();
+
+        File path = new File( AppDirs.getPredefinedPrivateStorageLocalScoped(requireContext()), storageFolderName);
+        File targetFile = new File(path, key + File.separator + fileName);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(FileProvider.getUriForFile(requireActivity().getApplicationContext(), requireContext().getPackageName()+".provider", targetFile));
+        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION|Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        mIntentResultLauncher.launch(intent);
+
+        /*
+        openPathIntent(
+                requireActivity(),
+                file.getPath(),
+                false,
+                requireContext().getPackageName(),
+                "",
+                new HashMap<>(0)
+        );
+        */
     }
 
 }
