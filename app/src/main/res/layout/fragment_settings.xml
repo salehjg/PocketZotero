@@ -217,7 +217,7 @@
             android:layout_weight="0.8"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:hint="/SharedDrive/Folder/zotero.sqlite" />
+            android:hint="SharedDrive/Folder/zotero.sqlite" />
     </LinearLayout>
 
     <RelativeLayout
