@@ -569,6 +569,8 @@ public class MainItemDetailed2Fragment extends Fragment {
             @Override
             public void onItemClick(View view, int position) {
                 String str = mRecyclerAdapterNotes.getItem(position).getNote();
+
+                mRichTextNote.getARE().setText("");
                 mRichTextNote.fromHtml(str);
             }
 
