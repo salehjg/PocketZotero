@@ -61,6 +61,8 @@ public abstract class RecyclerAdapterGenericDouble<T> extends RecyclerView.Adapt
                     if(mClickListener!=null) mClickListener.onItemRemoveClick(view, getBindingAdapterPosition());
                 }
             });
+
+            itemView.setOnClickListener(this);
         }
 
         @Override

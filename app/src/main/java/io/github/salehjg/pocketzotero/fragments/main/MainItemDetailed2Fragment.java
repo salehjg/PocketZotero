@@ -28,6 +28,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.chinalwb.are.AREditor;
 import com.github.nikartm.button.FitButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -58,7 +59,6 @@ import io.github.salehjg.pocketzotero.zoteroengine.types.ItemAttachment;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemDetailed;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemNote;
 import io.github.salehjg.pocketzotero.zoteroengine.types.ItemTag;
-import jp.wasabeef.richeditor.RichEditor;
 
 public class MainItemDetailed2Fragment extends Fragment {
 
@@ -88,7 +88,7 @@ public class MainItemDetailed2Fragment extends Fragment {
     private FitButton mBtnFieldAdd, mBtnFieldSave, mBtnFieldDiscard;
     private LinearLayout mBtnGroupFieldEdit;
     private EditText mEditTextAuthorFirstName, mEditTextAuthorLastName, mEditTextTag, mEditTextField;
-    private RichEditor mRichTextNote;
+    private AREditor mRichTextNote;
     private ExpandableLayout mExpandableAuthors, mExpandableTags, mExpandableNotes, mExpandableFields;
     private FitButton mBtnToolbarDrawer, mBtnToolbarDeleteItem, mBtnToolbarEditItem;
     private RecyclerView mRecyclerAttachments, mRecyclerCreators, mRecyclerTags, mRecyclerNotes, mRecyclerFields;
@@ -355,7 +355,7 @@ public class MainItemDetailed2Fragment extends Fragment {
                 mEditTextAuthorFirstName.setVisibility(View.GONE);
                 mEditTextAuthorLastName.setVisibility(View.GONE);
                 mEditTextTag.setVisibility(View.GONE);
-                mRichTextNote.setVisibility(View.GONE);
+                mRichTextNote.setVisibility(View.VISIBLE);
                 mEditTextField.setVisibility(View.GONE);
 
                 mCoverRelativeLayout.setVisibility(View.INVISIBLE);
@@ -568,7 +568,8 @@ public class MainItemDetailed2Fragment extends Fragment {
         mRecyclerAdapterNotes.setOnClickListener(new RecyclerAdapterGenericSingle.ItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-
+                String str = mRecyclerAdapterNotes.getItem(position).getNote();
+                mRichTextNote.fromHtml(str);
             }
 
             @Override
